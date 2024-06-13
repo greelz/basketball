@@ -1,33 +1,119 @@
 @tailwind base;
-@tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+.btn {
+  @apply font-bold py-2 px-4 rounded;
+}
+.btn-blue {
+  @apply bg-blue-500 text-white;
+}
+.btn-blue:hover {
+  @apply bg-blue-700;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+form {
+  @apply w-full max-w-md bg-white shadow-md rounded px-8 pt-6 pb-8 m-4;
+}
+
+form button[type="submit"] {
+  @apply btn btn-blue
+}
+
+h1 {
+  @apply text-4xl text-center p-4;
+}
+
+h2 {
+  @apply text-3xl text-center p-3;
+}
+h3 {
+  @apply text-2xl text-center p-2;
+}
+h4 {
+  @apply text-xl text-center p-1;
+}
+
+@font-face {
+  font-family: "Selawik";
+  src: url("/fonts/selawik.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  font-family: "Selawik", sans-serif;
+}
+
+main {
+  height: calc(100vh - 48px);
+}
+
+fieldset {
+  border: 1px solid black;
+  padding: .25em .5em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5em;
+}
+
+fieldset > div {
+  display: flex;
+  gap: .25em;
+  align-items: center;
+  justify-content: center;
+
+}
+
+
+.courtDiv {
+  background: white;
+  overflow: hidden;
+  height: calc(100vh - 48px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.courtImageDiv {
+  height: 100%;
+  aspect-ratio: 1183 / 745;
+  position: relative;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1 0 0%;
+  min-width: 0px;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 100%;
+}
+
+.player {
+  @apply cursor-pointer;
+  flex: 1;
+  display: flex;
+  width: 100%;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-variant: small-caps;
+  font-size: small;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* ------------- Base Element Styling --------------*/
+input[type="text"] {
+  border: 1px solid grey;
+  padding: 0.05em 0.15em;
 }
