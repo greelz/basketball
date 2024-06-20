@@ -6,6 +6,7 @@ import {
   getGamesForSeason,
   getTeamsForSeason,
 } from "@/app/database";
+import { Timestamp } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
 
 interface IPage {
@@ -14,7 +15,19 @@ interface IPage {
 export default async function SeasonPage({ params }: IPage) {
   const teams = await getTeamsForSeason(params.leagueId, params.seasonId);
   const games = await getGamesForSeason(params.leagueId, params.seasonId);
-  // const data = await getData(params.leagueId);
+  // Format games to contain the timestamp
+  games.forEach(
+    (g) => (g.name += ` - ${(g.date as Timestamp).toDate().toLocaleString()}`)
+  );
+
+  games.sort((a, b) => {
+    const aDate = (a.date as Timestamp).toDate();
+    const bDate = (b.date as Timestamp).toDate();
+    if (aDate > bDate) return 1;
+    if (bDate > aDate) return -1;
+    return 0;
+  });
+
   return (
     <>
       <div>
@@ -41,10 +54,7 @@ export default async function SeasonPage({ params }: IPage) {
       </div>
       <div>
         <h1>Games</h1>
-        <LinkList
-          data={games}
-          slug='/live'
-        />
+        <LinkList data={games} slug="/live" />
         <form
           action={async (formData) => {
             "use server";
@@ -85,7 +95,7 @@ export default async function SeasonPage({ params }: IPage) {
                 required
                 name="datetime"
                 autoComplete="off"
-                value="2024-06-01T17:30"
+                defaultValue="2024-06-01T17:30"
               />
             </div>
           </div>

@@ -87,7 +87,7 @@ export default function PlayerIncrementor({
           <div>{team1Score}</div>-<div>{team2Score}</div>
         </div>
       </div>
-      <div className="grid gap-3 grid-cols-5 text-xs justify-evenly items-center">
+      <div className="grid gap-3 grid-cols-6 text-xs justify-evenly items-center">
         <div className="flex flex-col gap-2">
           {PlayerStatsStringForButtons.slice(0, 2).map((t) => (
             <StatIncrementButton
@@ -117,6 +117,15 @@ export default function PlayerIncrementor({
         </div>
         <div className="flex flex-col gap-2">
           {PlayerStatsStringForButtons.slice(6, 8).map((t) => (
+            <StatIncrementButton
+              incrementStat={incrementAndAddToHistory}
+              player={player}
+              t={t}
+            />
+          ))}
+        </div>
+        <div className="flex flex-col gap-2">
+          {PlayerStatsStringForButtons.slice(8).map((t) => (
             <StatIncrementButton
               incrementStat={incrementAndAddToHistory}
               player={player}

@@ -27,7 +27,7 @@ export interface Game {
   name: string;
   team1: string;
   team2: string;
-  date: Date;
+  date: unknown;
 }
 
 export interface PlayerStats extends Player {
