@@ -2,6 +2,7 @@ import { getDocs, increment, setDoc, updateDoc } from "firebase/firestore";
 import { collection, addDoc, doc, getDoc } from "firebase/firestore";
 import { Game, League, Player, PlayerStats, Season, Team } from "./types";
 import { db } from "./config";
+import { ref } from "firebase/database";
 
 // ************** ADD FUNCTIONS ***************** //
 
@@ -191,6 +192,11 @@ export async function getGameStatistics(
     await getTeamPlayersFromGame(leagueId, seasonId, gameId);
   const allPlayers = team1players.concat(team2players);
 
+  const gameSnapshot = await getDoc(
+    doc(db, `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`)
+  );
+  const gg = gameSnapshot.get("gameover") == 1;
+
   const snapshot = await getDocs(
     collection(
       db,
@@ -211,11 +217,33 @@ export async function getGameStatistics(
     };
   });
 
-  return { playerStats, team1, team2 };
+  return { playerStats, team1, team2, gg };
 }
+
+export async function getTeamNameByTeamId(
+  leagueId: string,
+  seasonId: string,
+  teamId: string
+) {
+  const snapshot = await getDoc(
+    doc(db, `leagues/${leagueId}/seasons/${seasonId}/teams/${teamId}`)
+  );
+
+  return snapshot.get("name");
+}
+
 //#endregion
 
 //#region Utility functions
+export async function finalizeGame(
+  leagueId: string,
+  seasonId: string,
+  gameId: string
+) {
+  const initialPath = `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`;
+
+  await updateDoc(doc(db, initialPath), { gameover: 1 });
+}
 export async function incrementStat(
   leagueId: string,
   seasonId: string,

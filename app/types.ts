@@ -12,7 +12,7 @@ export interface Season {
 export interface Team {
   id: string;
   name: string;
-  captain: string;
+  captain?: string;
 }
 
 export interface Player {

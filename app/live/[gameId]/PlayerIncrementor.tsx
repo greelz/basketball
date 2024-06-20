@@ -4,6 +4,7 @@ import { Player, PlayerStats, PlayerStatsStringForButtons } from "@/app/types";
 import React, { useCallback, useState } from "react";
 import StatCell from "./StatCell";
 import StatIncrementButton from "./StatIncrementButton";
+import { finalizeGame } from "@/app/database";
 
 interface Props {
   incrementStat: (
@@ -11,9 +12,11 @@ interface Props {
     fieldName: string,
     incrementValue: number
   ) => void;
+  finalizeGame: () => void;
   playerStats: PlayerStats[];
   team1Id: string;
   team2Id: string;
+  gameIsOver: boolean;
 }
 
 interface IHistory {
@@ -24,9 +27,11 @@ interface IHistory {
 
 export default function PlayerIncrementor({
   incrementStat,
+  finalizeGame,
   playerStats,
   team1Id,
   team2Id,
+  gameIsOver
 }: Props) {
   const [player, setPlayer] = useState("");
   const [history, setHistory] = useState<IHistory[]>([]);
@@ -34,6 +39,7 @@ export default function PlayerIncrementor({
 
   const incrementAndAddToHistory = useCallback(
     (p: string, t: string, v: number) => {
+      if (gameIsOver) return;
       incrementStat(p, t, v);
       setHistory((curr) => {
         const temp = curr.slice(0, historyIndex ?? 0);
@@ -52,9 +58,8 @@ export default function PlayerIncrementor({
     if (p.teamId === team2Id) team2Score += p.points ?? 0;
   });
 
-  const undoDisabled = historyIndex === null || historyIndex === 0;
+  const undoDisabled = historyIndex === null || historyIndex === 0 || gameIsOver;
 
-  console.log(undoDisabled);
   return (
     <div className="flex gap-4 flex-col">
       <div className="flex flex-row flex-wrap">
@@ -136,7 +141,7 @@ export default function PlayerIncrementor({
         <button
           className={`${undoDisabled ? "bg-slate-300" : ""} btn btn-blue`}
           onClick={() => {
-            if (!historyIndex || historyIndex === 0) return;
+            if (!historyIndex || historyIndex === 0 || gameIsOver) return;
             const { player, type, val } = history[historyIndex - 1];
 
             // do the opposite thing that just happened
@@ -150,6 +155,13 @@ export default function PlayerIncrementor({
           Undo
         </button>
       </div>
+      <br />
+      <br />
+      <br />
+      <br />
+      <button className="btn" onClick={() => finalizeGame()}>
+        Finalize Game
+      </button>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import {
   addGame,
   addTeam,
   getGamesForSeason,
+  getTeamNameByTeamId,
   getTeamsForSeason,
 } from "@/app/database";
 import { Timestamp } from "firebase/firestore";
@@ -13,11 +14,30 @@ interface IPage {
   params: { leagueId: string; seasonId: string };
 }
 export default async function SeasonPage({ params }: IPage) {
+  const leagueId = params.leagueId;
+  const seasonId = params.seasonId;
   const teams = await getTeamsForSeason(params.leagueId, params.seasonId);
   const games = await getGamesForSeason(params.leagueId, params.seasonId);
   // Format games to contain the timestamp
+  for (let i = 0; i < games.length; ++i) {
+    const teamA = await getTeamNameByTeamId(leagueId, seasonId, games[i].team1);
+    const teamB = await getTeamNameByTeamId(leagueId, seasonId, games[i].team2);
+    const timestamp = (games[i].date as Timestamp).toDate().toLocaleString();
+    games[i].name = `${teamA} v ${teamB} - ${timestamp}${
+      games[i].name ? ` [${games[i].name}]` : ""
+    }`;
+  }
   games.forEach(
-    (g) => (g.name += ` - ${(g.date as Timestamp).toDate().toLocaleString()}`)
+    async (g) =>
+      (g.name += `${await getTeamNameByTeamId(
+        params.leagueId,
+        params.seasonId,
+        g.team1
+      )} vs. ${await getTeamNameByTeamId(
+        params.leagueId,
+        params.seasonId,
+        g.team2
+      )} - ${(g.date as Timestamp).toDate().toLocaleString()} ${g.name}`)
   );
 
   games.sort((a, b) => {
@@ -30,28 +50,6 @@ export default async function SeasonPage({ params }: IPage) {
 
   return (
     <>
-      <div>
-        <h1>Teams</h1>
-        <LinkList
-          data={teams}
-          slug={`/admin/${params.leagueId}/${params.seasonId}/teams`}
-        />
-        <form
-          action={async (formData) => {
-            "use server";
-            const teamName = formData.get("teamName") as string;
-            await addTeam(params.leagueId, params.seasonId, teamName);
-            revalidatePath("/");
-          }}
-        >
-          <h4>Add a team</h4>
-          <div className="my-3">
-            <label htmlFor="teamName">Team Name: </label>
-            <input type="text" name="teamName" autoComplete="off" />
-          </div>
-          <button type="submit">Add Team</button>
-        </form>
-      </div>
       <div>
         <h1>Games</h1>
         <LinkList data={games} slug="/live" />
@@ -86,7 +84,7 @@ export default async function SeasonPage({ params }: IPage) {
             </fieldset>
             <div className="my-2">
               <label htmlFor="gameName">Description: </label>
-              <input type="text" required name="gameName" autoComplete="off" />
+              <input type="text" name="gameName" autoComplete="off" />
             </div>
             <div className="my-2">
               <label htmlFor="datetime">Date and time: </label>
@@ -100,6 +98,28 @@ export default async function SeasonPage({ params }: IPage) {
             </div>
           </div>
           <button type="submit">Add Game</button>
+        </form>
+      </div>
+      <div>
+        <h1>Teams</h1>
+        <LinkList
+          data={teams}
+          slug={`/admin/${params.leagueId}/${params.seasonId}/teams`}
+        />
+        <form
+          action={async (formData) => {
+            "use server";
+            const teamName = formData.get("teamName") as string;
+            await addTeam(params.leagueId, params.seasonId, teamName);
+            revalidatePath("/");
+          }}
+        >
+          <h4>Add a team</h4>
+          <div className="my-3">
+            <label htmlFor="teamName">Team Name: </label>
+            <input type="text" name="teamName" autoComplete="off" />
+          </div>
+          <button type="submit">Add Team</button>
         </form>
       </div>
     </>
