@@ -1,4 +1,10 @@
-import { getDocs, increment, setDoc, updateDoc } from "firebase/firestore";
+import {
+  getDocs,
+  increment,
+  onSnapshot,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { collection, addDoc, doc, getDoc } from "firebase/firestore";
 import { Game, League, Player, PlayerStats, Season, Team } from "./types";
 import { db } from "./config";
@@ -183,41 +189,15 @@ export async function getTeamPlayersFromGame(
   return { team1, team2, team1players, team2players };
 }
 
-export async function getGameStatistics(
+export async function isGameOver(
   leagueId: string,
   seasonId: string,
   gameId: string
 ) {
-  const { team1, team2, team1players, team2players } =
-    await getTeamPlayersFromGame(leagueId, seasonId, gameId);
-  const allPlayers = team1players.concat(team2players);
-
   const gameSnapshot = await getDoc(
     doc(db, `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`)
   );
-  const gg = gameSnapshot.get("gameover") == 1;
-
-  const snapshot = await getDocs(
-    collection(
-      db,
-      `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/playerStatistics`
-    )
-  );
-
-  const playerStats: PlayerStats[] = allPlayers;
-
-  snapshot.forEach((d) => {
-    const onTeam1 = team1players.findIndex((p) => p.id === d.id) > -1;
-    const statData = d.data() as PlayerStats;
-    const idx = playerStats.findIndex((p) => p.id === d.id);
-    playerStats[idx] = {
-      ...playerStats[idx],
-      ...statData,
-      teamId: onTeam1 ? team1 : team2,
-    };
-  });
-
-  return { playerStats, team1, team2, gg };
+  return gameSnapshot.get("gameover") == 1;
 }
 
 export async function getTeamNameByTeamId(

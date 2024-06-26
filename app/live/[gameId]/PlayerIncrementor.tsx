@@ -1,10 +1,22 @@
 "use client";
 
-import { Player, PlayerStats, PlayerStatsStringForButtons } from "@/app/types";
-import React, { useCallback, useState } from "react";
+import {
+  Player,
+  PlayerStat,
+  PlayerStats,
+  PlayerStatsStringForButtons,
+} from "@/app/types";
+import React, { useCallback, useEffect, useState } from "react";
 import StatCell from "./StatCell";
 import StatIncrementButton from "./StatIncrementButton";
-import { finalizeGame } from "@/app/database";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
+import { db } from "@/app/config";
 
 interface Props {
   incrementStat: (
@@ -13,10 +25,16 @@ interface Props {
     incrementValue: number
   ) => void;
   finalizeGame: () => void;
-  playerStats: PlayerStats[];
   team1Id: string;
   team2Id: string;
+  team1Players: Player[];
+  team2Players: Player[];
+  leagueId: string;
+  seasonId: string;
+  gameId: string;
   gameIsOver: boolean;
+  team1Name: string;
+  team2Name: string;
 }
 
 interface IHistory {
@@ -25,17 +43,55 @@ interface IHistory {
   val: number;
 }
 
+function findPlayerName(team1: Player[], team2: Player[], id: string) {
+  const team1_team2 = team1.concat(team2);
+  return team1_team2.find((t) => t.id === id)?.name;
+}
+
 export default function PlayerIncrementor({
   incrementStat,
   finalizeGame,
-  playerStats,
   team1Id,
   team2Id,
-  gameIsOver
+  team1Players,
+  team2Players,
+  leagueId,
+  seasonId,
+  gameId,
+  gameIsOver,
+  team1Name,
+  team2Name,
 }: Props) {
   const [player, setPlayer] = useState("");
   const [history, setHistory] = useState<IHistory[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
+  const [playerStatistics, setPlayerStatistics] = useState<
+    PlayerStats[] | undefined
+  >();
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(
+        db,
+        `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/playerStatistics`
+      ),
+      (snapshot) => {
+        snapshot.docs.forEach((s) => {
+          const stats = snapshot.docs.map((doc) => {
+            const onTeam1 = team1Players.findIndex((p) => p.id === doc.id) > -1;
+            return {
+              teamId: onTeam1 ? team1Id : team2Id,
+              id: doc.id,
+              name: findPlayerName(team1Players, team2Players, doc.id) || "",
+              ...(doc.data() as PlayerStat),
+            };
+          });
+          setPlayerStatistics(stats);
+        });
+      }
+    );
+    return () => unsubscribe();
+  }, []);
 
   const incrementAndAddToHistory = useCallback(
     (p: string, t: string, v: number) => {
@@ -53,40 +109,66 @@ export default function PlayerIncrementor({
 
   let team1Score = 0;
   let team2Score = 0;
-  playerStats.forEach((p) => {
+  playerStatistics?.forEach((p) => {
     if (p.teamId === team1Id) team1Score += p.points ?? 0;
     if (p.teamId === team2Id) team2Score += p.points ?? 0;
   });
 
-  const undoDisabled = historyIndex === null || historyIndex === 0 || gameIsOver;
+  const undoDisabled =
+    historyIndex === null || historyIndex === 0 || gameIsOver;
+
+  if (!playerStatistics) return "Couldn't find any player statistics.";
 
   return (
-    <div className="flex gap-4 flex-col">
+    <div className="flex flex-1 gap-4 flex-col">
       <div className="flex flex-row flex-wrap">
         <table className="mx-2 text-right padding-2 flex-1">
-          <tr>
-            <td>NAME</td>
-            <td>FG</td>
-            <td>3PT</td>
-            <td>OREB</td>
-            <td>DREB</td>
-            <td>AST</td>
-            <td>STL</td>
-            <td>BLK</td>
-            <td>TO</td>
-            <td className="font-bold">PTS</td>
-          </tr>
-          {playerStats
-            .filter((p) => p.teamId === team1Id)
-            .map((s) => (
-              <StatCell player={player} s={s} setPlayer={setPlayer} />
-            ))}
-          <hr className="m-2" />
-          {playerStats
-            .filter((p) => p.teamId === team2Id)
-            .map((s) => (
-              <StatCell player={player} s={s} setPlayer={setPlayer} />
-            ))}
+          <thead>
+            <tr>
+              <td>NAME</td>
+              <td className="text-xs">2PA</td>
+              <td className="text-xs">2PM</td>
+              <td className="text-xs">3PA</td>
+              <td className="text-xs">3PM</td>
+              <td>FG</td>
+              <td>3PT</td>
+              <td>OREB</td>
+              <td>DREB</td>
+              <td>AST</td>
+              <td>STL</td>
+              <td>BLK</td>
+              <td>TO</td>
+              <td className="font-bold">PTS</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="font-bold">{team1Name}</td>
+            </tr>
+            {playerStatistics
+              .filter((p) => p.teamId === team1Id)
+              .map((s) => (
+                <StatCell
+                  key={s.id}
+                  player={player}
+                  s={s}
+                  setPlayer={setPlayer}
+                />
+              ))}
+            <tr>
+              <td className="font-bold">{team2Name}</td>
+            </tr>
+            {playerStatistics
+              .filter((p) => p.teamId === team2Id)
+              .map((s) => (
+                <StatCell
+                  key={s.id}
+                  player={player}
+                  s={s}
+                  setPlayer={setPlayer}
+                />
+              ))}
+          </tbody>
         </table>
         <div className="text-7xl flex-1 flex justify-center gap-2 items-center text-center">
           <div>{team1Score}</div>-<div>{team2Score}</div>
@@ -96,6 +178,7 @@ export default function PlayerIncrementor({
         <div className="flex flex-col gap-2">
           {PlayerStatsStringForButtons.slice(0, 2).map((t) => (
             <StatIncrementButton
+              key={t.id}
               incrementStat={incrementAndAddToHistory}
               player={player}
               t={t}
@@ -105,6 +188,7 @@ export default function PlayerIncrementor({
         <div className="flex flex-col gap-2">
           {PlayerStatsStringForButtons.slice(2, 4).map((t) => (
             <StatIncrementButton
+              key={t.id}
               incrementStat={incrementAndAddToHistory}
               player={player}
               t={t}
@@ -114,6 +198,7 @@ export default function PlayerIncrementor({
         <div className="flex flex-col gap-2">
           {PlayerStatsStringForButtons.slice(4, 6).map((t) => (
             <StatIncrementButton
+              key={t.id}
               incrementStat={incrementAndAddToHistory}
               player={player}
               t={t}
@@ -123,6 +208,7 @@ export default function PlayerIncrementor({
         <div className="flex flex-col gap-2">
           {PlayerStatsStringForButtons.slice(6, 8).map((t) => (
             <StatIncrementButton
+              key={t.id}
               incrementStat={incrementAndAddToHistory}
               player={player}
               t={t}
@@ -132,6 +218,7 @@ export default function PlayerIncrementor({
         <div className="flex flex-col gap-2">
           {PlayerStatsStringForButtons.slice(8).map((t) => (
             <StatIncrementButton
+              key={t.id}
               incrementStat={incrementAndAddToHistory}
               player={player}
               t={t}
@@ -155,11 +242,7 @@ export default function PlayerIncrementor({
           Undo
         </button>
       </div>
-      <br />
-      <br />
-      <br />
-      <br />
-      <button className="btn" onClick={() => finalizeGame()}>
+      <button className="btn ml-auto mt-auto" onClick={() => finalizeGame()}>
         Finalize Game
       </button>
     </div>

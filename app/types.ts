@@ -30,7 +30,7 @@ export interface Game {
   date: unknown;
 }
 
-export interface PlayerStats extends Player {
+export interface PlayerStat {
   assists?: number;
   points?: number;
   two_point_miss?: number;
@@ -42,6 +42,12 @@ export interface PlayerStats extends Player {
   steals?: number;
   blocks?: number;
   turnovers?: number;
+}
+
+export interface PlayerStats extends PlayerStat {
+  name: string;
+  id: string;
+  teamId: string | undefined;
 }
 
 export const PlayerStatsStringForButtons = [

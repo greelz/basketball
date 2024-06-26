@@ -16,6 +16,9 @@ const convertToZeroOrOriginal = (val: any) => {
 };
 
 export default function StatCell({ s, setPlayer, player }: Props) {
+  let totalTwosAttempted =
+    convertToZeroOrOriginal(s.two_point_miss) +
+    convertToZeroOrOriginal(s.two_point_made);
   let totalAttempts =
     convertToZeroOrOriginal(s.two_point_miss) +
     convertToZeroOrOriginal(s.three_point_miss);
@@ -28,9 +31,19 @@ export default function StatCell({ s, setPlayer, player }: Props) {
     <tr
       key={s.id}
       className={`cursor-pointer ${s.id === player ? "bg-slate-300" : ""}`}
-      onClick={() => setPlayer(s.id)}
+      onClick={() => {
+        if (player === s.id) {
+          setPlayer("");
+        } else {
+          setPlayer(s.id);
+        }
+      }}
     >
       <td>{s.name}</td>
+      <td className="text-xs">{totalTwosAttempted}</td>
+      <td className="text-xs">{s.two_point_made}</td>
+      <td className="text-xs">{totalThreesAttempted}</td>
+      <td className="text-xs">{s.three_point_made}</td>
       <td>
         {totalMakes}-{totalAttempts}
       </td>
