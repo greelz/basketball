@@ -9,14 +9,9 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import StatCell from "./StatCell";
 import StatIncrementButton from "./StatIncrementButton";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-} from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "@/app/config";
+import { spec } from "node:test/reporters";
 
 interface Props {
   incrementStat: (
@@ -69,6 +64,8 @@ export default function PlayerIncrementor({
     PlayerStats[] | undefined
   >();
 
+  const allPlayers = team1Players.concat(team2Players); // starting block for who to show on the screen
+
   useEffect(() => {
     const unsubscribe = onSnapshot(
       collection(
@@ -76,18 +73,16 @@ export default function PlayerIncrementor({
         `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/playerStatistics`
       ),
       (snapshot) => {
+        const tempStats: PlayerStats[] = allPlayers.map(p => ({...p}));
         snapshot.docs.forEach((s) => {
-          const stats = snapshot.docs.map((doc) => {
-            const onTeam1 = team1Players.findIndex((p) => p.id === doc.id) > -1;
-            return {
-              teamId: onTeam1 ? team1Id : team2Id,
-              id: doc.id,
-              name: findPlayerName(team1Players, team2Players, doc.id) || "",
-              ...(doc.data() as PlayerStat),
-            };
-          });
-          setPlayerStatistics(stats);
+          const specificPlayerIdx = tempStats.findIndex((a) => a.id === s.id);
+          if (specificPlayerIdx === -1) return;
+          tempStats[specificPlayerIdx] = {
+            ...tempStats[specificPlayerIdx],
+            ...(s.data() as PlayerStat),
+          };
         });
+        setPlayerStatistics(tempStats);
       }
     );
     return () => unsubscribe();
@@ -117,8 +112,7 @@ export default function PlayerIncrementor({
   const undoDisabled =
     historyIndex === null || historyIndex === 0 || gameIsOver;
 
-  if (!playerStatistics) return "Couldn't find any player statistics.";
-
+  if (!playerStatistics) return "Couldn't find any stats to show.";
   return (
     <div className="flex flex-1 gap-4 flex-col">
       <div className="flex flex-row flex-wrap">

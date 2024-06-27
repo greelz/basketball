@@ -18,8 +18,8 @@ export interface Team {
 export interface Player {
   id: string; // Firestore document ID
   name: string;
+  teamId: string; // what team are they on
   position?: string;
-  teamId?: string; // what team are they on
 }
 
 export interface Game {
@@ -44,11 +44,7 @@ export interface PlayerStat {
   turnovers?: number;
 }
 
-export interface PlayerStats extends PlayerStat {
-  name: string;
-  id: string;
-  teamId: string | undefined;
-}
+export interface PlayerStats extends PlayerStat, Player {}
 
 export const PlayerStatsStringForButtons = [
   { id: "two_point_miss", name: "2-miss" },

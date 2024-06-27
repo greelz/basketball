@@ -245,6 +245,7 @@ export async function incrementStat(
     dataToUpdate["three_point_miss"] = increment(incrementValue);
     dataToUpdate["points"] = increment(3 * incrementValue);
   }
+  console.log('here');
 
   try {
     const snapshot = doc(db, `${initialPath}/${playerId}`);
