@@ -17,8 +17,7 @@ const convertToZeroOrOriginal = (val: any) => {
 
 export default function StatCell({ s, setPlayer, player }: Props) {
   let totalTwosAttempted =
-    convertToZeroOrOriginal(s.two_point_miss) +
-    convertToZeroOrOriginal(s.two_point_made);
+    convertToZeroOrOriginal(s.two_point_miss);
   let totalAttempts =
     convertToZeroOrOriginal(s.two_point_miss) +
     convertToZeroOrOriginal(s.three_point_miss);

@@ -38,11 +38,6 @@ interface IHistory {
   val: number;
 }
 
-function findPlayerName(team1: Player[], team2: Player[], id: string) {
-  const team1_team2 = team1.concat(team2);
-  return team1_team2.find((t) => t.id === id)?.name;
-}
-
 export default function PlayerIncrementor({
   incrementStat,
   finalizeGame,
