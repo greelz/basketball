@@ -235,17 +235,6 @@ export async function incrementStat(
   const initialPath = `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/playerStatistics`;
   if (playerId.length !== 20) return;
   let dataToUpdate = { [fieldName]: increment(incrementValue) };
-  if (fieldName === "two_point_made") {
-    dataToUpdate = {
-      two_point_miss: increment(incrementValue),
-      two_point_made: increment(incrementValue),
-      points: increment(2 * incrementValue),
-    };
-  } else if (fieldName === "three_point_made") {
-    dataToUpdate["three_point_miss"] = increment(incrementValue);
-    dataToUpdate["points"] = increment(3 * incrementValue);
-  }
-  console.log('here');
 
   try {
     const snapshot = doc(db, `${initialPath}/${playerId}`);
