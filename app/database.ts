@@ -81,6 +81,7 @@ export async function addGame(
     }
   );
 }
+
 //#endregion
 
 //#region Get functions
