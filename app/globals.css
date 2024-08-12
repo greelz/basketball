@@ -236,6 +236,10 @@ button {
   flex: 1;
 }
 
+._text {
+  color: black;
+}
+
 .actionsContainer .titleTextGoDiv :last-child() {
   display: inline-block;
 }
