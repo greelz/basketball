@@ -7,12 +7,23 @@ import {
   getTeamNameByTeamId,
   getTeamsForSeason,
 } from "@/app/database";
+import { Team } from "@/app/types";
 import { Timestamp } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
 
 interface IPage {
   params: { leagueId: string; seasonId: string };
 }
+
+function logTime(start: number, words: string): number {
+  console.log(`${words}: ${performance.now() - start}`);
+  return performance.now();
+}
+
+function getTeamNameFromCachedTeams(teamId: string, teams: Team[]) {
+    return teams.find(t => t.id === teamId)?.name;
+}
+
 export default async function SeasonPage({ params }: IPage) {
   const leagueId = params.leagueId;
   const seasonId = params.seasonId;
@@ -20,25 +31,13 @@ export default async function SeasonPage({ params }: IPage) {
   const games = await getGamesForSeason(params.leagueId, params.seasonId);
   // Format games to contain the timestamp
   for (let i = 0; i < games.length; ++i) {
-    const teamA = await getTeamNameByTeamId(leagueId, seasonId, games[i].team1);
-    const teamB = await getTeamNameByTeamId(leagueId, seasonId, games[i].team2);
+    const teamA = getTeamNameFromCachedTeams(games[i].team1, teams);
+    const teamB = getTeamNameFromCachedTeams(games[i].team2, teams);
     const timestamp = (games[i].date as Timestamp).toDate().toLocaleString();
     games[i].name = `${teamA} v ${teamB} - ${timestamp}${
       games[i].name ? ` [${games[i].name}]` : ""
     }`;
   }
-  games.forEach(
-    async (g) =>
-      (g.name += `${await getTeamNameByTeamId(
-        params.leagueId,
-        params.seasonId,
-        g.team1
-      )} vs. ${await getTeamNameByTeamId(
-        params.leagueId,
-        params.seasonId,
-        g.team2
-      )} - ${(g.date as Timestamp).toDate().toLocaleString()} ${g.name}`)
-  );
 
   games.sort((a, b) => {
     const aDate = (a.date as Timestamp).toDate();
