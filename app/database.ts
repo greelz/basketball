@@ -6,7 +6,17 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { collection, addDoc, doc, getDoc } from "firebase/firestore";
-import { Game, League, Player, PlayerStats, Season, Team } from "./types";
+import {
+  Game,
+  GameForSeason,
+  League,
+  Player,
+  PlayerStat,
+  PlayerStats,
+  Season,
+  Team,
+  TeamRecord,
+} from "./types";
 import { db } from "./config";
 import { ref } from "firebase/database";
 
@@ -80,6 +90,23 @@ export async function addGame(
       name: gameName,
     }
   );
+}
+
+export async function addScoreToGame(
+  leagueId: string,
+  seasonId: string,
+  gameId: string,
+  team1score: number,
+  team2score: number
+) {
+  const ref = doc(
+    db,
+    `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`
+  );
+  return await updateDoc(ref, {
+    team1score: team1score,
+    team2score: team2score,
+  });
 }
 
 //#endregion
@@ -188,6 +215,121 @@ export async function getTeamPlayersFromGame(
   const team1players = await getPlayersFromTeam(leagueId, seasonId, team1);
   const team2players = await getPlayersFromTeam(leagueId, seasonId, team2);
   return { team1, team2, team1players, team2players };
+}
+
+export async function getPlayerStatisticsFromGame(
+  leagueId: string,
+  seasonId: string,
+  gameId: string
+) {
+  const { team1, team2, team1players, team2players } =
+    await getTeamPlayersFromGame(leagueId, seasonId, gameId);
+
+  const playerStatistics: PlayerStats[] = team1players
+    .concat(team2players)
+    .map((p) => ({ ...p }));
+
+  const snapshot = await getDocs(
+    collection(
+      db,
+      `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/playerStatistics`
+    )
+  );
+
+  snapshot.docs.forEach((s) => {
+    const data = s.data();
+    const two_point_made = data["two_point_made"] ?? 0;
+    const three_point_made = data["three_point_made"] ?? 0;
+    const specificPlayerIdx = playerStatistics.findIndex((a) => a.id === s.id);
+    if (specificPlayerIdx === -1) return;
+    playerStatistics[specificPlayerIdx] = {
+      ...playerStatistics[specificPlayerIdx],
+      ...(data as PlayerStat),
+      points: two_point_made * 2 + three_point_made * 3,
+    };
+  });
+
+  let team1Score = 0;
+  let team2Score = 0;
+  playerStatistics?.forEach((p) => {
+    if (p.teamId === team1) team1Score += p.points ?? 0;
+    if (p.teamId === team2) team2Score += p.points ?? 0;
+  });
+
+  return {
+    playerStatistics: playerStatistics,
+    team1: { id: team1, score: team1Score },
+    team2: { id: team2, score: team2Score },
+  };
+}
+
+export async function getSeasonSchedule(
+  leagueId: string,
+  seasonId: string
+): Promise<GameForSeason[]> {
+  const teams = await getTeamsForSeason(leagueId, seasonId);
+  const games = await getGamesForSeason(leagueId, seasonId);
+
+  const teamMap = new Map<string, Team>();
+  teams.forEach((t) => teamMap.set(t.id, t));
+
+  return games
+    .filter((g) => teamMap.has(g.team1) && teamMap.has(g.team2))
+    .map((game) => ({
+      ...game,
+      team1ref: teamMap.get(game.team1)!,
+      team2ref: teamMap.get(game.team2)!,
+    }));
+}
+
+// Special case if things are generated appropriately
+export async function getSeasonStatisticsRegenerate(
+  leagueId: string,
+  seasonId: string,
+  games?: Game[]
+) {
+  if (!games) games = await getGamesForSeason(leagueId, seasonId);
+
+  let records: Map<string, TeamRecord> = new Map();
+  for (const g of games) {
+    if (g.gameover === 1) {
+      const stats = await getPlayerStatisticsFromGame(leagueId, seasonId, g.id);
+      const team1 = stats.team1.id;
+      const team2 = stats.team2.id;
+
+      if (!records.has(team1)) {
+        records.set(team1, { teamId: team1, wins: 0, losses: 0, ties: 0 });
+        console.log(`Adding ${team1} to map`);
+      }
+      if (!records.has(team2)) {
+        records.set(team2, { teamId: team2, wins: 0, losses: 0, ties: 0 });
+        console.log(`Adding ${team2} to map`);
+      }
+
+      addScoreToGame(
+        leagueId,
+        seasonId,
+        g.id,
+        stats.team1.score,
+        stats.team2.score
+      );
+
+      // Add the loss and the win
+      if (stats.team1.score > stats.team2.score) {
+        records.get(team1)!.wins += 1;
+        records.get(team2)!.losses += 1;
+      } else if (stats.team1.score < stats.team2.score) {
+        records.get(team1)!.losses += 1;
+        records.get(team2)!.wins += 1;
+      } else {
+        records.get(team1)!.ties += 1;
+        records.get(team2)!.ties += 1;
+        // a tie?
+      }
+    }
+  }
+
+  return records;
 }
 
 export async function isGameOver(

@@ -9,18 +9,8 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import StatCell from "./StatCell";
 import StatIncrementButton from "./StatIncrementButton";
-import {
-  collection,
-  deleteDoc,
-  deleteField,
-  doc,
-  getDocs,
-  onSnapshot,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "@/app/config";
-import assert from "assert";
 import Clock from "./Clock";
 
 interface Props {
@@ -80,14 +70,14 @@ export default function PlayerIncrementor({
       (snapshot) => {
         const tempStats: PlayerStats[] = allPlayers.map((p) => ({ ...p }));
         snapshot.docs.forEach((s) => {
-          const two_point_made = s.data()['two_point_made'] ?? 0;
-          const three_point_made = s.data()['three_point_made'] ?? 0;
+          const two_point_made = s.data()["two_point_made"] ?? 0;
+          const three_point_made = s.data()["three_point_made"] ?? 0;
           const specificPlayerIdx = tempStats.findIndex((a) => a.id === s.id);
           if (specificPlayerIdx === -1) return;
           tempStats[specificPlayerIdx] = {
             ...tempStats[specificPlayerIdx],
             ...(s.data() as PlayerStat),
-            points: two_point_made * 2 + three_point_made * 3
+            points: two_point_made * 2 + three_point_made * 3,
           };
         });
         setPlayerStatistics(tempStats);
@@ -173,7 +163,9 @@ export default function PlayerIncrementor({
           </tbody>
         </table>
         <div className="text-7xl flex-1 flex flex-wrap justify-around gap-2 items-center text-center">
-          <div>{team1Score} - {team2Score}</div>
+          <div>
+            {team1Score} - {team2Score}
+          </div>
           <Clock />
         </div>
       </div>

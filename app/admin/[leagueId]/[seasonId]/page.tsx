@@ -10,18 +10,14 @@ import {
 import { Team } from "@/app/types";
 import { Timestamp } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
+import Link from "next/link";
 
 interface IPage {
   params: { leagueId: string; seasonId: string };
 }
 
-function logTime(start: number, words: string): number {
-  console.log(`${words}: ${performance.now() - start}`);
-  return performance.now();
-}
-
 function getTeamNameFromCachedTeams(teamId: string, teams: Team[]) {
-    return teams.find(t => t.id === teamId)?.name;
+  return teams.find((t) => t.id === teamId)?.name;
 }
 
 export default async function SeasonPage({ params }: IPage) {
@@ -33,15 +29,15 @@ export default async function SeasonPage({ params }: IPage) {
   for (let i = 0; i < games.length; ++i) {
     const teamA = getTeamNameFromCachedTeams(games[i].team1, teams);
     const teamB = getTeamNameFromCachedTeams(games[i].team2, teams);
-    const timestamp = (games[i].date as Timestamp).toDate().toLocaleString();
+    const timestamp = games[i].date.toDate().toLocaleString();
     games[i].name = `${teamA} v ${teamB} - ${timestamp}${
       games[i].name ? ` [${games[i].name}]` : ""
     }`;
   }
 
   games.sort((a, b) => {
-    const aDate = (a.date as Timestamp).toDate();
-    const bDate = (b.date as Timestamp).toDate();
+    const aDate = a.date.toDate();
+    const bDate = b.date.toDate();
     if (aDate > bDate) return 1;
     if (bDate > aDate) return -1;
     return 0;
@@ -50,6 +46,12 @@ export default async function SeasonPage({ params }: IPage) {
   return (
     <>
       <div>
+        <Link
+          className="inline-block m-1 btn btn-blue"
+          href={`/scoreboard/${leagueId}/${seasonId}`}
+        >
+          Go to scoreboard!
+        </Link>
         <h1>Games</h1>
         <LinkList data={games} slug="/live" />
         <form

@@ -18,7 +18,7 @@ form {
 }
 
 form button[type="submit"] {
-  @apply btn btn-blue
+  @apply btn btn-blue;
 }
 
 h1 {
@@ -56,20 +56,18 @@ main {
 
 fieldset {
   border: 1px solid black;
-  padding: .25em .5em;
+  padding: 0.25em 0.5em;
   display: flex;
   flex-wrap: wrap;
-  gap: .5em;
+  gap: 0.5em;
 }
 
-fieldset>div {
+fieldset > div {
   display: flex;
-  gap: .25em;
+  gap: 0.25em;
   align-items: center;
   justify-content: center;
-
 }
-
 
 .courtDiv {
   background: white;
@@ -118,24 +116,30 @@ fieldset>div {
   }
 }
 
+.gameComponentDiv {
+  width: 320px;
+  border: 1px solid #ccc;
+  padding: 1em;
+  border-radius: 0.2em;
+  display: grid;
+}
+
+.teamLine {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  align-items: center;
+  margin: .5em 0;
+}
+
 /* ------------- Base Element Styling --------------*/
 input[type="text"] {
   border: 1px solid grey;
   padding: 0.05em 0.15em;
 }
 
-
-
-
-
-
-
-
-
-
 .triviaBackground {
-  background: #3C252A;
-  background-image: linear-gradient(to bottom right, #3C252A, #5B5C96);
+  background: #3c252a;
+  background-image: linear-gradient(to bottom right, #3c252a, #5b5c96);
   overflow: hidden;
   height: 100%;
 }
@@ -151,7 +155,7 @@ input[type="text"] {
   align-content: space-between;
 }
 
-.container>* {
+.container > * {
   display: flex;
   align-items: center;
 }
@@ -445,7 +449,7 @@ button {
   border-bottom: 1px solid black;
 }
 
-._hostPlayerRow>* {
+._hostPlayerRow > * {
   display: flex;
   flex: 0 0 30px;
 }
@@ -514,7 +518,7 @@ button {
   color: white;
 }
 
-.board .jeopardyCategory>* {
+.board .jeopardyCategory > * {
   min-height: 30px;
   aspect-ratio: 2/1;
   background-color: blue;

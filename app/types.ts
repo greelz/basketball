@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface League {
   id: string;
   name: string;
@@ -13,6 +15,9 @@ export interface Team {
   id: string;
   name: string;
   captain?: string;
+  wins: number;
+  losses: number;
+  ties: number;
 }
 
 export interface Player {
@@ -27,7 +32,22 @@ export interface Game {
   name: string;
   team1: string;
   team2: string;
-  date: unknown;
+  team1score: number;
+  team2score: number;
+  date: Timestamp;
+  gameover: 1 | undefined;
+}
+
+export interface GameForSeason extends Game {
+  team1ref: Team;
+  team2ref: Team;
+}
+
+export interface TeamRecord {
+  teamId: string;
+  wins: number;
+  losses: number;
+  ties: number;
 }
 
 export interface PlayerStat {
