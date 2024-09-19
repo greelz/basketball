@@ -112,116 +112,81 @@ export default function PlayerIncrementor({
 
   if (!playerStatistics) return "Couldn't find any stats to show.";
   return (
-    <div className="flex flex-1 gap-4 flex-col">
-      <div className="flex flex-row flex-wrap">
-        <table className="mx-2 text-right padding-2 flex-1">
-          <thead>
-            <tr>
-              <td>NAME</td>
-              <td className="text-xs">2PA</td>
-              <td className="text-xs">2PM</td>
-              <td className="text-xs">3PA</td>
-              <td className="text-xs">3PM</td>
-              <td>FG</td>
-              <td>3PT</td>
-              <td>OREB</td>
-              <td>DREB</td>
-              <td>AST</td>
-              <td>STL</td>
-              <td>BLK</td>
-              <td>TO</td>
-              <td className="font-bold">PTS</td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="font-bold">{team1Name}</td>
-            </tr>
-            {playerStatistics
-              .filter((p) => p.teamId === team1Id)
-              .map((s) => (
-                <StatCell
-                  key={s.id}
-                  player={player}
-                  s={s}
-                  setPlayer={setPlayer}
-                />
-              ))}
-            <tr>
-              <td className="font-bold">{team2Name}</td>
-            </tr>
-            {playerStatistics
-              .filter((p) => p.teamId === team2Id)
-              .map((s) => (
-                <StatCell
-                  key={s.id}
-                  player={player}
-                  s={s}
-                  setPlayer={setPlayer}
-                />
-              ))}
-          </tbody>
-        </table>
-        <div className="text-7xl flex-1 flex flex-wrap justify-around gap-2 items-center text-center">
-          <div>
+    <div className="flex flex-col gap-4 p-4">
+      <div className="flex flex-col md:flex-row gap-4">
+        {/* Stats Table */}
+        <div className="flex-1 border rounded-lg overflow-x-auto bg-white shadow-md">
+          <table className="min-w-full text-sm text-left border-separate border-spacing-0">
+            <thead>
+              <tr className="bg-gray-100 border-b">
+                <th className="p-2 font-semibold border">NAME</th>
+                <th className="p-2 text-xs border">2PA</th>
+                <th className="p-2 text-xs border">2PM</th>
+                <th className="p-2 text-xs border">3PA</th>
+                <th className="p-2 text-xs border">3PM</th>
+                <th className="p-2 border">FG</th>
+                <th className="p-2 border">3PT</th>
+                <th className="p-2 border">OREB</th>
+                <th className="p-2 border">DREB</th>
+                <th className="p-2 border">AST</th>
+                <th className="p-2 border">STL</th>
+                <th className="p-2 border">BLK</th>
+                <th className="p-2 border">TO</th>
+                <th className="p-2 font-bold border">PTS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="bg-gray-50 border-b">
+                <td className="font-bold p-2 border-r border-b">{team1Name}</td>
+              </tr>
+              {playerStatistics
+                .filter((p) => p.teamId === team1Id)
+                .map((s) => (
+                  <StatCell
+                    key={s.id}
+                    player={player}
+                    s={s}
+                    setPlayer={setPlayer}
+                  />
+                ))}
+              <tr className="bg-gray-50 border-b">
+                <td className="font-bold p-2 border-r border-b">{team2Name}</td>
+              </tr>
+              {playerStatistics
+                .filter((p) => p.teamId === team2Id)
+                .map((s) => (
+                  <StatCell
+                    key={s.id}
+                    player={player}
+                    s={s}
+                    setPlayer={setPlayer}
+                  />
+                ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Score and Clock */}
+        <div className="flex flex-col justify-center items-center flex-1 text-5xl font-semibold">
+          <div className="text-center mb-4">
             {team1Score} - {team2Score}
           </div>
           <Clock />
         </div>
       </div>
-      <div className="grid gap-3 grid-cols-6 text-xs justify-evenly items-center">
-        <div className="flex flex-col gap-2">
-          {PlayerStatsStringForButtons.slice(0, 2).map((t) => (
-            <StatIncrementButton
-              key={t.id}
-              incrementStat={incrementAndAddToHistory}
-              player={player}
-              t={t}
-            />
-          ))}
-        </div>
-        <div className="flex flex-col gap-2">
-          {PlayerStatsStringForButtons.slice(2, 4).map((t) => (
-            <StatIncrementButton
-              key={t.id}
-              incrementStat={incrementAndAddToHistory}
-              player={player}
-              t={t}
-            />
-          ))}
-        </div>
-        <div className="flex flex-col gap-2">
-          {PlayerStatsStringForButtons.slice(4, 6).map((t) => (
-            <StatIncrementButton
-              key={t.id}
-              incrementStat={incrementAndAddToHistory}
-              player={player}
-              t={t}
-            />
-          ))}
-        </div>
-        <div className="flex flex-col gap-2">
-          {PlayerStatsStringForButtons.slice(6, 8).map((t) => (
-            <StatIncrementButton
-              key={t.id}
-              incrementStat={incrementAndAddToHistory}
-              player={player}
-              t={t}
-            />
-          ))}
-        </div>
-        <div className="flex flex-col gap-2">
-          {PlayerStatsStringForButtons.slice(8).map((t) => (
-            <StatIncrementButton
-              key={t.id}
-              incrementStat={incrementAndAddToHistory}
-              player={player}
-              t={t}
-            />
-          ))}
-        </div>
+
+      {/* Player Stat Buttons and Undo Button */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
+        {PlayerStatsStringForButtons.map((buttonData, index) => (
+          <StatIncrementButton
+            key={buttonData.id}
+            incrementStat={incrementAndAddToHistory}
+            player={player}
+            t={buttonData}
+          />
+        ))}
         <button
-          className={`${undoDisabled ? "bg-slate-300" : ""} btn btn-blue`}
+          className={`col-span-2 ${undoDisabled ? "bg-slate-300" : "bg-blue-500 text-white hover:bg-blue-600"} rounded-lg px-4 py-2`}
           onClick={() => {
             if (!historyIndex || historyIndex === 0 || gameIsOver) return;
             const { player, type, val } = history[historyIndex - 1];
@@ -237,9 +202,13 @@ export default function PlayerIncrementor({
           Undo
         </button>
       </div>
-      <button className="btn ml-auto mt-auto" onClick={() => finalizeGame()}>
-        Finalize Game
-      </button>
+
+      {/* Finalize Game Button */}
+      <div className="flex justify-end mt-4">
+        <button className="bg-green-500 text-white rounded-lg px-4 py-2 hover:bg-green-600" onClick={() => finalizeGame()}>
+          Finalize Game
+        </button>
+      </div>
     </div>
   );
 }

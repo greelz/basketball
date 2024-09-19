@@ -11,8 +11,10 @@ export default async function LeaguesPage() {
   const data = await getData();
   return (
     <>
-      <h1>Leagues</h1>
-      <LinkList data={data} slug="/admin" />
+      <div className=' bg-white/75 my-20 px-36 pb-20 pt-10 h-3/4' >
+        <h1>Leagues</h1>
+        <LinkList data={data} slug="/admin" />
+      </div>
     </>
   );
 }

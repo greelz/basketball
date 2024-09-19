@@ -13,9 +13,9 @@ interface IPage {
 export default async function SeasonPage({ params }: IPage) {
   const { leagueId, seasonId, teamId, playerId } = params;
   return (
-    <>
+    <div className="steveBox">
       <h1>Player Profile</h1>
       <h2>{playerId}</h2>
-    </>
+    </div>
   );
 }
