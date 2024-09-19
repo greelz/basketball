@@ -1,5 +1,6 @@
 @tailwind base;
 @tailwind utilities;
+@tailwind components;
 
 .btn {
   @apply font-bold py-2 px-4 rounded;
@@ -14,7 +15,7 @@
 }
 
 form {
-  @apply w-full max-w-md bg-white shadow-md rounded px-8 pt-6 pb-8 m-4;
+  @apply w-full max-w-md bg-white rounded px-8 pt-2 pb-2 m-4;
 }
 
 form button[type="submit"] {
@@ -556,6 +557,8 @@ button {
   position: static;
 }
 
+/* // ************** STEVIE CSS ***************** // */
+
 .homeRadial {
   background: radial-gradient(circle, #f56600 10%, #001c40 80%);
 }
@@ -570,24 +573,25 @@ button {
 
 .grid-list-xl {
   display: grid;
-  grid-template-columns: repeat(15, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   /* 3 columns */
   gap: 10px;
   /* Adjust spacing between items */
   list-style: none;
   /* Remove bullet points */
-  padding: 0;
+  margin-bottom: 1em;
+  margin-top: 1em;
 
 }
 
-.grid-list-xl li {
+/* .grid-list-xl li {
   padding: 5px;
   background-color: lightgray;
   text-align: center;
   margin-top: 1em;
   margin-left: 1em;
 
-}
+} */
 
 
 .grid-list {
