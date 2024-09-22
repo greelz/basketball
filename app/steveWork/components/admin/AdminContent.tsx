@@ -9,26 +9,26 @@ interface LeaguesPageProps {
 }
 
 export default async function AdminContent() {
-  const data = await getData();
+  // const data = await getData();
   return (
     <main className="flex-1 p-6 bg-gray-100">
       <div className="container mx-auto">
         <h2 className="text-2xl font-semibold mb-6 text-black">Dashboard Overview</h2>
-        <LinkList data={data} slug="/steveWork" />
+        {/* <LinkList data={data} slug="/steveWork" /> */}
       </div>
     </main>
   );
 }
 
-async function getData(): Promise<League[]> {
-  const leaguesSnapshot = await getDocs(collection(db, "leagues"));
-  const leagues: League[] = leaguesSnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as League[];
+// async function getData(): Promise<League[]> {
+//   const leaguesSnapshot = await getDocs(collection(db, "leagues"));
+//   const leagues: League[] = leaguesSnapshot.docs.map((doc) => ({
+//     id: doc.id,
+//     ...doc.data(),
+//   })) as League[];
 
-  return leagues;
-}
+//   return leagues;
+// }
 
 
 //   <main className="flex-1 p-6 bg-gray-100">

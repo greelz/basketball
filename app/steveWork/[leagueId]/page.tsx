@@ -5,10 +5,11 @@ interface LeaguePageProps {
 }
 
 export default function LeaguePage({ params }: LeaguePageProps) {
+  console.log(params);
   return (
     <div className="steveBox">
-          <LeagueLayout params={params} />
-      </div>
+      <LeagueLayout params={params} />
+    </div>
   );
 }
 

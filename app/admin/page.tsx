@@ -9,6 +9,8 @@ interface LeaguesPageProps {
 
 export default async function LeaguesPage() {
   const data = await getData();
+  console.log('getLeagues data:');
+  console.log(data);
   return (
     <>
       <div className=' bg-white/75 my-20 px-36 pb-20 pt-10 h-3/4' >
@@ -25,6 +27,10 @@ async function getData(): Promise<League[]> {
     id: doc.id,
     ...doc.data(),
   })) as League[];
-
+  console.log('getdataFunction:*******************************************');
+  console.log('leaguessnapshot::*******************************************');
+  console.log(leaguesSnapshot);
+  console.log('leagues::*******************************************');
+  console.log(leagues);
   return leagues;
 }

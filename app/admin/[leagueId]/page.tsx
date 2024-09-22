@@ -8,6 +8,9 @@ interface LeaguePageProps {
 
 export default async function LeaguePage({ params }: LeaguePageProps) {
   const seasons = await getSeasons(params.leagueId);
+
+  console.log('getSeasons params:*******************************************');
+  console.log(params);
   return (
     <div className=' bg-white/75 mt-20 h-3/4'>
       <h1>Seasons</h1>

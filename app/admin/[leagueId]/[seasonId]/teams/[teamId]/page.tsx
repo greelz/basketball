@@ -9,6 +9,7 @@ interface IPage {
     teamId: string;
   };
 }
+
 export default async function SeasonPage({ params }: IPage) {
   const { leagueId, seasonId, teamId } = params;
   const players = await getPlayersFromTeam(
@@ -16,6 +17,14 @@ export default async function SeasonPage({ params }: IPage) {
     seasonId,
     teamId
   );
+
+  console.log('team params?::*******************************************');
+  console.log(params);
+  console.log('players?:*******************************************');
+  console.log(players);
+  console.log('games?:*******************************************');
+  console.log('idk bro hope this helps!:*******************************************');
+
   return (
     <div className="steveBox">
       <h1>Players</h1>

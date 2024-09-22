@@ -13,8 +13,8 @@ const navigation = [
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     return (
-        <header className="absolute inset-x-0 top-0 z-50 ">
-            <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
+        <header className="homeRadial">
+            <nav className="flex items-center justify-between p-6 lg:px-8">
                 <div className="flex lg:flex-1">
                     <a href="/" className="-m-1.5 p-1.5">
                         <span className="sr-only">THE SLAB</span>
@@ -42,7 +42,8 @@ export default function Header() {
                         </a>
                     ))}
                 </div>
-                <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+                <div className="hidden lg:flex lg:flex-1 lg:justify-end items-center">
+                    <input className="mr-2 px-2.5 py-2.5 text-sm font-bold rounded-lg border focus:outline focus:outline-2 focus:outline-offset-2 bg-[#405A6B] text-[#F6F2E5] focus:outline-[#F6F2E5] border-[#F6F2E5]" placeholder="Search..." />
                     <a href="#" className="text-sm font-semibold leading-6 text-white hover:text-white/50">
                         Log in <span aria-hidden="true">&rarr;</span>
                     </a>

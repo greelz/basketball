@@ -36,6 +36,13 @@ export default async function SeasonPage({ params }: IPage) {
   // Sort games by date
   games.sort((a, b) => a.date.toDate().getTime() - b.date.toDate().getTime());
 
+  console.log('getTeams params::*******************************************');
+  console.log(params);
+  console.log('teams?:*******************************************');
+  console.log(teams);
+  console.log('games?:*******************************************');
+  console.log(games);
+
   return (
     <div className="grid grid-cols-2 grid-rows-2 gap-4 p-4 h-screen">
       {/* Top Left Quadrant */}

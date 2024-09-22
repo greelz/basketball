@@ -54,7 +54,7 @@ body {
 }
 
 main {
-  height: calc(100vh - 48px);
+  height: calc(100vh);
   display: flex;
   flex-direction: column;
 }
@@ -560,16 +560,44 @@ button {
 /* // ************** STEVIE CSS ***************** // */
 
 .homeRadial {
-  background: radial-gradient(circle, #f56600 10%, #001c40 80%);
+  background: rgb(2, 0, 36);
+  background: linear-gradient(130deg, rgba(2, 0, 36, 1) 0%, rgba(32, 44, 56, 1) 36%, rgba(64, 90, 107, 1) 100%);
+}
+
+.sidebarGradiant {
+  background: rgb(2, 0, 36);
+  background: linear-gradient(180deg, rgba(2, 0, 36, 1) 0%, rgba(32, 44, 56, 1) 36%, rgba(64, 90, 107, 1) 100%);
+}
+
+.bg {
+  background: rgba(32, 44, 56, 1)
+}
+
+.cardbg {
+  background: rgb(2, 0, 36);
+  background: linear-gradient(130deg, rgba(2, 0, 36, 1) 0%, rgba(246, 242, 229, 1) 13%, rgba(255, 255, 255, 1) 100%);
+}
+
+.chartBlue {
+  @apply bg-gradient-to-b from-blue-400 to-blue-800 rounded-lg h-36 items-center justify-center absolute -top-16 left-2 right-2 w-auto z-10 shadow-lg
+}
+
+.text {
+  text-color: #F6F2E5;
 }
 
 .steveBox {
-  @apply bg-white/75 mt-20 h-3/4
+  @apply bg-white/75 h-3/4
 }
 
 .steveButton {
   @apply rounded-md bg-white/50 px-3.5 py-2.5 text-sm font-semibold shadow-sm hover:bg-white/100 hover:text-black
 }
+
+.sidebarli {
+  @apply block py-2 px-4 hover:bg-gray-600 flex items-center
+}
+
 
 .grid-list-xl {
   display: grid;
