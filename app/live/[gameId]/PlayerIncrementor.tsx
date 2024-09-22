@@ -61,30 +61,142 @@ export default function PlayerIncrementor({
 
   const allPlayers = team1Players.concat(team2Players); // starting block for who to show on the screen
 
-  useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(
-        db,
-        `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/playerStatistics`
-      ),
-      (snapshot) => {
-        const tempStats: PlayerStats[] = allPlayers.map((p) => ({ ...p }));
-        snapshot.docs.forEach((s) => {
-          const two_point_made = s.data()["two_point_made"] ?? 0;
-          const three_point_made = s.data()["three_point_made"] ?? 0;
-          const specificPlayerIdx = tempStats.findIndex((a) => a.id === s.id);
-          if (specificPlayerIdx === -1) return;
-          tempStats[specificPlayerIdx] = {
-            ...tempStats[specificPlayerIdx],
-            ...(s.data() as PlayerStat),
-            points: two_point_made * 2 + three_point_made * 3,
-          };
-        });
-        setPlayerStatistics(tempStats);
-      }
-    );
-    return () => unsubscribe();
-  }, []);
+  if (process.env.NODE_ENV === "development") {
+    useEffect(() => setPlayerStatistics([
+      {
+        name: "Jonas L",
+        id: "CRkCwB34bxCKFSUowV40",
+        teamId: "74k0M13yM3kY6Gd92vO8",
+        assists: 1,
+        two_point_miss: 6,
+        turnovers: 4,
+        three_point_made: 3,
+        "O rebounds": 1,
+        steals: 1,
+        two_point_made: 3,
+        three_point_miss: 3,
+        "D rebounds": 4,
+        points: 15,
+      },
+      {
+        name: "Caleb C",
+        id: "WBDcCNHozLy8P3fPdIxZ",
+        teamId: "74k0M13yM3kY6Gd92vO8",
+      },
+      {
+        name: "Dillon C",
+        id: "dKhU7oWusmsKUyCbH1FQ",
+        teamId: "74k0M13yM3kY6Gd92vO8",
+        three_point_made: 4,
+        steals: 5,
+        two_point_miss: 11,
+        two_point_made: 10,
+        "D rebounds": 6,
+        "O rebounds": 10,
+        three_point_miss: 9,
+        blocks: 2,
+        turnovers: 2,
+        assists: 3,
+        points: 32,
+      },
+      {
+        name: "Cam H",
+        id: "orfYYIQ4siHtJKD8kkMH",
+        teamId: "74k0M13yM3kY6Gd92vO8",
+        steals: 2,
+        three_point_miss: 12,
+        "O rebounds": 4,
+        two_point_miss: 9,
+        turnovers: 1,
+        blocks: 1,
+        assists: 4,
+        two_point_made: 5,
+        three_point_made: 6,
+        "D rebounds": 10,
+        points: 28,
+      },
+      {
+        name: "Trace H",
+        id: "LM6fxBKqZeFE3Gv0jgoR",
+        teamId: "U89b93HpOFa0kEqHwonf",
+        two_point_made: 5,
+        turnovers: 1,
+        "D rebounds": 4,
+        assists: 3,
+        "O rebounds": 2,
+        two_point_miss: 3,
+        points: 10,
+      },
+      {
+        name: "Nathan H",
+        id: "c5R2tEgHAzkV1q9XCbGS",
+        teamId: "U89b93HpOFa0kEqHwonf",
+        two_point_miss: 9,
+        two_point_made: 11,
+        assists: 6,
+        turnovers: 5,
+        three_point_miss: 9,
+        "D rebounds": 15,
+        "O rebounds": 4,
+        three_point_made: 1,
+        points: 25,
+      },
+      {
+        name: "Jon V",
+        id: "heW0UypymlmfEtagwvjn",
+        teamId: "U89b93HpOFa0kEqHwonf",
+        "D rebounds": 2,
+        three_point_miss: 4,
+        turnovers: 2,
+        assists: 4,
+        two_point_made: 10,
+        two_point_miss: 5,
+        three_point_made: 3,
+        steals: 1,
+        "O rebounds": 2,
+        points: 29,
+      },
+      {
+        name: "Roscoe Z",
+        id: "pUYrb84Q1Lz8xX3uxwHo",
+        teamId: "U89b93HpOFa0kEqHwonf",
+        two_point_miss: 3,
+        "O rebounds": 2,
+        steals: 1,
+        three_point_miss: 7,
+        assists: 4,
+        three_point_made: 4,
+        "D rebounds": 3,
+        turnovers: 2,
+        points: 12,
+      },
+    ]), []);
+  } else {
+    useEffect(() => {
+      const unsubscribe = onSnapshot(
+        collection(
+          db,
+          `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/playerStatistics`
+        ),
+        (snapshot) => {
+          const tempStats: PlayerStats[] = allPlayers.map((p) => ({ ...p }));
+          snapshot.docs.forEach((s) => {
+            const two_point_made = s.data()["two_point_made"] ?? 0;
+            const three_point_made = s.data()["three_point_made"] ?? 0;
+            const specificPlayerIdx = tempStats.findIndex((a) => a.id === s.id);
+            if (specificPlayerIdx === -1) return;
+            tempStats[specificPlayerIdx] = {
+              ...tempStats[specificPlayerIdx],
+              ...(s.data() as PlayerStat),
+              points: two_point_made * 2 + three_point_made * 3,
+            };
+          });
+          setPlayerStatistics(tempStats);
+        }
+      );
+      return () => unsubscribe();
+    }, []);
+  }
 
   const incrementAndAddToHistory = useCallback(
     (p: string, t: string, v: number) => {
