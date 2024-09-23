@@ -9,7 +9,7 @@ export default function Layout() {
     <div className="flex h-screen">
       <AdminSidebar />
       <div className="flex-1 flex flex-row ">
-        <TESTELEMENT />
+        <AdminContent />
       </div>
     </div>
     <AdminFooter />

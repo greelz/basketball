@@ -9,6 +9,7 @@ import {
 import React from "react";
 import PlayerIncrementor from "./PlayerIncrementor";
 import { revalidatePath } from "next/cache";
+import ShotTracker from "../../components/ShotTracker";
 
 interface LiveGameParams {
   params: { gameId: string };
@@ -18,6 +19,8 @@ export default async function LiveGame({ params }: LiveGameParams) {
   const gameId = params.gameId;
   const findLeagueResult = await findLeagueAndSeasonByGameId(params.gameId);
   let leagueId: string, seasonId: string;
+
+
 
   if (findLeagueResult) {
     ({ leagueId, seasonId } = findLeagueResult);
@@ -32,13 +35,13 @@ export default async function LiveGame({ params }: LiveGameParams) {
   const teamName2 = await getTeamNameByTeamId(leagueId, seasonId, team2);
 
   return (
-    <div className=' bg-white/75 mt-20 h-3/4'>
-      <div className="border-black border">
-        <h4 className="text-center">
+    <main className="flex-1 p-6 bg-gray-100  ">
+      <div className="">
+        <h4 className="text-center text-black">
           {teamName1} vs {teamName2} {gg ? "[Final]" : ""}
         </h4>
       </div>
-      <div className="border-black border">
+      <div className="min-w-full text-black my-6  ">
         <PlayerIncrementor
           incrementStat={async (playerId, field, val) => {
             "use server";
@@ -61,6 +64,7 @@ export default async function LiveGame({ params }: LiveGameParams) {
           team2Name={teamName2}
         />
       </div>
-    </div>
+
+    </main>
   );
 }

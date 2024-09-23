@@ -6,6 +6,7 @@ import Header from "./components/Header";
 import AdminFooter from "./steveWork/components/admin/AdminFooter";
 
 const selawik = localFont({ src: "../public/fonts/selawik.ttf" });
+const shotfont = localFont({ src: "../public/fonts/sevensegment.ttf" });
 
 export const metadata: Metadata = {
   title: "Basketball",
@@ -19,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (<>
     <html lang="en">
-      <body className="homeRadial">
+      <body className="homeRadial ">
         <Header />
         <main >{children}
         </main>

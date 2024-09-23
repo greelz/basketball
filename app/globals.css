@@ -559,6 +559,54 @@ button {
 
 /* // ************** STEVIE CSS ***************** // */
 
+.bgorange {
+  background: #FC440E;
+  color: #fff;
+}
+
+.bgbblue {
+  background: #4CABDB;
+  background-color: #4CABDB;
+  color: #fff;
+}
+
+.bgbluegrad {
+  @apply bg-gradient-to-b from-blue-400 to-blue-800
+}
+
+.bgbblue:hover {
+  background: #4CABDB;
+  background-color: #4CABDB;
+  color: #fff;
+}
+
+.bggraygrad {
+  background: rgb(0, 38, 57);
+  background: linear-gradient(0deg, rgba(32, 44, 56, 1) 0%, rgba(64, 90, 107, 1) 65%);
+  color: #fff;
+}
+
+.bggraygrad:hover {
+  background: rgb(32, 44, 56);
+  background: linear-gradient(0deg, rgba(32, 44, 56, 1) 0%, rgba(6, 8, 10, 1) 65%);
+  color: #fff;
+}
+
+.bgdgray {
+  background: #202C38;
+  color: #fff;
+}
+
+
+
+.bggray {
+  background: #405A6B;
+  color: #fff;
+}
+
+
+
+
 .homeRadial {
   background: rgb(2, 0, 36);
   background: linear-gradient(130deg, rgba(2, 0, 36, 1) 0%, rgba(32, 44, 56, 1) 36%, rgba(64, 90, 107, 1) 100%);

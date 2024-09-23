@@ -27,7 +27,7 @@ const courtImage = 'https://muralsyourway.vtexassets.com/arquivos/ids/236597/Woo
 
 export default async function TESTELEMENT() {
     return (
-        <main className="flex-1 p-6 bg-gray-100">
+        <main className="flex-1 p-6 bg-gray-200">
             <h2 className="text-2xl font-semibold mb-6 text-black">Dashboard Overview</h2>
             <div className="flex-1 flex flex-row gap-8 justify-center">
                 <BarChart team={teamData} /><div className="justify-evenly"><MiniCard team={teamData} /><MiniCard team={teamData} /></div><BarChart team={teamData} />
