@@ -33,7 +33,7 @@ export default function StatCell({ s, setPlayer, player }: Props) {
   return (
     <tr
       key={s.id}
-      className={`cursor-pointer ${s.id === player ? "bg-slate-300 hover:bg-blue-200" : " hover:bg-blue-200"}`}
+      className={`cursor-pointer ${s.id === player ? "bg-slate-300 hover:bg-orange-900" : " hover:bg-orange-900"}`}
       onClick={() => {
         if (player === s.id) {
           setPlayer("");

@@ -8,7 +8,7 @@ interface LeaguePageProps {
 
 export default async function LeagueContent({ params }: LeaguePageProps) {
   const seasons = await getSeasons(params.leagueId);
-  console.log(params);
+
   return (
 
     <main className="flex-1 p-6 bg-gray-100">

@@ -558,10 +558,24 @@ button {
 }
 
 /* // ************** STEVIE CSS ***************** // */
+@media (min-width: 1536px) {
+  .hidden-above-2xl {
+    display: none;
+  }
+}
 
 .bgorange {
   background: #FC440E;
   color: #fff;
+}
+
+.bgorange:hover {
+  background: #FC440E;
+  color: #fff;
+}
+
+.txtorange {
+  color: #FC440E;
 }
 
 .bgbblue {
@@ -571,7 +585,7 @@ button {
 }
 
 .bgbluegrad {
-  @apply bg-gradient-to-b from-blue-400 to-blue-800
+  @apply bg-gradient-to-b from-blue-400 to-blue-800 text-white
 }
 
 .bgbblue:hover {
@@ -579,6 +593,17 @@ button {
   background-color: #4CABDB;
   color: #fff;
 }
+
+.bggrayd-nohov {
+  background: rgb(0, 38, 57);
+  background: linear-gradient(0deg, rgba(32, 44, 56, 1) 0%, rgba(6, 8, 10, 1) 65%);
+}
+
+.bggrayd-nohov-inv {
+  background: rgb(0, 38, 57);
+  background: linear-gradient(0deg, rgba(6, 8, 10, 1) 0%, rgba(32, 44, 56, 1) 65%);
+}
+
 
 .bggraygrad {
   background: rgb(0, 38, 57);

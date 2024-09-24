@@ -21,13 +21,7 @@ export default async function LiveGame({ params }: LiveGameParams) {
   const findLeagueResult = await findLeagueAndSeasonByGameId(params.gameId);
   let leagueId: string, seasonId: string;
 
-  console.log('LiveGame Page::*******************************************');
-  console.log('params::*******************************************');
-console.log(params);
-console.log('Find League Result?:*******************************************');
-console.log(findLeagueResult);
 
-console.log('first seetion break!:*******************************************');
 
   if (findLeagueResult) {
     ({ leagueId, seasonId } = findLeagueResult);
@@ -42,19 +36,7 @@ console.log('first seetion break!:*******************************************');
   const teamName2 = await getTeamNameByTeamId(leagueId, seasonId, team2);
 
 
-  console.log('team1*********************' );
-  console.log(team1);
-  console.log('team2*********************');
-  console.log(team2);
-  console.log('team1players*********************');
-  console.log(team1players);
-  console.log('team2players*********************');
-  console.log(team2players);
-  console.log('gg?*********************');
-  console.log(gg);
-  console.log('breaking down the functions too i think!:*******************************************');
-  console.log(getTeamPlayersFromGame);
-  console.log(findLeagueAndSeasonByGameId);
+
 
   return (
     <div className=' bg-white/75 mt-20 h-3/4'>

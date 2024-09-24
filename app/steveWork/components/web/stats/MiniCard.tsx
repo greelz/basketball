@@ -29,8 +29,8 @@ const MiniCard = ({ team, stat, variant }) => {
     const playerName = playerWithMostStats[1]?.name || "N/A"; // Default name to "N/A" if undefined
 
     return (
-        <div className="w-200">
-            <div className="mt-4 py-4 bg-white rounded-lg shadow-lg relative flex items-start">
+        <div className="w-200 min-w-content max-w-fit">
+            <div className="py-4 bg-white rounded-lg shadow-lg relative flex items-start min-w-fit">
                 {/* Dynamic Color Background */}
                 <div className={color}>
                     <StatsIcon size={8} mr={0} />
@@ -38,10 +38,10 @@ const MiniCard = ({ team, stat, variant }) => {
 
                 {/* Data Section */}
                 <div className="ml-20">
-                    <h3 className="text-xl font-semibold text-black">
+                    <h3 className="text-xl font-semibold text-black whitespace-nowrap">
                         {stat.charAt(0).toUpperCase() + stat.slice(1)}: {totalStats}
                     </h3>
-                    <p className="text-sm text-black text-center ">
+                    <p className="text-sm text-black text-center whitespace-nowrap">
                         <span className="font-semibold">MVP: </span>{playerName}
                     </p>
                 </div>

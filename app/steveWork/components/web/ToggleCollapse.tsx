@@ -30,10 +30,10 @@ function ToggleCollapse({ title, content, player, selectedPlayer, onPlayerClick 
     };
 
     return (
-        <div className="border border-gray-300 rounded-md shadow-sm mb-4  min-w-fit ">
+        <div className="border border-gray-300 rounded-md shadow-sm mb-4  min-w ">
             {/* Accordion Header */}
             <div
-                className={`${selectedPlayer === player ? "w-full text-left p-4 rounded-md bggraygrad text-white hover:bg-blue-200 hover:text-black font-medium flex justify-between items-center" : "w-full text-left p-4 rounded-md bggraygrad font-medium flex justify-between items-center hover:bg-blue-200 hover:text-white"}`}
+                className={`${selectedPlayer === player ? "w-full text-left p-4 rounded-md bggraygrad text-white font-medium flex justify-between items-center" : "w-full text-left p-4 rounded-md bggraygrad font-medium flex justify-between items-center hover:text-white"}`}
                 onClick={toggleAccordion}
             >
                 {title}

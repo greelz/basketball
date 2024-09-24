@@ -387,6 +387,18 @@ export async function incrementStat(
   }
 }
 
+export const incrementPlayerStat = async (
+  leagueId: string,
+  seasonId: string,
+  gameId: string,
+  playerId: string,
+  field: string,
+  val: number
+) => {
+  "use server";
+  await incrementStat(leagueId, seasonId, gameId, playerId, field, val);
+};
+
 export async function findLeagueAndSeasonByGameId(gameId: string) {
   try {
     // Step 1: Fetch all leagues

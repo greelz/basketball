@@ -13,8 +13,7 @@ interface ILinkListProps {
 
 export function LinkList({ data, slug }: ILinkListProps) {
 
-  console.log('LinkList data:*******************************************');
-  console.log(data);
+
 
   return (
     <ul role="list" className={data.length >= 10 ? "flex space-x-4 border border-black grid-list-xl overflow-x-auto whitespace-nowrap" : "flex space-x-4 border border-black grid-list overflow-x-auto whitespace-nowrap min-w-full"}>

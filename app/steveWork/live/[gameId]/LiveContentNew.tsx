@@ -8,6 +8,7 @@ import Clock from "./ClockNew";
 import BarChart from "../../components/web/stats/BarChart";
 import MiniCard from "../../components/web/stats/MiniCard";
 import PlayerStatBlock from "../../components/web/stats/PlayerStatBlock";
+import LEDTracker from "../../components/web/stats/LEDTracker";
 
 const Team1Stats = [{
 
@@ -145,12 +146,12 @@ export default function LiveContentNew() {
     }
 
     return (
-        <main className="flex-1 min-h-max bg-gray-100 homeRadial ">
+        <main className="flex-1 min-h-0 bg-gray-100 homeRadial ">
             {/* Main Grid Layout */}
-            <div className="grid grid-cols-4 gap-4 text-black mt-2 min-h-max">
+            <div className="grid grid-cols-4 gap-4 text-black mt-2 ">
                 {/* Left Column - Score, Player Names, Stats */}
-                <div className="col-span-1 bg-white p-4 rounded-lg shadow-md ">
-                    <div id="score" className="mb-2 text-center"><span className=" text-9xl font-extrabold">{team1points}</span></div>
+                <div className="col-span-1 bg-white p-4 rounded-lg shadow-md min-w-fit">
+                    <div id="score" className="mb-2 text-center"><span className=" text-9xl "><LEDTracker amount={team1points} variant={1} /></span></div>
                     <h2 className="text-4xl font-bold mb-4 border-t-2  border-b-2">{team1[0]}</h2>
                     <h3 className="font-semibold mb-2">Players</h3>
                     <div className="flex-1 flex-col mx-2 ">
@@ -162,29 +163,34 @@ export default function LiveContentNew() {
                             Team2Stats={Team2Stats}
                         />
                     </div>
-                    <div className="w-full text-left p-4 rounded-md bgdgray text-white mb-10">
-                        <h3 className="font-semibold mb-2 border-b">Team Stats</h3>
-                        <div className="w-full text-left p-4 rounded-md bgdgray text-white flex flex-row justify-between items-center mb-10">
+
+                    <div className="bggraygrad rounded-md">
+                        <h3 className="font-semibold ">Team Stats</h3>
+                        <div className="w-full text-left p-4  bgdgray text-white flex flex-row justify-between items-center ">
                             <button className={`py-2 px-4 text-white rounded-lg ${selectedStat1 === 'points' ? 'bgorange' : 'bggraygrad'}`} onClick={() => newSelectedStat1('points')}> Points</button>
                             <button className={`py-2 px-4 text-white rounded-lg ${selectedStat1 === 'assists' ? 'bgorange' : 'bggraygrad'}`} onClick={() => newSelectedStat1('assists')}> Assists</button>
                             <button className={`py-2 px-4 text-white rounded-lg ${selectedStat1 === 'steals' ? 'bgorange' : 'bggraygrad'}`} onClick={() => newSelectedStat1('steals')}> Steals</button>
                             <button className={`py-2 px-4 text-white rounded-lg ${selectedStat1 === 'turnovers' ? 'bgorange' : 'bggraygrad'}`} onClick={() => newSelectedStat1('turnovers')}> TNO</button>
                         </div>
-
-                        <div className="grid grid-cols-2 grid-rows-4 gap-2">
-                            <div className="col-span-2 row-span-2 mb-4"><BarChart team={Team1Stats} stat={selectedStat1} variant={1} /></div>
+                    </div>
+                    <div className="w-full text-left p-4 rounded-b-md bgdgray text-white">
+                        <div className="grid grid-cols-2 grid-rows-4 gap-2 min-w-fit">
+                            <div className="col-span-2 row-span-2 mb-4 flex items-center justify-center">
+                                <BarChart team={Team1Stats} stat={selectedStat1} variant={1} />
+                            </div>
                             <div className="row-start-3"><MiniCard team={Team1Stats} stat={'assists'} variant={1} /></div>
                             <div className="col-start-1 row-start-4"><MiniCard team={Team1Stats} stat={'steals'} variant={2} /></div>
-                            <div className="col-start-2 row-start-3 "><MiniCard team={Team1Stats} stat={'points'} variant={3} /></div>
+                            <div className="col-start-2 row-start-3"><MiniCard team={Team1Stats} stat={'points'} variant={3} /></div>
                             <div className="row-start-4"><MiniCard team={Team1Stats} stat={'points'} variant={4} /></div>
                         </div>
                     </div>
+
                 </div>
 
                 {/* Center Column - Main Information */}
-                <div className="col-span-2 bg-white p-4 rounded-lg shadow-md flex flex-col justify-start items-center">
+                <div className="col-span-2 bg-white p-4 rounded-lg shadow-md min-w-fit">
                     <Clock />
-                    <div className="mb-5"><ShotTracker selectedPlayer={selectedPlayer} /></div>
+                    <div className="mb-5 flex flex-col items-center justify-center"><ShotTracker selectedPlayer={selectedPlayer} /></div>
                     <div className={selectedPlayer ? "content" : "hidden"}>
                         <PlayerStatBlock Team1Stats={Team1Stats} Team2Stats={Team2Stats} selectedPlayer={selectedPlayer} />
                     </div>
@@ -193,8 +199,8 @@ export default function LiveContentNew() {
                 </div>
 
                 {/* Right Column - Score, Player Names, Stats */}
-                <div className="col-span-1 bg-white p-4 rounded-lg shadow-md">
-                    <div className="mb-2 text-center"><span className="text-9xl font-semibold ">{team2points}</span></div>
+                <div className="col-span-1 bg-white p-4 rounded-lg shadow-md min-w-fit">
+                    <div className="mb-2 text-center"><span className="text-9xl  "><LEDTracker amount={team2points} variant={1} /></span></div>
                     <h2 className="text-4xl font-bold mb-4 border-t-2 border-b-2">{team2[0]}</h2>
                     <h3 className="font-semibold mb-2">Players</h3>
                     <div className="flex-1 flex-col mx-2 mb-6">

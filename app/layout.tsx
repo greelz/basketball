@@ -6,7 +6,8 @@ import Header from "./components/Header";
 import AdminFooter from "./steveWork/components/admin/AdminFooter";
 
 const selawik = localFont({ src: "../public/fonts/selawik.ttf" });
-const shotfont = localFont({ src: "../public/fonts/sevensegment.ttf" });
+const shotfont = localFont({ src: "../public/fonts/alarmclock.ttf" });
+const statfont = localFont({ src: "../public/fonts/dsdigi.ttf" });
 
 export const metadata: Metadata = {
   title: "Basketball",

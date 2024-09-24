@@ -1,13 +1,16 @@
 import React, { useRef, useState } from "react";
 import localFont from "next/font/local";
-const shotfont = localFont({ src: "../../../../public/fonts/sevensegment.ttf" });
+const shotfont = localFont({ src: "../../../../public/fonts/alarmclock.ttf" });
 
 export default function ClockNew() {
     const [time, setTime] = useState(960);
     const [isPlaying, setPlaying] = useState(false)
     const interval = useRef<NodeJS.Timeout | null>(null);
 
-    const mins = Math.floor(time / 60);
+    let mins = Math.floor(time / 60);
+    if (mins !== "00" && (mins as number) < 10) {
+        mins = "0" + mins;
+    }
     let secs = time % 60 || "00";
     if (secs !== "00" && (secs as number) < 10) {
         secs = "0" + secs;
@@ -43,11 +46,15 @@ export default function ClockNew() {
             <div className="">
                 <button className="min-w-full bggraygrad text-xl " onClick={() => setTime((prev) => ++prev)}>▲</button>
             </div>
-            <div className="col-span-5 row-span-2 flex align-center items-center justify-center  border-black border-8">
-                <div className={`${shotfont.className} text-9xl`}>
+            <div className="col-span-5 row-span-2 relative flex items-center justify-center border-black border-8 bggrayd-nohov">
+                <div className={`${shotfont.className} text-9xl z-10 text-white`}>
                     {mins}:{secs}
                 </div>
+                <div className={`${shotfont.className} text-9xl text-gray-900 absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center z-0`}>
+                    88:88
+                </div>
             </div>
+
             <div className="col-start-7">
                 <div className={isPlaying ? "hidden" : "contents"}>
                     <button

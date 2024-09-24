@@ -3,8 +3,6 @@ import React from 'react';
 
 const BarChart = ({ team, stat, variant }) => {
     const players = Object.entries(team);
-    console.log(JSON.stringify(players, null, 2));
-    console.log(JSON.stringify(team, null, 2));
 
     // Calculate total based on the provided stat
     const totalStat = players.reduce((sum, [, player]) => sum + (player[stat] || 0), 0);
@@ -27,7 +25,7 @@ const BarChart = ({ team, stat, variant }) => {
     }
 
     return (
-        <div className="mt-12 flex-1">
+        <div className="mt-12 w-200 min-w-content max-w-fit">
             {/* Bar Chart Section */}
             <div className="bg-white rounded-lg shadow-lg p-4 relative">
                 <div className={color}>

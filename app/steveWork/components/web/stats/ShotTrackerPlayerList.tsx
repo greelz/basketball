@@ -15,16 +15,18 @@ const ShotTrackerPlayerList = ({ team, selectedPlayer, onPlayerClick, Team1Stats
 
     return (
         <div className="flex flex-col">
-            {team.map((player) => (
+            {team.map((player, idx) => (
 
-                <ToggleCollapse title={<button
-                    key={`${player}team`}
-                    onClick={() => handlePlayerClick(player)}
-                    className={`py-2 px-4 text-white rounded-lg ${selectedPlayer === player ? 'bgorange' : 'bgdgray'}`}
-                >
-                    {player}
-                </button>}
-                    content={<PlayerCard selectedPlayer={player} Team1Stats={Team1Stats}
+                <ToggleCollapse
+                    key={`${player} ${idx}list`}
+                    title={<button
+                        key={`${player}button`}
+                        onClick={() => handlePlayerClick(player)}
+                        className={`py-2 px-4 text-white rounded-lg ${selectedPlayer === player ? 'bgorange' : 'bgdgray'}`}
+                    >
+                        {player}
+                    </button>}
+                    content={<PlayerCard key={`${player}teamcard`} selectedPlayer={player} Team1Stats={Team1Stats}
                         Team2Stats={Team2Stats} />}
                     player={player}
                     selectedPlayer={selectedPlayer}

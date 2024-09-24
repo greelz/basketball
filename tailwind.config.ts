@@ -14,6 +14,9 @@ const config: Config = withMT({
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      screens: {
+        'custom-xl': '1500px', // Custom breakpoint for 1200px
+      },
     },
   },
   plugins: [],
