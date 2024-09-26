@@ -97,8 +97,8 @@ export default function HomeContent({ data, slug }: ILinkListProps) {
                     href={`${slug}/${data[0].id}`}
                 >{isHovered ? `Dive into ${data[0].name}` : 'Welcome to Slab League'}</a>
                 <HeaderContainer />
-                <div className="grid grid-cols-2 grid-rows-1 w-full h-full mt-5">
-                    <div className="flex flex-1 justify-center align-center">
+                <div className="grid grid-cols-2 grid-rows-1 w-full h-full mt-5 overflow-y-auto gap-2 ">
+                    <div className="flex flex-1 flex-col justify-start align-center mx-4">
                         <HighlightChart
                             titleContent={'Top Teams'}
                             col1Title={'Teams'}
@@ -109,7 +109,7 @@ export default function HomeContent({ data, slug }: ILinkListProps) {
                             col3data={col1c}
                         />
                     </div>
-                    <div className="flex flex-1 justify-center align-center">
+                    <div className="flex flex-1 flex-col justify-start align-center mx-4">
                         <HighlightChart
                             titleContent={'Top Players'}
                             col1Title={'Player'}

@@ -34,9 +34,9 @@ export default async function LeagueContent({ params, data, slug }: LeaguePagePr
         >{'Choose A League'}</a>
         <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4 w-full mt-5">
           {data.map((d) => (
-            <div key={d.id} className="flex justify-center align-center">
+            <div key={d.id} className="flex flex-col justify-center align-center mx-6">
               <HighlightChart
-              key={`${d.id}.chart`}                
+                key={`${d.id}.chart`}
                 titleContent={<a href={`${slug}/${d.id}`}>{d.name}</a>}
                 col1Title={'Teams'}
                 col1data={['AC130s', 'Banana Boat Boys', 'Mean Machines']}
