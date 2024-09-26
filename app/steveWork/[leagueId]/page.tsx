@@ -1,36 +1,16 @@
 import LeagueLayout from '../../steveWork/[leagueId]/LeagueLayout';
+import { revalidatePath } from "next/cache";
+import { addSeason, addTeam, getSeasons } from "@/app/database";
 
 interface LeaguePageProps {
   params: { leagueId: string };
 }
 
-export default function LeaguePage({ params }: LeaguePageProps) {
-  console.log(params);
+export default async function LeaguePage({ params }: LeaguePageProps) {
+  const seasons = await getSeasons(params.leagueId);
+  console.log('Data in leagueID/page:', seasons);
+
   return (
-    <div className="steveBox">
-      <LeagueLayout params={params} />
-    </div>
+      <LeagueLayout params={params} data={seasons} slug={`/steveWork/${params.leagueId}`} />
   );
 }
-
-
-
-// import AdminSidebar from '../../steveWork/AdminSidebar';
-// import LeagueContent from '../../steveWork/[leagueId]/LeagueContent';
-// import AdminFooter from '../../steveWork/AdminFooter';
-
-// interface LeaguePageProps {
-//   params: { leagueId: string };
-// }
-
-// export default function Layout({ params }: LeaguePageProps) {
-//   return (
-//     <div className="flex h-screen">
-//       <AdminSidebar />
-//       <div className="flex-1 flex flex-col">
-//         <LeagueContent params={params}/>
-//         <AdminFooter />
-//       </div>
-//     </div>
-//   );
-// }

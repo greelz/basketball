@@ -5,6 +5,10 @@ interface Props {
   s: PlayerStats;
   setPlayer: (p: string) => void;
   player: string;
+  activePlayer: string | null;
+  setActivePlayer: (a: string | null) => void;
+  assistingPlayer: string | null;
+  setAssistingPlayer: (a: string | null) => void;
 }
 
 const convertToZeroOrOriginal = (val: any) => {
@@ -15,7 +19,25 @@ const convertToZeroOrOriginal = (val: any) => {
   }
 };
 
-export default function StatCell({ s, setPlayer, player }: Props) {
+
+
+export default function StatCell({ s,
+  setPlayer,
+  player,
+  activePlayer,
+  setActivePlayer,
+  assistingPlayer,
+  setAssistingPlayer, }: Props) {
+
+  function handleClick() {
+    if (player === s.id) {
+      setPlayer("");
+    } else {
+      setPlayer(s.id);
+    }
+  }
+
+
   let totalTwosAttempted =
     convertToZeroOrOriginal(s.two_point_miss) +
     convertToZeroOrOriginal(s.two_point_made);
@@ -37,8 +59,10 @@ export default function StatCell({ s, setPlayer, player }: Props) {
       onClick={() => {
         if (player === s.id) {
           setPlayer("");
+          setActivePlayer(null);
         } else {
           setPlayer(s.id);
+          setActivePlayer(s.id)
         }
       }}
     >

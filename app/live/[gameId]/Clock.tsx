@@ -2,6 +2,9 @@ import React, { useRef, useState } from "react";
 
 export default function Clock() {
   const [time, setTime] = useState(960);
+const [isUpdated, setIsUpdated] = useState(false);
+
+
   const interval = useRef<NodeJS.Timeout | null>(null);
   const mins = Math.floor(time / 60);
   let secs = time % 60 || "00";

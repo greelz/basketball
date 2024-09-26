@@ -35,6 +35,7 @@ export default async function SeasonPage({ params }: IPage) {
 
   // Sort games by date
   games.sort((a, b) => a.date.toDate().getTime() - b.date.toDate().getTime());
+ 
 
   console.log('getTeams params::*******************************************');
   console.log(params);

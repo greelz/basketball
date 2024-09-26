@@ -1,67 +1,57 @@
 
-import { getSeasons } from "@/app/database";
-import LinkList from "@/app/components/LinkListAdmin";
+import AdminSidebar from "../components/admin/AdminSidebar";
+import localFont from "next/font/local";
+
+import HighlightChart from "../components/web/HighlightChart";
+import RightSidebar from "../components/admin/RightSidebar";
+import { revalidatePath } from "next/cache";
+import { addSeason } from "@/app/database";
+
 
 interface LeaguePageProps {
   params: { leagueId: string };
 }
-
-export default async function LeagueContent({ params }: LeaguePageProps) {
-  const seasons = await getSeasons(params.leagueId);
-
+interface IIdAndName {
+  id: string;
+  name: string;
+}
+interface ILinkListProps {
+  data: IIdAndName[];
+  slug: string;
+}
+export default async function LeagueContent({ params, data, slug }: LeaguePageProps & ILinkListProps) {
+  console.log('Data in LeagueContent:', data);
   return (
-
-    <main className="flex-1 p-6 bg-gray-100">
-      <div className="container mx-auto">
-        <h2 className="text-2xl font-semibold mb-6 text-black">Seasons</h2>
-        <LinkList data={seasons} slug={`/steveWork/${params.leagueId}`} />
+    <div className="flex h-screen">
+      {/* Left Column */}
+      <div className="row-span-5">
+        <AdminSidebar />
       </div>
-    </main>
+      {/* Center Column */}
+      <div className="flex-1 flex flex-col justify-start items-center border-white border-r-8 m">
+        <img src="/bballSVG.svg" alt="Basketball" className="max-w-sm align-center animate-bobbing" />
+        <a className={` text-6xl border-2 border-transparent text-center bggrayd-nohov w-full whitespace-nowrap`}
+        >{'Choose A League'}</a>
+        <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4 w-full mt-5">
+          {data.map((d) => (
+            <div key={d.id} className="flex justify-center align-center">
+              <HighlightChart
+              key={`${d.id}.chart`}                
+                titleContent={<a href={`${slug}/${d.id}`}>{d.name}</a>}
+                col1Title={'Teams'}
+                col1data={['AC130s', 'Banana Boat Boys', 'Mean Machines']}
+                col2Title={"W/L"}
+                col2data={[`6 / 0 `, `4 / 2`, `1 / 5`]}
+              />
+            </div>))}
+
+
+        </div>
+      </div>
+      {/* Right Column */}
+      <div className="row-span-5">
+        <RightSidebar />
+      </div>
+    </div >
   );
 }
-
-
-
-
-
-
-
-
-//   import { revalidatePath } from "next/cache";
-// import { addSeason, addTeam, getSeasons } from "@/app/database";
-// import LinkList from "@/app/components/LinkList";
-
-// interface LeaguePageProps {
-//   params: { leagueId: string };
-// }
-
-// export default async function LeaguePage({ params }: LeaguePageProps) {
-//   const seasons = await getSeasons(params.leagueId);
-//   return (
-//     <div className=' bg-white/75 mt-20 h-3/4'>
-//       <h1>Seasons</h1>
-//       <LinkList data={seasons} slug={`/admin/${params.leagueId}`} />
-//       <div className="min-w-fill grid place-items-center">
-//         <div className="text-center">
-//           <form className=" bg-white/10 border-black border justify-center align-center"
-//             action={async (formData) => {
-//               "use server";
-//               const seasonName = formData.get("seasonName") as string;
-//               await addSeason(seasonName, params.leagueId);
-//               revalidatePath("/");
-//             }}
-//           >
-//             <h3>Add A Season</h3>
-//             <div className="my-2">
-//               <label htmlFor="seasonName">Season Name: </label>
-//               <input type="text" id="seasonName" name="seasonName" autoComplete="off" />
-//             </div>
-//             <div className="text-left">
-//               <button className="ml-0" type="submit">Add Season</button>
-//             </div>
-//           </form>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }

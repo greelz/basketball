@@ -14,7 +14,7 @@ export default function StatIncrementButton({
   return (
     <button
       key={t.id}
-      className={`btn-blue ${disabled ? "!bg-slate-300" : ""} btn`}
+      className={`bggraygrad ${disabled ? "!bg-slate-300" : ""} btn`}
       type="button"
       disabled={player === ""}
       onClick={() => {

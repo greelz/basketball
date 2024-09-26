@@ -14,8 +14,18 @@ const config: Config = withMT({
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
-      screens: {
-        'custom-xl': '1500px', // Custom breakpoint for 1200px
+      keyframes: {
+        bob: {
+          '0%, 100%': { transform: 'translateY(0px) rotate(0deg)', opacity: '0.6' },
+          '50%': { transform: 'translateY(-10px) rotate(5deg)', opacity: '1' },
+        },
+        glow: {
+          '0%, 100%': { opacity: '0.6' },
+          '50%': { opacity: '1' }, // Keep it just for opacity changes
+        },
+      },
+      animation: {
+        bobbing: 'bob 8s ease-in-out infinite, glow 5s ease-in-out infinite', // Combine the animations
       },
     },
   },

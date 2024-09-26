@@ -8,7 +8,7 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 const navigation = [
     { name: 'Home', href: '/' },
     { name: 'Admin', href: '/admin' },
-    { name: 'Testing', href: '/steveWork' },]
+    { name: 'Testing', href: '/steveWork/testing' },]
 
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)

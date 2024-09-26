@@ -1,4 +1,6 @@
 import TeamsLayout from './TeamsLayout';
+import { addPlayer, getPlayersFromTeam } from "@/app/database";
+import { revalidatePath } from "next/cache";
 
 interface IPage {
   params: {
@@ -8,10 +10,14 @@ interface IPage {
   };
 }
 
-export default function TeamsPage({ params }: IPage) {
+export default async function TeamsPage({ params }: IPage) {
+  const { leagueId, seasonId, teamId } = params;
+  const players = await getPlayersFromTeam(
+    leagueId,
+    seasonId,
+    teamId
+  );
   return (
-    <div className="steveBox">
-      <TeamsLayout params={params} />
-    </div>
+    <TeamsLayout params={params} />
   );
 }

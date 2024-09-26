@@ -216,7 +216,69 @@ export async function getTeamPlayersFromGame(
   const team2players = await getPlayersFromTeam(leagueId, seasonId, team2);
   return { team1, team2, team1players, team2players };
 }
+//Function by Steve to grab player records for a specific team
+export async function getThisTeamStatsFromGame(
+  leagueId: string,
+  seasonId: string,
+  gameId: string,
+  teamId: string,
+) {
+  const { team1, team2 } = await getTeamsIdsForGame(leagueId, seasonId, gameId);
+  const team1players = await getPlayersFromTeam(leagueId, seasonId, team1);
+  const team2players = await getPlayersFromTeam(leagueId, seasonId, team2);
+  return { team1, team2, team1players, team2players };
+}
 
+export async function findGameIdsByTeamId(
+  teamId: string,
+  games: Game[],
+) {
+  return games
+    .filter(game => game.team1 === teamId && game.gameover || game.team2 === teamId && game.gameover)
+    .map(game => game.id);
+}
+
+//Get player stats for a team from every game in the season completed so far
+export async function getTeamStatsforGame(
+  leagueId: string,
+  seasonId: string,
+  gameId: string,
+  teamId: string,
+) {
+  const { team1, team2, team1players, team2players } =
+    await getTeamPlayersFromGame(leagueId, seasonId, gameId);
+  const allGamePlayersStats: PlayerStats[] =
+    [...team1players, ...team2players].map((p) => ({ ...p }));
+  const seasonSnap = await getDocs(
+    collection(
+      db,
+      `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/playerStatistics`
+    )
+  );
+  seasonSnap.docs.forEach((s) => {
+    const data = s.data();
+    const two_point_made = data["two_point_made"] ?? 0;
+    const three_point_made = data["three_point_made"] ?? 0;
+    const specificPlayerIdx = allGamePlayersStats.findIndex((a) => a.id === s.id);
+    if (specificPlayerIdx === -1) return;
+    allGamePlayersStats[specificPlayerIdx] = {
+      ...allGamePlayersStats[specificPlayerIdx],
+      ...(data as PlayerStat),
+      points: two_point_made * 2 + three_point_made * 3,
+    };
+  });
+  let gameTotalPoints = 0;
+  allGamePlayersStats.forEach((p) => {
+    if (p.teamId === teamId) gameTotalPoints += p.points ?? 0;
+  });
+  const teamPlayerStats: PlayerStats[] = allGamePlayersStats.filter(player => teamId === player.teamId)
+  return {
+    teamPlayerStats: teamPlayerStats,
+    game: { gameTotalPoints, gameId }
+  }
+}
+
+//START GREELZ *********************************
 export async function getPlayerStatisticsFromGame(
   leagueId: string,
   seasonId: string,

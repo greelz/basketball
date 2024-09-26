@@ -16,6 +16,8 @@ export default function ClockNew() {
         secs = "0" + secs;
     }
 
+    const buttonStyles = "min-w-full bggraygrad text-lg"
+
 
     const handlePlayStopClick = () => {
         if (!isPlaying) {
@@ -44,9 +46,9 @@ export default function ClockNew() {
     return (
         <div className="grid grid-cols-7 grid-rows-2 gap-4 mb-4">
             <div className="">
-                <button className="min-w-full bggraygrad text-xl " onClick={() => setTime((prev) => ++prev)}>▲</button>
+                <button className={buttonStyles} onClick={() => setTime((prev) => ++prev)}>▲</button>
             </div>
-            <div className="col-span-5 row-span-2 relative flex items-center justify-center border-black border-8 bggrayd-nohov">
+            <div className="col-span-5 row-span-2 relative flex items-center justify-center border-black border-8 bggrayd-nohov mx-2">
                 <div className={`${shotfont.className} text-9xl z-10 text-white`}>
                     {mins}:{secs}
                 </div>
@@ -58,7 +60,7 @@ export default function ClockNew() {
             <div className="col-start-7">
                 <div className={isPlaying ? "hidden" : "contents"}>
                     <button
-                        className="min-w-full bggraygrad text-xl"
+                        className={buttonStyles}
                         onClick={handlePlayStopClick}
                     >
                         ▶
@@ -66,18 +68,18 @@ export default function ClockNew() {
                 </div>
                 <div className={isPlaying ? "contents" : "hidden"}>
                     <button
-                        className="min-w-full bggraygrad text-xl"
+                        className={buttonStyles}
                         onClick={handlePlayStopClick}
                     >
                         <span style={{ color: 'white' }}>⏸</span>
                     </button>
                 </div>
             </div>
-            <div className="row-start-2"><button className="min-w-full bggraygrad text-xl" onClick={() => setTime((prev) => --prev)}>
+            <div className="row-start-2"><button className={buttonStyles} onClick={() => setTime((prev) => --prev)}>
                 ▼
             </button>
             </div>
-            <div className="col-start-7 row-start-2"><button className="min-w-full bggraygrad text-xl" onClick={() => setTime(960)}>
+            <div className="col-start-7 row-start-2"><button className={buttonStyles} onClick={() => setTime(960)}>
                 <span style={{ color: 'white' }}>⏮︎</span>
             </button></div>
         </div>

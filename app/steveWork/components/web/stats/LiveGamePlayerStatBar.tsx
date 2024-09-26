@@ -19,10 +19,12 @@ function LiveGamePlayerStatBar({ title, selectedPlayer, player, setSelectedPlaye
     const stats = playerStatistics;
 
 
+
+
     const findPlayerByName = (stats, player) => {
         return stats.find(p => p.name === player);
     };
-    const playerToDisplay = findPlayerByName(stats, player);
+    const playerToDisplay = stats ? findPlayerByName(stats, player) : null;
 
     // // Effect to sync isActive state with selectedPlayer
     // useEffect(() => {

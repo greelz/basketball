@@ -1,10 +1,8 @@
 
-import AdminLayout from './components/admin/AdminLayout';
+import HomeLayout from './layouts/home/HomeLayout';
 
 export default function AdminPage() {
     return (
-        <div className='steveBox'>
-        <AdminLayout />
-        </div>
+        <HomeLayout />
     );
 }

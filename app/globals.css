@@ -2,6 +2,10 @@
 @tailwind utilities;
 @tailwind components;
 
+html {
+  @apply text-white
+}
+
 .btn {
   @apply font-bold py-2 px-4 rounded;
 }
@@ -47,10 +51,12 @@ h4 {
   src: url("/fonts/selawik.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+  color: "white"
 }
 
 body {
   font-family: "Selawik", sans-serif;
+  color: "white"
 }
 
 main {
@@ -570,7 +576,7 @@ button {
 }
 
 .bgorange:hover {
-  background: #FC440E;
+  background: #701a00;
   color: #fff;
 }
 
@@ -579,13 +585,19 @@ button {
 }
 
 .bgbblue {
-  background: #4CABDB;
-  background-color: #4CABDB;
-  color: #fff;
+  @apply bg-gradient-to-b from-blue-400 to-blue-800 text-white
+}
+
+.bgbblue:hover {
+  @apply bg-gradient-to-b from-blue-800 to-blue-900 text-white
 }
 
 .bgbluegrad {
   @apply bg-gradient-to-b from-blue-400 to-blue-800 text-white
+}
+
+.bgorangegrad {
+  @apply bg-gradient-to-b from-orange-700 to-orange-900 text-white
 }
 
 .bgbblue:hover {
@@ -627,6 +639,38 @@ button {
 .bggray {
   background: #405A6B;
   color: #fff;
+}
+
+.bgwhitehover {
+  @apply bg-white text-gray-900
+}
+
+.bgwhitehover:hover {
+  @apply bg-orange-200
+}
+
+.bggrayhover {
+  @apply bg-gray-100 text-gray-900
+}
+
+.bggrayhover:hover {
+  @apply bg-orange-200
+}
+
+.bgwhitehoverblue {
+  @apply bg-white text-gray-900
+}
+
+.bgwhitehoverblue:hover {
+  @apply bg-blue-200
+}
+
+.bggrayhoverblue {
+  @apply bg-gray-100 text-gray-900
+}
+
+.bggrayhoverblue:hover {
+  @apply bg-blue-200
 }
 
 

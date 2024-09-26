@@ -36,6 +36,10 @@ interface Props {
   team1Name: string;
   team2Name: string;
   highlightedPlayer: string | null;
+  activePlayer: string | null;
+  setActivePlayer: () => void;
+  assistingPlayer: string | null;
+  setAssistingPlayer: () => void;
 }
 
 interface IHistory {
@@ -57,7 +61,10 @@ export default function PlayerIncrementorUX({
   gameIsOver,
   team1Name,
   team2Name,
-  highlightedPlayer,
+  activePlayer,
+  setActivePlayer,
+  assistingPlayer,
+  setAssistingPlayer,
 }: Props) {
 
   const [player, setPlayer] = useState("");
@@ -411,7 +418,7 @@ export default function PlayerIncrementorUX({
   // }
 
   return (
-    <>
+    <><button onClick={() => console.log(player)}>Log Player</button>
       <div className="flex flex-col gap-4 p-4">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Stats Table */}
@@ -447,6 +454,10 @@ export default function PlayerIncrementorUX({
                       player={player}
                       s={s}
                       setPlayer={setPlayer}
+                      setActivePlayer={setActivePlayer}
+                      setAssistingPlayer={setAssistingPlayer}
+                      activePlayer={activePlayer}
+                      assistingPlayer={assistingPlayer}
                     />
                   ))}
                 <tr className="bg-gray-50 border-b">
@@ -460,6 +471,10 @@ export default function PlayerIncrementorUX({
                       player={player}
                       s={s}
                       setPlayer={setPlayer}
+                      setActivePlayer={setActivePlayer}
+                      setAssistingPlayer={setAssistingPlayer}
+                      activePlayer={activePlayer}
+                      assistingPlayer={assistingPlayer}
                     />
                   ))}
               </tbody>
@@ -477,7 +492,7 @@ export default function PlayerIncrementorUX({
             />
           ))}
           <button
-            className={`col-span-2 ${undoDisabled ? "bg-slate-300 shadow-lg" : " shadow-lg bg-blue-500 text-white hover:bg-blue-600"} rounded-lg px-4 py-2`}
+            className={`col-span-2 ${undoDisabled ? "bg-slate-300 shadow-lg" : "shadow-lg bggrayd-nohov-inv text-white "} rounded-lg px-4 py-2`}
             onClick={() => {
               if (!historyIndex || historyIndex === 0 || gameIsOver) return;
               const { player, type, val } = history[historyIndex - 1];

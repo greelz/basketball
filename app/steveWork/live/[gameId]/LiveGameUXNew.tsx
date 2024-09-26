@@ -305,10 +305,12 @@ export default function LiveGameUXNew({
                     <div>
                         <Clock />
                     </div>
-                    <div className="mb-5 flex flex-col items-center justify-center">
-                        <ShotTracker selectedPlayer={selectedPlayer} /></div>
+                    <div className="mb-5 flex flex-col items-center">
+                        <ShotTracker selectedPlayer={selectedPlayer} />
+                    </div>
                     <div className={selectedPlayer ? "content" : "hidden"}></div>
                 </div>
+
                 <div className="col-span-4 row-span-2 row-start-2">
                     <PlayerIncrementorUX
                         incrementStat={incrementStat}
@@ -323,7 +325,10 @@ export default function LiveGameUXNew({
                         team2Players={team2Players}
                         team1Name={team1Name}
                         team2Name={team2Name}
-                        highlightedPlayer={selectedPlayer} />
+                        activePlayer={selectedPlayer}
+                        setActivePlayer={setSelectedPlayer}
+                        assistingPlayer={assistingPlayer}
+                        setAssistingPlayer={setAssistingPlayer}/>
                 </div>
                 {/* Right Column - Score, Player Names, Stats */}
                 <div className="col-start-4 bg-white p-4 rounded-lg shadow-md min-w-fit">

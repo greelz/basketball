@@ -4,9 +4,11 @@ const shotfont = localFont({ src: "../../../../../public/fonts/alarmclock.ttf" }
 const statfont = localFont({ src: "../../../../../public/fonts/dsdigi.ttf" });
 
 export default function LEDStatTracker({ player, stat, variant }) {
-    
-    const totalStats = player[stat] ?? 0;
-    
+
+    const totalStats = player ? (player[stat] ?? 0) : 0;
+    const dummy1 = player ? (player[stat] ?? 0) : 0
+    const dummy2 = stat ? (stat ?? 0) : 0;
+
     let places = 8;
     if (totalStats >= 10) places = 88;
     if (totalStats >= 100) places = 888;
