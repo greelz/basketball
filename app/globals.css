@@ -570,6 +570,20 @@ button {
   }
 }
 
+@keyframes scroll {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-scroll {
+  display: inline-block;
+  animation: scroll 10s linear infinite;
+}
+
 .bgorange {
   background: #FC440E;
   color: #fff;
@@ -673,6 +687,23 @@ button {
   @apply bg-blue-200
 }
 
+/* //start */
+
+.bgwhitehoverorange {
+  @apply bg-white text-gray-900
+}
+
+.bgwhitehoverorange:hover {
+  @apply bg-orange-200
+}
+
+.bggrayhoverorange {
+  @apply bg-gray-100 text-gray-900
+}
+
+.bggrayhoverorange:hover {
+  @apply bg-orange-200
+}
 
 
 

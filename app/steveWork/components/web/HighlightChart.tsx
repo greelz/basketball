@@ -1,4 +1,5 @@
 "use client"
+
 import LEDTracker from "./stats/LEDTracker";
 import BigButton from "../../components/web/BigButton";
 
@@ -39,15 +40,15 @@ export default function HeaderContainer({ variant, titleContent, col1Title, col1
     }
 
     const rows = genDummyData();
-    const titleColor = variant ? `bgorangegrad max-h-16 w-auto flex justify-center items-center border-white border` : `bgbluegrad max-h-16 w-auto flex justify-center items-center border-white border`
+    const titleColor = variant ? `bgorangegrad max-h-16 w-full flex justify-center items-center border-white border rounded-t-md` : `bgbluegrad max-h-16 w-full flex justify-center items-center border-white border rounded-t-md`
     return (
         <>
             {titleContent ? (
                 <div className={titleColor}>
                     <p className="m-0 p-2">{titleContent}</p>
                 </div>) : (<></>)}
-            <div className="bg-gray-200 w-auto">
-                <div className="relative overflow-hidden rounded-lg">
+            <div className="bg-gray-200 w-auto rounded-b-md">
+                <div className="relative overflow-hidden ">
                     <table className="table-fixed w-full text-left ">
                         <thead className="bggrayd-nohov">
                             <tr>
@@ -57,13 +58,17 @@ export default function HeaderContainer({ variant, titleContent, col1Title, col1
                                 {col4Title ? <th className="py-2 border text-center  p-4" >{col4Title}</th> : <></>}
                             </tr>
                         </thead>
-                        <tbody className="bg-white text-gray-900 ">
+                        <tbody className="bg-white text-gray-900 max-h-[300px] overflow-auto">
                             {rows.map((m, idx) => (
                                 <tr key={`row${idx}`}
-                                    className={`py-0 ${idx % 2 === 0 ? 'bgwhitehoverblue' : 'bggrayhoverblue'}`}>
+                                    className={!variant ? (`py-0 ${idx % 2 === 0 ? 'bgwhitehoverblue' : 'bggrayhoverblue'}`) : (`py-0 ${idx % 2 === 0 ? 'bgwhitehoverorange' : 'bggrayhoverorange'}`)} >
                                     {m.col1 ? <td key={`${m.col1}${idx}`} className="py-0 border-t border-b h-12 p-4" >{m.col1}</td> : <></>}
                                     {m.col2 ? <td key={`${m.col2}${idx}`} className="py-0 border-t border-b text-center h-12 p-4" >{m.col2}</td> : <></>}
-                                    {m.col3 ? <td key={`${m.col3}${idx}`} className="py-0 border-t border-b  h-12 p-4" >{m.col3}</td> : <></>}
+                                    {m.col3 ? <td key={`${m.col3}${idx}`} className="py-0 border-t border-b  h-12 p-4" >
+                                        {typeof m.col3 === 'number' ? (
+                                            <LEDTracker amount={m.col4} variant={3} />
+                                        ) : (m.col3)}
+                                    </td> : <></>}
                                     {m.col4 ? <td key={`${m.col4}${idx}`} className="py-0 border-t border-b  h-12 p-4" >
                                         {typeof m.col4 === 'number' ? (
                                             <LEDTracker amount={m.col4} variant={3} />

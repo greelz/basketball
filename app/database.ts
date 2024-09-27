@@ -229,12 +229,21 @@ export async function getThisTeamStatsFromGame(
   return { team1, team2, team1players, team2players };
 }
 
-export async function findGameIdsByTeamId(
+export async function findFinishedGameIdsByTeamId(
   teamId: string,
   games: Game[],
 ) {
   return games
     .filter(game => game.team1 === teamId && game.gameover || game.team2 === teamId && game.gameover)
+    .map(game => game.id);
+}
+
+export async function findUpcomingGamesByTeamId(
+  teamId: string,
+  games: Game[],
+){
+  return games
+    .filter(game => game.team1 === teamId && !game.gameover || game.team2 === teamId && !game.gameover)
     .map(game => game.id);
 }
 

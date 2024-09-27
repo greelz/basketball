@@ -1,17 +1,18 @@
 import localFont from "next/font/local";
 
-const shotfont = localFont({ src: "../../../../../public/fonts/alarmclock.ttf" });
-const statfont = localFont({ src: "../../../../../public/fonts/dsdigi.ttf" });
+const statfont = localFont({ src: "../../../../../public/fonts/alarmclock.ttf" });
+const shotfont = localFont({ src: "../../../../../public/fonts/dsdigi.ttf" });
 
 export default function LEDStatTracker({ player, stat, variant }) {
 
-    const totalStats = player ? (player[stat] ?? 0) : 0;
-    const dummy1 = player ? (player[stat] ?? 0) : 0
+    let totalStats = player ? (player[stat] ?? 0) : 0;
+    const dummy1 = player ? (player[stat] ?? 0) : 0;
     const dummy2 = stat ? (stat ?? 0) : 0;
 
     let places = 8;
     if (totalStats >= 10) places = 88;
     if (totalStats >= 100) places = 888;
+    if (isNaN(totalStats)) totalStats = 0;
 
     let sizeInd = "";
     let sizeBase = "";
@@ -29,8 +30,8 @@ export default function LEDStatTracker({ player, stat, variant }) {
     if (variant === 2) {
         sizeInd = `${shotfont.className} z-10 text-white text-7xl`;
         sizeBase = `${shotfont.className} text-gray-900 absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center z-0 text-7xl`;
-        statSize = `${shotfont.className} text-md text-center bggraygrad`;
-        statTrackerSize = `bggrayd-nohov w-full max-w-[75px] h-full max-h-[75px] m-2`;
+        statSize = `${shotfont.className} text-md text-center bggraygrad no-wrap whitespace-nowrap overflow-hidden`;
+        statTrackerSize = `bggrayd-nohov w-full max-w-[75px] h-full max-h-[75px] m-2 flex-none `;
         borderBox = "relative flex items-center justify-center border-black border-4 bggrayd-nohov";
     }
     if (variant === 3) {

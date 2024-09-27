@@ -74,11 +74,7 @@ const BarChart = ({ team, stat, variant }) => {
 
                 {/* Data Section */}
                 <div className="bg-white p-4 rounded-b-lg mt-16 z-0">
-                    <h3 className="text-xl font-semibold text-black">Total {stat.charAt(0).toUpperCase() + stat.slice(1)}: {totalStat}</h3>
-                    <p className="text-sm text-black">Game Performance</p>
-                    <div className="flex items-center text-black mt-2">
-                        <p className="text-sm">Game analysis based on {stat} scored</p>
-                    </div>
+                    <h3 className="whitespace-nowrap text-xl font-semibold text-black">Total {stat.charAt(0).toUpperCase() + stat.slice(1)}: {totalStat}</h3>
                 </div>
             </div>
         </div>

@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (<>
-    <html lang="en">
+    <html lang="en" className="min-h-screen max-h-full ">
       <body className="homeRadial ">
         <Header />
         <main >
