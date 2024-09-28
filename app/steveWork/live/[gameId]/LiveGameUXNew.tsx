@@ -283,10 +283,10 @@ export default function LiveGameUXNew({
                 {/* Left Column - Score, Player Names, Stats */}
                 <div className=" bg-white p-4 rounded-lg shadow-md min-w-fit">
                     <div id="score" className="mb-2 text-center"><span className=" text-9xl "><LEDTracker amount={team1Score} variant={1} /></span></div>
-                    <h2 className="text-4xl font-bold mb-4 border-t-2  border-b-2">{team1Name}</h2>
+                    <h2 className="text-4xl font-bold mb-4 border-t-2 text-black border-b-2">{team1Name}</h2>
                     <div className="flex flex-row justify-between">
-                        <h3 className="font-semibold  mx-2">Players</h3>
-                        <h3 className="font-semibold  mx-2">Points</h3>
+                        <h3 className="font-semibold text-black mx-2">Players</h3>
+                        <h3 className="font-semibold text-black mx-2">Points</h3>
                     </div>
                     <div className="flex-1 flex-col mx-2 ">
                         <LiveGamePlayerList
@@ -328,15 +328,15 @@ export default function LiveGameUXNew({
                         activePlayer={selectedPlayer}
                         setActivePlayer={setSelectedPlayer}
                         assistingPlayer={assistingPlayer}
-                        setAssistingPlayer={setAssistingPlayer}/>
+                        setAssistingPlayer={setAssistingPlayer} />
                 </div>
                 {/* Right Column - Score, Player Names, Stats */}
                 <div className="col-start-4 bg-white p-4 rounded-lg shadow-md min-w-fit">
                     <div className="mb-2 text-center"><span className="text-9xl  "><LEDTracker amount={team2Score} variant={1} /></span></div>
-                    <h2 className="text-4xl font-bold mb-4 border-t-2 border-b-2">{team2Name}</h2>
+                    <h2 className="text-4xl font-bold mb-4 border-t-2 border-b-2 text-black">{team2Name}</h2>
                     <div className="flex flex-row justify-between">
-                        <h3 className="font-semibold  mx-2">Players</h3>
-                        <h3 className="font-semibold  mx-2">Points</h3>
+                        <h3 className="font-semibold text-black mx-2">Players</h3>
+                        <h3 className="font-semibold text-black mx-2">Points</h3>
                     </div>
 
                     <div className="flex-1 flex-col mx-2 mb-6">

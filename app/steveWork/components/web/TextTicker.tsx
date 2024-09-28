@@ -3,17 +3,17 @@ const statfont = localFont({ src: "../../../../public/fonts/dsdigi.ttf" });
 
 interface Props {
     content: string
+    url?: string
 }
-export default function TextTicker({ content }: Props) {
+export default function TextTicker({ content, url }: Props) {
     return (
-        <div className="flex flex-row relative w-full overflow-hidden h-16 items-center mx-40 ">
+        <div className={`flex flex-row relative w-full overflow-hidden h-16 items-center mx-40 ${url ? `hover:border-white cursor-pointer` : ``}`}>
             <div className="animate-scroll whitespace-nowrap flex justify-end  mx-auto">
-                <span className={`${statfont.className} mx-5  inline-block text-4xl text-white`}>{content}</span>
+                <a href={url} className={`${statfont.className} mx-5  inline-block text-4xl text-white`}>{content}</a>
             </div>
             <div className="animate-scroll whitespace-nowrap flex mx-auto  ">
-                <span className={`${statfont.className} mx-5  inline-block text-4xl text-white`}>{content}</span>
+                <a href={url} className={`${statfont.className} mx-5  inline-block text-4xl text-white`}>{content}</a>
             </div>
-
-        </div >
+        </div>
     );
 };

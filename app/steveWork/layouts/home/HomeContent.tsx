@@ -7,6 +7,8 @@ import BigButton from "../../components/web/BigButton";
 import RightSidebar from "../../components/admin/RightSidebar";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import LEDTracker from "../../components/web/stats/LEDTracker";
+import TextTicker from "../../components/web/TextTicker";
 const statfont = localFont({ src: "../../../../public/fonts/dsdigi.ttf" });
 
 // Dummy Data
@@ -63,12 +65,13 @@ const col2b = [
     'Turnovers'
 ];
 const col2c = [
-    32,
-    18,
-    32,
-    17,
-    21,
-    200
+    (<div className="text-white !important"><LEDTracker variant={2} amount={43} /></div>),
+    (<div className="text-white !important"><LEDTracker variant={2} amount={23} /></div>),
+    (<div className="text-white !important"><LEDTracker variant={2} amount={17} /></div>),
+    (<div className="text-white !important"><LEDTracker variant={2} amount={10} /></div>),
+    (<div className="text-white !important"><LEDTracker variant={2} amount={6} /></div>),
+    (<div className="text-white !important"><LEDTracker variant={2} amount={4} /></div>),
+
 ];
 
 interface IIdAndName {
@@ -81,7 +84,7 @@ interface ILinkListProps {
 }
 export default function HomeContent({ data, slug }: ILinkListProps) {
     const [isHovered, setisHovered] = useState(false);
-    console.log('Data in HomeContent:', data);
+    // console.log('Data in HomeContent:', data);
     return (
         <div className="flex h-screen">
             {/* Left Column */}
@@ -91,11 +94,11 @@ export default function HomeContent({ data, slug }: ILinkListProps) {
             {/* Center Column */}
             <div className="flex-1 flex flex-col justify-start items-center border-white border-r-8 m">
                 <img src="/bballSVG.svg" alt="Basketball" className="max-w-sm align-center animate-bobbing" />
-                <a className={`${statfont.className} text-6xl border-2 border-transparent text-center bggrayd-nohov w-full whitespace-nowrap hover:border-white cursor-pointer`}
-                    onMouseEnter={() => setisHovered(true)}
-                    onMouseLeave={() => setisHovered(false)}
-                    href={`${slug}/${data[0].id}`}
-                >{isHovered ? `Dive into ${data[0].name}` : 'Welcome to Slab League'}</a>
+                <div className="border-2 border-transparent bggrayd-nohov w-full whitespace-nowrap">
+                    <div className="flex flex-row flex-1 items-center">
+                        <TextTicker content={"Welcome to Slab League"} url={`${slug}/${data[0].id}`} />
+                    </div>
+                </div>
                 <HeaderContainer />
                 <div className="grid grid-cols-2 grid-rows-1 w-full h-full mt-5 overflow-y-auto gap-2 ">
                     <div className="flex flex-1 flex-col justify-start align-center mx-4">

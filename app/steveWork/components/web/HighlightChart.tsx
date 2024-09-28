@@ -76,10 +76,10 @@ export default function HeaderContainer({ variant, titleContent, col1Title, col1
                                                 : 'bggrayhoverblue'
                                             }`}
                                     >
-                                        {col1Title && col1data ? <td className="py-0 border-t border-b h-12 p-4">{m.col1}</td> : null}
-                                        {col2Title && col2data ? <td className="py-0 border-t border-b text-center h-12 p-4">{m.col2}</td> : null}
+                                        {col1Title && col1data ? <td className="py-0 border-t border-b h-12 p-4 whitespace-nowrap">{m.col1}</td> : null}
+                                        {col2Title && col2data ? <td className="py-0 border-t border-b text-center h-12 p-4 whitespace-nowrap">{m.col2}</td> : null}
                                         {col3Title && col3data ? (
-                                            <td className="py-0 border-t border-b h-12 p-4">
+                                            <td className="py-0 border-t border-b h-12 p-4 text-center ">
                                                 {typeof m.col3 === 'number' && m.col4 ? (
                                                     <div className={m.col3 > m.col4 ? "text-green-200" : m.col3 < m.col4 ? "text-red-200" : "text-white"}>
                                                         <LEDTracker key={`m.col3${idx}${m}`} amount={m.col3} variant={3} />
@@ -91,7 +91,7 @@ export default function HeaderContainer({ variant, titleContent, col1Title, col1
                                         ) : (
                                             null)}
                                         {col4Title && col4data ? (
-                                            <td className="py-0 border-t border-b h-12 p-4">
+                                            <td className="py-0 border-t border-b h-12 p-4 text-center whitespace-nowrap">
                                                 {typeof m.col4 === 'number' && m.col3 ? (
                                                     <div className={m.col3 > m.col4 ? "text-green-200" : m.col3 < m.col4 ? "text-red-200" : "text-white"}>
                                                         <LEDTracker key={`m.col4${idx}${m}`} amount={m.col4} variant={3} />

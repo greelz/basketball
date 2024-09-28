@@ -60,7 +60,7 @@ export default async function TeamsContent({ params }: IPage) {
     const teamName = await getTeamNameByTeamId(leagueId, seasonId, teamId);
     const myTeam = teams.find(t => teamId === t.id);
 
-    console.log(`teamName: ${JSON.stringify(teamName, null, 2)}`);
+    // console.log(`teamName: ${JSON.stringify(teamName, null, 2)}`);
 
     games.forEach((game) => {
 
@@ -73,27 +73,27 @@ export default async function TeamsContent({ params }: IPage) {
             } else if (teamName === teamB && teamName !== teamA) {
                 opponent = teamA;
             } else {
-                console.log(`******NO OPPONENT FOR GAME*`);
-                console.log(`TeamName to match: ${teamName}`)
-                console.log(`TeamA: ${teamA}`);
-                console.log(`TeamB: ${teamB}`);
+                // console.log(`******NO OPPONENT FOR GAME*`);
+                // console.log(`TeamName to match: ${teamName}`)
+                // console.log(`TeamA: ${teamA}`);
+                // console.log(`TeamB: ${teamB}`);
 
             }
             game.name = opponent ? `${opponent}` : `${teamA} vs ${teamB}`;
-            console.log(`********GAME FOUND********`)
-            console.log(`GAME FOUND: ${game.id}.`);
-            console.log(`game.name value check: ${game.name}`);
+            // console.log(`********GAME FOUND********`)
+            // console.log(`GAME FOUND: ${game.id}.`);
+            // console.log(`game.name value check: ${game.name}`);
 
         } else {
-            console.log(`**SKIPPED*`);
-            console.log(`${game.id} due to missing team data.`);
+            // console.log(`**SKIPPED*`);
+            // console.log(`${game.id} due to missing team data.`);
         }
     });
     //sort games into order
     games.sort((a, b) => a.date.toDate().getTime() - b.date.toDate().getTime());
 
     //{team1,team2,date(sec nano) id gameover?=1}
-    console.log(`Full Formatted Game Array: ${JSON.stringify(games, null, 2)}`);
+    // console.log(`Full Formatted Game Array: ${JSON.stringify(games, null, 2)}`);
     //filtergames into finished and unfinished (id:string arrays)
     const unfinishedGameIds = await findUpcomingGamesByTeamId(teamId, games);
     const finishedGameIds = await findFinishedGameIdsByTeamId(teamId, games);
@@ -101,9 +101,9 @@ export default async function TeamsContent({ params }: IPage) {
     const upcomingGameData = filterGamesbyIds(games, unfinishedGameIds);
     const completedGamesData = filterGamesbyIds(games, finishedGameIds);
 
-    console.log(`finishedGameIds Strings: ${JSON.stringify(finishedGameIds, null, 2)}`);
-    console.log(`completedGamesData: ${JSON.stringify(completedGamesData, null, 2)}`);
-    console.log(`upcomingGameData: ${JSON.stringify(upcomingGameData, null, 2)}`);
+    // console.log(`finishedGameIds Strings: ${JSON.stringify(finishedGameIds, null, 2)}`);
+    // console.log(`completedGamesData: ${JSON.stringify(completedGamesData, null, 2)}`);
+    // console.log(`upcomingGameData: ${JSON.stringify(upcomingGameData, null, 2)}`);
 
     //set date and time of upcominggames to strings
     const upcomingGameDateData = upcomingGameData.map((game: Game) => {
@@ -111,12 +111,12 @@ export default async function TeamsContent({ params }: IPage) {
         const time = game.date.toDate().toLocaleTimeString();
         return { date: date, time: time };
     });
-    console.log(`upcomingGameDateData: ${JSON.stringify(upcomingGameDateData, null, 2)}`);
+    // console.log(`upcomingGameDateData: ${JSON.stringify(upcomingGameDateData, null, 2)}`);
 
     const upcomingGameDates = upcomingGameDateData.map((d) => d.date);
     const upcomingGameTimes = upcomingGameDateData.map((d) => d.time);
-    console.log(`upcomingGameDates: ${JSON.stringify(upcomingGameDates, null, 2)}`);
-    console.log(`upcomingGameTimes: ${JSON.stringify(upcomingGameTimes, null, 2)}`);
+    // console.log(`upcomingGameDates: ${JSON.stringify(upcomingGameDates, null, 2)}`);
+    // console.log(`upcomingGameTimes: ${JSON.stringify(upcomingGameTimes, null, 2)}`);
 
     //set date and time of completedGames to strings
     const completedGameDateData = completedGamesData.map((game: Game) => {
@@ -124,12 +124,12 @@ export default async function TeamsContent({ params }: IPage) {
         const time = game.date.toDate().toLocaleTimeString();
         return { date: date, time: time };
     });
-    console.log(`completedGameDateData: ${JSON.stringify(completedGameDateData, null, 2)}`);
+    // console.log(`completedGameDateData: ${JSON.stringify(completedGameDateData, null, 2)}`);
 
     const completedGameDates = completedGameDateData.map((d) => d.date);
     const completedGameTimes = completedGameDateData.map((d) => d.time);
-    console.log(`completedGameDates: ${JSON.stringify(completedGameDates, null, 2)}`);
-    console.log(`completedGameTimes: ${JSON.stringify(completedGameTimes, null, 2)}`);
+    // console.log(`completedGameDates: ${JSON.stringify(completedGameDates, null, 2)}`);
+    // console.log(`completedGameTimes: ${JSON.stringify(completedGameTimes, null, 2)}`);
 
     //get all player stats from all finished games
     const seasonGameStats = await Promise.all(     //wait until the whole loop has finished
@@ -137,7 +137,7 @@ export default async function TeamsContent({ params }: IPage) {
             return getTeamStatsforGame(leagueId, seasonId, g, teamId);
         }));
 
-    console.log(`seasonGameStats: ${JSON.stringify(seasonGameStats, null, 2)}`);
+    // console.log(`seasonGameStats: ${JSON.stringify(seasonGameStats, null, 2)}`);
 
     const seasonGameStatArray = seasonGameStats.map((g) => g.teamPlayerStats);
     const combinePlayerStats = (seasonGameStatArray) => {
@@ -160,25 +160,25 @@ export default async function TeamsContent({ params }: IPage) {
     };
     //sum up all player stats of every game of the season to a seasonPlayerValue
     const seasonPlayerValues = combinePlayerStats(seasonGameStatArray);
-    console.log(`seasonPlayerValues: ${JSON.stringify(seasonPlayerValues, null, 2)}`);
+    // console.log(`seasonPlayerValues: ${JSON.stringify(seasonPlayerValues, null, 2)}`);
 
     //map variables for charting
     const teamScore = completedGamesData.map((g) => {
         return teamId === g.team1 ? g.team1score : g.team2score;
     });
-    console.log(`teamScore: ${JSON.stringify(teamScore, null, 2)}`);
+    // console.log(`teamScore: ${JSON.stringify(teamScore, null, 2)}`);
     const opponentScore = completedGamesData.map((g) => {
         return teamId === g.team1 ? g.team2score : g.team1score;
     });
-    console.log(`opponentScore: ${JSON.stringify(opponentScore, null, 2)}`);
+    // console.log(`opponentScore: ${JSON.stringify(opponentScore, null, 2)}`);
 
     const teamPlayerNames = seasonPlayerValues.map((p) => p.name);
     const upcomingOpponents = upcomingGameData.map((g) => g.name);
     const previousOpponents = completedGamesData.map((g) => g.name);
     // const playerURLs = seasonPlayerValues.map((u) => `/steveWork/${leagueId}/${seasonId}/${u.id}`);
-    console.log(`teamPlayerNames: ${JSON.stringify(teamPlayerNames, null, 2)}`);
-    console.log(`upcomingOpponents: ${JSON.stringify(upcomingOpponents, null, 2)}`);
-    console.log(`previousOpponents: ${JSON.stringify(previousOpponents, null, 2)}`);
+    // console.log(`teamPlayerNames: ${JSON.stringify(teamPlayerNames, null, 2)}`);
+    // console.log(`upcomingOpponents: ${JSON.stringify(upcomingOpponents, null, 2)}`);
+    // console.log(`previousOpponents: ${JSON.stringify(previousOpponents, null, 2)}`);
 
     const tabPanel = [
         {
@@ -264,7 +264,7 @@ export default async function TeamsContent({ params }: IPage) {
                                         col1Title={"Date"}
                                         col2Title={"Opponents"}
                                         col3Title={"Team"}
-                                        col4Title={"Opp"}
+                                        col4Title={ }
                                         col1data={completedGameDates}
                                         col2data={previousOpponents}
                                         col3data={teamScore}
@@ -280,7 +280,6 @@ export default async function TeamsContent({ params }: IPage) {
                             </div>
                             <Tabber tabPanel={tabPanel} />
                         </div>
-
                         {/* Right Column */}
                         <div className="row-span-5">
                             <RightSidebar />

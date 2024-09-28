@@ -139,7 +139,7 @@ export default async function SeasonLayout({ params }: IPage) {
         <>
             <div className="flex flex-col h-screen">
                 <div className="flex-1 flex flex-col">
-                    <SeasonContent params={params} games={games} gameDates={gameDates} gameSlug={"/steveWork/live"} teams={teams} teamSlug={`/admin/${leagueId}/${seasonId}/teams`} />
+                    <SeasonContent params={params} games={games} gameDates={gameDates} gameSlug={"/steveWork/live"} teams={teams} teamSlug={`/steveWork/${leagueId}/${seasonId}/teams`} />
                 </div>
                 <AdminFooter />
             </div >

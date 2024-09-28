@@ -16,6 +16,7 @@ import { useState } from "react";
 import ToggleCollapse from "../../components/web/ToggleCollapse";
 import TextTicker from "../../components/web/TextTicker";
 import RightSidebar from "@/app/steveWork/components/admin/RightSidebar";
+import LEDTracker from "../../components/web/stats/LEDTracker";
 
 interface IPage {
     params: { leagueId: string; seasonId: string };
@@ -28,14 +29,18 @@ interface Props {
     teamSlug: string;
 }
 
+const sortTeamsByWins = (teams) => {
+    return teams.sort((a, b) => b.wins - a.wins);
+};
+
 export default async function SeasonContent({ params, games, gameSlug, gameDates, teams, teamSlug }: IPage & Props) {
     // Massive Database Query Aggregator
 
-
+    const leaderboard = sortTeamsByWins(teams);
 
 
     const teamNames = teams.map((t) => t.name);
-    const wlratios = teams.map((r) => `${r.wins ?? '0'} / ${r.losses ?? '0'}`);
+    const wlratios = leaderboard.map((r) => `${r.wins ?? '0'} / ${r.losses ?? '0'}`);
     const matchups = games.map((g) => g.name);
     const matchupURLs = games.map((g) => `/steveWork/live/${g.id}`);
     const teamURLs = teams.map((u) => `/steveWork/${params.leagueId}/${params.seasonId}/teams/${u.id}`);
@@ -49,7 +54,7 @@ export default async function SeasonContent({ params, games, gameSlug, gameDates
     const gameTime = gameDates.map((t) => t.time);
     const gameDate = gameDates.map((d) => d.date);
     // console.log(`games in SEASON CONTENT ****************************************: ${JSON.stringify(games, null, 2)}`);
-    // console.log(`teams: ${JSON.stringify(teams, null, 2)}`);
+    console.log(`teams: ${JSON.stringify(teams, null, 2)}`);
     // console.log(`params SeasonContent: ${params}`);
     // console.log(`matchupURLs: ${matchupURLs}`);
 
@@ -76,9 +81,28 @@ export default async function SeasonContent({ params, games, gameSlug, gameDates
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4  mx-40">
+                <div className="grid grid-cols-2 gap-4  ">
                     {/* Upcoming Games */}
-                    <div className="flex flex-col justify-start items-center w-full max-h-[250px] overflow-hidden">
+                    <div className="flex flex-col justify-start items-center w-[600px]  overflow-hidden rounded-md">
+                        <HighlightChart
+                            titleContent={'Leaderboards'}
+                            col1Title={'Standings'}
+                            col1data={leaderboard.map((t, v) => (
+                                <div className={`${t[v] === 0 ? 'text-yellow-200 !important' : t[v] === 1 ? 'text-gray-200 !important' : t[v] === 2 ? 'text-orange-200 ' : 'text-white'}`}><LEDTracker variant={3} amount={v + 1} /></div>
+                            ))}
+                            col2Title={'Team'}
+                            col2data={leaderboard.map((t) => (
+                                (<div key={t.id} className="flex flex-col justify-center align-center mx-6">
+                                    <BigButton url={`${teamSlug}/${t.id}`} content={t.name} />
+                                </div>)
+                            ))}
+                            col3Title={"Record"}
+                            col3data={wlratios}
+
+                            variant={1}
+                        />
+                    </div>
+                    <div className="flex flex-col justify-start items-center w-[600px]  overflow-hidden rounded-md">
                         <HighlightChart
                             titleContent={'Upcoming Games'}
                             col1Title={'Date'}
@@ -89,19 +113,7 @@ export default async function SeasonContent({ params, games, gameSlug, gameDates
                             col3data={matchups}
                             col4Title={"View Match"}
                             col4data={matchButtons}
-                            variant={1}
-                        />
-                    </div>
-                    {/* Past Games */}
-                    <div className="flex flex-col justify-start items-center w-full max-h-[250px] overflow-hidden mb-4">
-                        <HighlightChart
-                            titleContent={'Teams of the Season'}
-                            col1Title={"Team"}
-                            col1data={teamNames}
-                            col2Title={"W/L"}
-                            col2data={wlratios}
-                            col4Title={"View More"}
-                            col4data={teamButtons}
+
                         />
                     </div>
                 </div>

@@ -62,12 +62,12 @@ const ShotTracker = ({ selectedPlayer }) => {
             {showMarkers && selectedPlayer && playerShots[selectedPlayer]?.map((shot, index) => (
                 <div
                     key={`${selectedPlayer}-${index}`}
-                    className={`absolute ${shot.status ? 'bg-green-600' : 'bg-red-500'} text-white rounded-full w-6 h-6 flex items-center text-center justify-center cursor-no-drop`}
+                    className={`absolute ${shot.status ? 'text-green-600 font-extrabold text-2xl' : 'text-red-500 font-extrabold text-2xl'}  rounded-full w-6 h-6 flex items-center text-center justify-center cursor-no-drop text-2xl`}
                     style={{ top: `${shot.y}%`, left: `${shot.x}%` }}
                     onClick={() => handleShotClick(index)} // Handle removing the shot
                     title={`Player: ${selectedPlayer}`}
                 >
-                    {shot.status ? 'X' : 'O'}
+                    {shot.status ? 'O' : 'X'}
                 </div>
             ))
             }
@@ -75,12 +75,12 @@ const ShotTracker = ({ selectedPlayer }) => {
                 shots.map((shot, index) => (
                     <div
                         key={`${player}-${index}`}
-                        className={`absolute ${shot.status ? 'bg-green-600' : 'bg-red-500'} text-white rounded-full w-6 h-6 flex items-center text-center justify-center cursor-no-drop`}
+                        className={`absolute ${shot.status ? 'text-green-600 font-extrabold text-2xl' : 'text-red-500 font-extrabold text-2xl'}  rounded-full w-6 h-6 flex items-center text-center justify-center cursor-no-drop text-2xl`}
                         style={{ top: `${shot.y}%`, left: `${shot.x}%` }}
                         onClick={() => handleShotClick(index)}
                         title={`Player: ${player}`}
                     >
-                        {shot.status ? 'X' : 'O'}
+                        {shot.status ? 'O' : 'X'}
                     </div>
                 ))
             ))}
@@ -88,7 +88,7 @@ const ShotTracker = ({ selectedPlayer }) => {
         <div className="mt-2 flex flex-row">
             <button onClick={clearShots} className={"py-2 px-4 bg-black text-white rounded-lg hover:bg-gray-600 "}>Clear All Shots</button>
             <button onClick={handleShotBool} className={hitOrmiss ? " py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-200" : "py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-200"}>{
-                hitOrmiss ? "HIT !" : "MISS"}</button>
+                hitOrmiss ? "MAKE" : "MISS!"}</button>
         </div>
     </>
     );
