@@ -5,8 +5,8 @@ interface IPage {
 }
 
 export default function SeasonPage({ params }: IPage) {
-  console.log('params in leagueid/seasonid/page:', params);
+  // console.log('params in leagueid/seasonid/page:', params);
   return (
-      <SeasonLayout params={params} />
+    <SeasonLayout params={params} />
   );
 }

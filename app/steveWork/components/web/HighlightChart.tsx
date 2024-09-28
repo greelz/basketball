@@ -48,36 +48,65 @@ export default function HeaderContainer({ variant, titleContent, col1Title, col1
                     <p className="m-0 p-2">{titleContent}</p>
                 </div>) : (<></>)}
             <div className="bg-gray-200 w-auto rounded-b-md">
-                <div className="relative overflow-hidden ">
-                    <table className="table-fixed w-full text-left ">
+                <div className="w-full">
+                    <table className="table-fixed w-full text-left">
                         <thead className="bggrayd-nohov">
                             <tr>
-                                {col1Title ? <th className="py-2 border text-center  p-4" >{col1Title}</th> : <></>}
-                                {col2Title ? <th className="py-2 border text-center  p-4" >{col2Title}</th> : <></>}
-                                {col3Title ? <th className="py-2 border text-center  p-4" >{col3Title}</th> : <></>}
-                                {col4Title ? <th className="py-2 border text-center  p-4" >{col4Title}</th> : <></>}
+                                {col1Title && col1data ? <th className="py-2 border text-center p-4">{col1Title}</th> : null}
+                                {col2Title && col2data ? <th className="py-2 border text-center p-4">{col2Title}</th> : null}
+                                {col3Title && col3data ? <th className="py-2 border text-center p-4">{col3Title}</th> : null}
+                                {col4Title && col4data ? <th className="py-2 border text-center p-4">{col4Title}</th> : null}
                             </tr>
                         </thead>
-                        <tbody className="bg-white text-gray-900 max-h-[300px] overflow-auto">
-                            {rows.map((m, idx) => (
-                                <tr key={`row${idx}`}
-                                    className={!variant ? (`py-0 ${idx % 2 === 0 ? 'bgwhitehoverblue' : 'bggrayhoverblue'}`) : (`py-0 ${idx % 2 === 0 ? 'bgwhitehoverorange' : 'bggrayhoverorange'}`)} >
-                                    {m.col1 ? <td key={`${m.col1}${idx}`} className="py-0 border-t border-b h-12 p-4" >{m.col1}</td> : <></>}
-                                    {m.col2 ? <td key={`${m.col2}${idx}`} className="py-0 border-t border-b text-center h-12 p-4" >{m.col2}</td> : <></>}
-                                    {m.col3 ? <td key={`${m.col3}${idx}`} className="py-0 border-t border-b  h-12 p-4" >
-                                        {typeof m.col3 === 'number' ? (
-                                            <LEDTracker amount={m.col4} variant={3} />
-                                        ) : (m.col3)}
-                                    </td> : <></>}
-                                    {m.col4 ? <td key={`${m.col4}${idx}`} className="py-0 border-t border-b  h-12 p-4" >
-                                        {typeof m.col4 === 'number' ? (
-                                            <LEDTracker amount={m.col4} variant={3} />
-                                        ) : (m.col4)}
-                                    </td> : <></>}
-                                </tr>
-                            ))}
-                        </tbody>
                     </table>
+
+                    {/* Scrollable tbody wrapper */}
+                    <div className="max-h-[200px] overflow-y-auto rounded-b-md mb-10 pb-10">
+                        <table className="table-fixed w-full text-left rounded-b-md">
+                            <tbody className="bg-white text-gray-900 rounded-b-md ">
+                                {rows.map((m, idx) => (
+                                    <tr
+                                        key={`row${idx}`}
+                                        className={`${idx % 2 === 0
+                                            ? variant
+                                                ? 'bgwhitehoverorange'
+                                                : 'bgwhitehoverblue'
+                                            : variant
+                                                ? 'bggrayhoverorange'
+                                                : 'bggrayhoverblue'
+                                            }`}
+                                    >
+                                        {col1Title && col1data ? <td className="py-0 border-t border-b h-12 p-4">{m.col1}</td> : null}
+                                        {col2Title && col2data ? <td className="py-0 border-t border-b text-center h-12 p-4">{m.col2}</td> : null}
+                                        {col3Title && col3data ? (
+                                            <td className="py-0 border-t border-b h-12 p-4">
+                                                {typeof m.col3 === 'number' && m.col4 ? (
+                                                    <div className={m.col3 > m.col4 ? "text-green-200" : m.col3 < m.col4 ? "text-red-200" : "text-white"}>
+                                                        <LEDTracker key={`m.col3${idx}${m}`} amount={m.col3} variant={3} />
+                                                    </div>
+                                                ) : (
+                                                    m.col3
+                                                )}
+                                            </td>
+                                        ) : (
+                                            null)}
+                                        {col4Title && col4data ? (
+                                            <td className="py-0 border-t border-b h-12 p-4">
+                                                {typeof m.col4 === 'number' && m.col3 ? (
+                                                    <div className={m.col3 > m.col4 ? "text-green-200" : m.col3 < m.col4 ? "text-red-200" : "text-white"}>
+                                                        <LEDTracker key={`m.col4${idx}${m}`} amount={m.col4} variant={3} />
+                                                    </div>
+                                                ) : (
+                                                    m.col4
+                                                )}
+                                            </td>
+                                        ) : (
+                                            null)}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </>

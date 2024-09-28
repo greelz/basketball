@@ -10,7 +10,7 @@ export default function LEDStatTracker({ player, stat, variant }) {
     const dummy2 = stat ? (stat ?? 0) : 0;
 
     let places = 8;
-    if (totalStats >= 10) places = 88;
+    if (totalStats <= 10) places = 88;
     if (totalStats >= 100) places = 888;
     if (isNaN(totalStats)) totalStats = 0;
 
@@ -28,7 +28,7 @@ export default function LEDStatTracker({ player, stat, variant }) {
         borderBox = "relative flex items-center justify-center border-black border-8 bggrayd-nohov"
     }
     if (variant === 2) {
-        sizeInd = `${shotfont.className} z-10 text-white text-7xl`;
+        sizeInd = `${shotfont.className} z-10 text-inherit text-7xl`;
         sizeBase = `${shotfont.className} text-gray-900 absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center z-0 text-7xl`;
         statSize = `${shotfont.className} text-md text-center bggraygrad no-wrap whitespace-nowrap overflow-hidden`;
         statTrackerSize = `bggrayd-nohov w-full max-w-[75px] h-full max-h-[75px] m-2 flex-none `;

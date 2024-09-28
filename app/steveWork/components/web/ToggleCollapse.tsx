@@ -37,9 +37,9 @@ export default function ToggleCollapse({ title, content, variant }: Props) {
 
             {/* Accordion Content - Expanded */}
             <div
-                className={`rounded-b-md shadow-sm bg-gray-100 overflow-hidden transition-max-height duration-300 ease-in-out ${isOpen ? 'max-h-screen' : 'max-h-0'}`}
+                className={` bgdgray rounded-b-md shadow-sm  overflow-hidden transition-max-height duration-300 ease-in-out ${isOpen ? 'max-h-screen' : 'max-h-0'}`}
             >
-                <div className="bg-gray-100 max-h-[calc(100vh-4rem)] min-h-[calc(100vh-50)] w-fit rounded-b-md">
+                <div className=" bgdgray max-h-[calc(100vh-4rem)] min-h-[calc(100vh-50)] w-fit rounded-b-md px-8">
                     {content}
                 </div>
             </div>

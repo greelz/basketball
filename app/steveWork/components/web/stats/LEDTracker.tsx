@@ -63,15 +63,15 @@ export default function LEDTracker({ amount = 0, variant }: Props) { // Default 
     let sizeBase = "";
 
     if (variant === 1) {
-        sizeInd = `${shotfont.className} z-10 text-white text-9xl`;
+        sizeInd = `${shotfont.className} z-10 text-inherit text-9xl`;
         sizeBase = `${shotfont.className} text-gray-900 absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center z-0 text-9xl`;
     }
     if (variant === 2) {
-        sizeInd = `${shotfont.className} z-10 text-white text-5xl`;
+        sizeInd = `${shotfont.className} z-10 text-inherit text-5xl`;
         sizeBase = `${shotfont.className} text-gray-900 absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center z-0 text-5xl`;
     }
     if (variant === 3) {
-        sizeInd = `${shotfont.className} z-10 text-white text-2xl`;
+        sizeInd = `${shotfont.className} z-10 text-inherit text-2xl`;
         sizeBase = `${shotfont.className} text-gray-900 absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center z-0 text-2xl`;
     }
 

@@ -11,12 +11,7 @@ interface IPage {
 }
 
 export default async function TeamsPage({ params }: IPage) {
-  const { leagueId, seasonId, teamId } = params;
-  const players = await getPlayersFromTeam(
-    leagueId,
-    seasonId,
-    teamId
-  );
+
   return (
     <TeamsLayout params={params} />
   );
