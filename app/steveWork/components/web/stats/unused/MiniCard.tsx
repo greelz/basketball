@@ -1,6 +1,6 @@
 // components/MiniCard.js
 import React from 'react';
-import StatsIcon from '../Icons/StatsIcon';
+import StatsIcon from '../../Icons/StatsIcon';
 
 const MiniCard = ({ team, stat, variant }) => {
     const players = Object.entries(team);

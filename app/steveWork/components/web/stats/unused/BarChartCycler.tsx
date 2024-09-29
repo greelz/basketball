@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import BarChart from "./BarChart";
+import BarChart from "./unused/BarChart";
 
 
 interface Props {

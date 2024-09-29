@@ -19,7 +19,7 @@ html {
 }
 
 form {
-  @apply w-full max-w-md bg-white rounded px-8 pt-2 pb-2 m-4;
+  @apply w-full bg-white rounded px-8 pt-2 pb-2 m-4;
 }
 
 form button[type="submit"] {
@@ -615,6 +615,16 @@ button {
   @apply bg-gradient-to-b from-orange-700 to-orange-900 text-white
 }
 
+.bgorangegradhov {
+  @apply bg-gradient-to-b from-orange-700 to-orange-900 text-white
+}
+
+.bgorangegradhov:hover {
+  background: rgb(32, 44, 56);
+  background: linear-gradient(0deg, rgba(32, 44, 56, 1) 0%, rgba(6, 8, 10, 1) 65%);
+  color: rgb(245, 124, 0);
+}
+
 .bgbblue:hover {
   background: #4CABDB;
   background-color: #4CABDB;
@@ -641,7 +651,7 @@ button {
 .bggraygrad:hover {
   background: rgb(32, 44, 56);
   background: linear-gradient(0deg, rgba(32, 44, 56, 1) 0%, rgba(6, 8, 10, 1) 65%);
-  color: #fff;
+  color: rgb(245, 124, 0);
 }
 
 .bgdgray {
@@ -654,6 +664,22 @@ button {
 .bggray {
   background: #405A6B;
   color: #fff;
+}
+
+.bgtranshover1 {
+  @apply bg-transparent
+}
+
+.bgtranshover1:hover {
+  @apply bg-blue-500/10
+}
+
+.bgtranshover2 {
+  @apply bg-gray-100/10
+}
+
+.bgtranshover2:hover {
+  @apply bg-blue-500/10
 }
 
 .bgwhitehover {

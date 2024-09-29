@@ -5,8 +5,8 @@ import ToggleCollapse from "../../components/web/ToggleCollapse";
 import ShotTrackerPlayerList from "../../components/web/stats/ShotTrackerPlayerList";
 import PlayerCard from "../../components/web/PlayerCard";
 import Clock from "./ClockNew";
-import BarChart from "../../components/web/stats/BarChart";
-import MiniCard from "../../components/web/stats/MiniCard";
+import BarChart from "../../components/web/stats/unused/BarChart";
+import MiniCard from "../../components/web/stats/unused/MiniCard";
 import PlayerStatBlock from "../../components/web/stats/PlayerStatBlock";
 import LEDTracker from "../../components/web/stats/LEDTracker";
 

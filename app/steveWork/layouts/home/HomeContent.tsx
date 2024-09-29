@@ -9,6 +9,12 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import LEDTracker from "../../components/web/stats/LEDTracker";
 import TextTicker from "../../components/web/TextTicker";
+import Tabber from "../../components/web/Tabber";
+
+import Form from "../../components/web/Form";
+import WebSectionList from "../../components/web/WebSectionList";
+import WebSectionList2 from "../../components/web/WebSectionList2";
+import Card from "../../components/web/Card";
 const statfont = localFont({ src: "../../../../public/fonts/dsdigi.ttf" });
 
 // Dummy Data
@@ -83,52 +89,97 @@ interface ILinkListProps {
     slug: string;
 }
 export default function HomeContent({ data, slug }: ILinkListProps) {
-    const [isHovered, setisHovered] = useState(false);
-    // console.log('Data in HomeContent:', data);
+    const tabPanel = [
+        { title: 'Top Teams', content: <Card><WebSectionList /></Card> },
+        { title: 'League History', content: <Card><WebSectionList2 /></Card> },
+        { title: 'Registration', content: <Form /> },
+    ];
+
+    const leagueUrl = "placeholder";
+    const leagueName = "placeholder";
+    const amount = 3;
     return (
-        <div className="flex h-screen">
-            {/* Left Column */}
-            <div className="row-span-5">
-                <AdminSidebar />
-            </div>
-            {/* Center Column */}
-            <div className="flex-1 flex flex-col justify-start items-center border-white border-r-8 m">
-                <img src="/bballSVG.svg" alt="Basketball" className="max-w-sm align-center animate-bobbing" />
-                <div className="border-2 border-transparent bggrayd-nohov w-full whitespace-nowrap">
-                    <div className="flex flex-row flex-1 items-center">
-                        <TextTicker content={"Welcome to Slab League"} url={`${slug}/${data[0].id}`} />
+        <>
+            <div className="flex flex-col min-h-screen max-h-full">
+                <div className="flex-1 flex flex-col h-full">
+                    <div className="flex h-full overflow-hidden homeRadial ">
+                        {/* Left Column */}
+                        <div className="row-span-5">
+                            <AdminSidebar />
+                        </div>
+
+                        {/* Center Column */}
+                        <div className="flex flex-col flex-1 justify-start items-center overflow-y-auto pt-2">
+                            <img src="/bballSVG.svg" alt="Basketball" className="h-[150px] align-center animate-bobbing" />
+                            <a className={`${statfont.className} text-6xl border-2 border-transparent text-center  w-full whitespace-nowrap hover:border-white cursor-pointer`}>
+                                Welcome to Slab League!
+                            </a>
+
+                            <div className="border-2 border-transparent bggrayd-nohov h-12 whitespace-nowrap mt-8 w-full">
+                                <div className="flex flex-row flex-1 items-center">
+                                    <TextTicker content={"Active Leagues"} variant={1} />
+                                </div>
+                            </div>
+                            <div className="flex flex-row justify-evenly items-center max-h-[210px] w-full my-4">
+                                <div className="flex flex-col items-center">
+                                    <div className="flex grow-[5]">
+                                        <BigButton url={leagueUrl} content={"League 1"} />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col items-center">
+                                    <div className="flex grow-[5]">
+                                        <BigButton url={leagueUrl} content={"League 2"} />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col items-center">
+                                    <div className="flex grow-[5]">
+                                        <BigButton url={leagueUrl} content={"League 3"} />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 w-full">
+                                {/* Upcoming Games */}
+                                <div className="flex flex-col justify-start items-center w-full max-h-[250px] overflow-hidden">
+                                    <HighlightChart
+                                        titleContent={"Upcoming Events"}
+                                        col1Title={"Date"}
+                                        col2Title={"Event"}
+                                        col3Title={"Location"}
+                                        col1data={amount}
+                                        col2data={amount}
+                                        col3data={amount}
+                                        variant={1}
+                                    />
+                                </div>
+                                {/* Past Games */}
+                                <div className="flex flex-col justify-start items-center w-full max-h-[250px] overflow-hidden mb-4">
+                                    <HighlightChart
+                                        titleContent={"Upcoming Games"}
+                                        col1Title={"Date"}
+                                        col2Title={"Opponents"}
+                                        col3Title={"Team"}
+                                        col4Title={"Opps"}
+                                        col1data={amount}
+                                        col2data={amount}
+                                        col3data={amount}
+                                        col4data={amount}
+                                        variant={1}
+                                    />
+                                </div>
+                            </div>
+                            <a className={`${statfont.className} text-4xl border-2 border-transparent text-center bggrayd-nohov w-full whitespace-nowrap hover:border-white cursor-pointer`}>
+                                What's new in the slab?
+                            </a>
+                            <Tabber tabPanel={tabPanel} />
+                        </div>
+                        {/* Right Column */}
+                        <div className="row-span-5">
+                            <RightSidebar />
+                        </div>
                     </div>
                 </div>
-                <HeaderContainer />
-                <div className="grid grid-cols-2 grid-rows-1 w-full h-full mt-5 overflow-y-auto gap-2 ">
-                    <div className="flex flex-1 flex-col justify-start align-center mx-4">
-                        <HighlightChart
-                            titleContent={'Top Teams'}
-                            col1Title={'Teams'}
-                            col1data={col1a}
-                            col2Title={"W/L"}
-                            col2data={col1b}
-                            col3Title={'MVP'}
-                            col3data={col1c}
-                        />
-                    </div>
-                    <div className="flex flex-1 flex-col justify-start align-center mx-4">
-                        <HighlightChart
-                            titleContent={'Top Players'}
-                            col1Title={'Player'}
-                            col1data={col2a}
-                            col2Title={"Stat"}
-                            col2data={col2b}
-                            col3Title={'Score'}
-                            col3data={col2c}
-                        />
-                    </div>
-                </div>
             </div>
-            {/* Right Column */}
-            <div className="row-span-5">
-                <RightSidebar />
-            </div>
-        </div>
-    );
+        </>
+
+    )
 }

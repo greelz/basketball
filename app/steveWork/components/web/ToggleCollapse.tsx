@@ -1,4 +1,5 @@
 "use client"
+import { ChevronDownIcon } from '@heroicons/react/16/solid';
 import { useEffect, useState } from 'react';
 
 interface Props {
@@ -22,7 +23,7 @@ export default function ToggleCollapse({ title, content, variant }: Props) {
     if (!variant) { barColor = "w-full text-left p-4 rounded-md bggraygrad text-white font-medium flex justify-between items-center" }
 
     return (
-        <div className="rounded-t-md shadow-sm w-fit cursor-pointer">
+        <div className="rounded-t-md shadow-sm w-fit cursor-pointer w-full">
             {/* Accordion Header */}
             <div
                 className={barColor}
@@ -31,7 +32,7 @@ export default function ToggleCollapse({ title, content, variant }: Props) {
                 {title}
                 {/* Icon for expand/collapse */}
                 <span className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`}>
-                    ▼
+                    <ChevronDownIcon className={`w-5 h-5 ml-2 -mr-1 text-white `} />
                 </span>
             </div>
 

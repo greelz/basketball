@@ -242,7 +242,6 @@ export default async function TeamsContent({ params }: IPage) {
                                     <p className="text-center font-bold">Games Played</p>
                                 </div>
                             </div>
-
                             <div className="grid grid-cols-2 gap-4 w-full">
                                 {/* Upcoming Games */}
                                 <div className="flex flex-col justify-start items-center w-full max-h-[250px] overflow-hidden">
@@ -264,7 +263,7 @@ export default async function TeamsContent({ params }: IPage) {
                                         col1Title={"Date"}
                                         col2Title={"Opponents"}
                                         col3Title={"Team"}
-                                        col4Title={ }
+                                        col4Title={"Opps"}
                                         col1data={completedGameDates}
                                         col2data={previousOpponents}
                                         col3data={teamScore}
