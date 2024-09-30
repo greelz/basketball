@@ -12,6 +12,7 @@ import DropdownSelector from "./DropdownSelector";
 import BigButton from "../../components/web/BigButton";
 import ToggleCollapse from "../../components/web/ToggleCollapse";
 import AdminPanelForm from "./AdminPanelForm";
+import UploadExport from "./UploadExport";
 const statfont = localFont({ src: "../../../../public/fonts/dsdigi.ttf" });
 
 
@@ -40,12 +41,11 @@ const tabPanel = [
             )
     },
     {
-        title: 'Players',
+        title: 'Bulk Upload / Export',
         content:
-            (<div className="grid pb-10 gap-4 m-5 grid-flow-row  rounded-lg">
-                <div className="flex flex-1 flex-col justify-center items-center">
-                </div>
-            </div>)
+            (
+                <UploadExport />
+            )
     },
 
 ];

@@ -17,6 +17,15 @@ import ToggleCollapse from "../../components/web/ToggleCollapse";
 import TextTicker from "../../components/web/TextTicker";
 import RightSidebar from "@/app/steveWork/components/admin/RightSidebar";
 import LEDTracker from "../../components/web/stats/LEDTracker";
+import Card from "../../components/web/Card";
+import WebSectionList from "../../components/web/WebSectionList";
+import WebSectionList2 from "../../components/web/WebSectionList2";
+import TournamentBracket from "../../components/web/stats/TournamentBracket";
+import Form from "../../components/web/Form";
+import Tabber from "../../components/web/Tabber";
+import LeaderboardLIVE from "../../components/web/LeaderboardLIVE";
+import MatchubBoardLarge from "../../components/web/MatchupBoardLarge";
+import MatchupRowMini from "../../components/web/MatchupRowMini";
 
 interface IPage {
     params: { leagueId: string; seasonId: string };
@@ -34,9 +43,12 @@ const sortTeamsByWins = (teams) => {
 };
 
 export default async function SeasonContent({ params, games, gameSlug, gameDates, teams, teamSlug }: IPage & Props) {
+    const seasons = await getSeasons(params.leagueId);
+    const seasonName = seasons.filter(s => s.id === params.seasonId).map((s) => s.name);
     // Massive Database Query Aggregator
 
-    const leaderboard = sortTeamsByWins(teams);
+    const leaderboard = await sortTeamsByWins(teams);
+    console.log(`leaderboard in leaderboard leaderboard ****************************************: ${JSON.stringify(leaderboard, null, 2)}`);
 
 
     const teamNames = teams.map((t) => t.name);
@@ -52,11 +64,35 @@ export default async function SeasonContent({ params, games, gameSlug, gameDates
         return <BigButton key={`teamButton ${idx}`} url={url} content={`View Team`} />
     });
     const gameTime = gameDates.map((t) => t.time);
-    const gameDate = gameDates.map((d) => d.date);
+    const gameDateDates = gameDates.map((d) => d.date);
     // console.log(`games in SEASON CONTENT ****************************************: ${JSON.stringify(games, null, 2)}`);
     console.log(`teams: ${JSON.stringify(teams, null, 2)}`);
     // console.log(`params SeasonContent: ${params}`);
     // console.log(`matchupURLs: ${matchupURLs}`);
+
+
+    const tabPanel = [
+        { title: 'Teams', content: <Card><LeaderboardLIVE teamSlug={teamSlug} leaderboard={await leaderboard} /></Card> },
+        {
+            title: 'Matchups', content:
+                <Card>
+                    <div className="w-full mx-4">
+                        <div className="grid grid-flow-col bgbluegrad grid-cols-2 w-full">
+                            <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Date</div>
+                            <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Matchup</div>
+                        </div>
+                        <div className="w-full max-h-[450px] overflow-y-auto">
+                            {games.map((g, idx) => (
+                                <a key={`matchup.next.${idx}`} href={new Date(gameDateDates[idx]) < new Date() ? `/steveWork/hist/${g.id}` : `/steveWork/live/${g.id}`} className={new Date(gameDateDates[idx]) < new Date() ? "text-red-400" : ""}>  <MatchupRowMini date={gameDateDates[idx]} opponent={g.name} /></a>
+                            ))}
+                        </div>
+                    </div>
+                </Card>
+        },
+        // { title: 'Standings', content: <Card><TournamentBracket /></Card> },
+        { title: 'Login/Register', content: <Form /> },
+    ];
+
 
     return (
         <div className="flex h-screen">
@@ -77,46 +113,12 @@ export default async function SeasonContent({ params, games, gameSlug, gameDates
                 </div>
                 <div className="border-2 border-transparent bggrayd-nohov w-full whitespace-nowrap hover:border-white cursor-pointer">
                     <div className="flex flex-row flex-1 items-center">
-                        <TextTicker content={"Lots of Games.. lots of choices.."} />
+                        <TextTicker content={`Welcome to the ${seasonName}`} />
                     </div>
                 </div>
+                <Tabber tabPanel={tabPanel} />
 
-                <div className="grid grid-cols-2 gap-4  ">
-                    {/* Upcoming Games */}
-                    <div className="flex flex-col justify-start items-center w-[600px]  overflow-hidden rounded-md">
-                        <HighlightChart
-                            titleContent={'Leaderboards'}
-                            col1Title={'Standings'}
-                            col1data={leaderboard.map((t, v) => (
-                                <div className={`${t[v] === 0 ? 'text-yellow-200 !important' : t[v] === 1 ? 'text-gray-200 !important' : t[v] === 2 ? 'text-orange-200 ' : 'text-white'}`}><LEDTracker variant={3} amount={v + 1} /></div>
-                            ))}
-                            col2Title={'Team'}
-                            col2data={leaderboard.map((t) => (
-                                (<div key={t.id} className="flex flex-col justify-center align-center mx-6">
-                                    <BigButton url={`${teamSlug}/${t.id}`} content={t.name} />
-                                </div>)
-                            ))}
-                            col3Title={"Record"}
-                            col3data={wlratios}
-
-                            variant={1}
-                        />
-                    </div>
-                    <div className="flex flex-col justify-start items-center w-[600px]  overflow-hidden rounded-md">
-                        <HighlightChart
-                            titleContent={'Upcoming Games'}
-                            col1Title={'Date'}
-                            col1data={gameDate}
-                            col2Title={"Time"}
-                            col2data={gameTime}
-                            col3Title={"Matchups"}
-                            col3data={matchups}
-                            col4Title={"View Match"}
-                            col4data={matchButtons}
-
-                        />
-                    </div>
-                </div>
+                ]
             </div>
             <div className="row-span-5">
                 <RightSidebar />

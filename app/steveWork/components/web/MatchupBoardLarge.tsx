@@ -8,7 +8,7 @@ const statfont = localFont({ src: "../../../../public/fonts/dsdigi.ttf" });
 
 
 
-export default function WebSectionList2() {
+export default function MatchubBoardLarge(dates, games) {
     return (
         <>
             <div className="grid grid-flow-col bgbluegrad grid-cols-10">
@@ -19,15 +19,10 @@ export default function WebSectionList2() {
 
 
             </div>
-            <a href="/" className=""><MatchupRow date={"09/06"} victor={"Frozen Tundra"} loser={"Ironfists"} victorScore={216} loserScore={88} /> </a>
-            <a href="/" className=""><MatchupRow date={"09/08"} victor={"Firebolts"} loser={"Pack Mentality"} victorScore={84} loserScore={62} /></a>
-            <a href="/" className=""><MatchupRow date={"09/10"} victor={"AC130s"} loser={"Frozen Tundra"} victorScore={317} loserScore={211} /></a>
-            <a href="/" className=""><MatchupRow date={"09/12"} victor={"Banana Boat Boys"} loser={"Firebolts"} victorScore={112} loserScore={43} /></a>
-            <a href="/" className=""><MatchupRow date={"09/12"} victor={"Pack Mentality"} loser={"Ironfists"} victorScore={89} loserScore={12} /></a>
+            {games.map((g, idx) => (
+                <a href="/" className=""><MatchupRow date={dates.idx} victor={g.victor} loser={g.loser} victorScore={216} loserScore={88} /> </a>
 
-
-
+            ))}
         </>
-
     )
 }

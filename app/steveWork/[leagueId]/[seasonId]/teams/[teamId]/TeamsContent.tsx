@@ -12,6 +12,7 @@ import PlayerStatBlock from "@/app/steveWork/components/web/stats/PlayerStatBloc
 import TextTicker from "@/app/steveWork/components/web/TextTicker";
 import Tabber from "@/app/steveWork/components/web/Tabber";
 import PlayerSeasonAverageBlock from "@/app/steveWork/components/web/stats/PlayerSeasonAverageBlock";
+import MatchupRowMini from "@/app/steveWork/components/web/MatchupRowMini";
 const statfont = localFont({ src: "../../../../../../public/fonts/dsdigi.ttf" });
 
 //dummydata
@@ -107,7 +108,11 @@ export default async function TeamsContent({ params }: IPage) {
 
     //set date and time of upcominggames to strings
     const upcomingGameDateData = upcomingGameData.map((game: Game) => {
-        const date = game.date.toDate().toLocaleDateString();
+        const dateObj = game.date.toDate();
+        const date = dateObj.toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit'
+        });
         const time = game.date.toDate().toLocaleTimeString();
         return { date: date, time: time };
     });
@@ -120,7 +125,11 @@ export default async function TeamsContent({ params }: IPage) {
 
     //set date and time of completedGames to strings
     const completedGameDateData = completedGamesData.map((game: Game) => {
-        const date = game.date.toDate().toLocaleDateString();
+        const dateObj = game.date.toDate();
+        const date = dateObj.toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit'
+        });
         const time = game.date.toDate().toLocaleTimeString();
         return { date: date, time: time };
     });
@@ -160,7 +169,10 @@ export default async function TeamsContent({ params }: IPage) {
     };
     //sum up all player stats of every game of the season to a seasonPlayerValue
     const seasonPlayerValues = combinePlayerStats(seasonGameStatArray);
-    // console.log(`seasonPlayerValues: ${JSON.stringify(seasonPlayerValues, null, 2)}`);
+    console.log(`TeamNAME**********************************************************`);
+    console.log(`${teamName}`);
+    console.log(`${teamId}`);
+    console.log(`seasonPlayerValues: ${JSON.stringify(seasonPlayerValues, null, 2)}`);
 
     //map variables for charting
     const teamScore = completedGamesData.map((g) => {
@@ -242,34 +254,31 @@ export default async function TeamsContent({ params }: IPage) {
                                     <p className="text-center font-bold">Games Played</p>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4 w-full">
+                            <div className="flex flex-row w-full items-start justify-around mb-6">
                                 {/* Upcoming Games */}
-                                <div className="flex flex-col justify-start items-center w-full max-h-[250px] overflow-hidden">
-                                    <HighlightChart
-                                        titleContent={"Upcoming Games"}
-                                        col1Title={"Date"}
-                                        col2Title={"Opponents"}
-                                        col3Title={"Time"}
-                                        col1data={upcomingGameDates}
-                                        col2data={upcomingOpponents}
-                                        col3data={upcomingGameTimes}
-                                        variant={1}
-                                    />
+                                <div className="w-full mx-4">
+                                    <div className="text-center bgorangegrad py-2 col-span-2  lg:col-span-1">Upcoming games</div>
+                                    <div className="grid grid-flow-col bgbluegrad grid-cols-2 w-full">
+                                        <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Date</div>
+                                        <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Opponent</div>
+                                    </div>
+                                    <div className="max-h-[250px] w-full">
+                                        {upcomingOpponents.map((o, idx) => (
+                                            <a key={`matchup.next.${idx}`} href={`/steveWork/live/${unfinishedGameIds[idx]}`}>  <MatchupRowMini date={upcomingGameDates[idx]} opponent={o} /></a>
+                                        ))}
+                                    </div>
                                 </div>
                                 {/* Past Games */}
-                                <div className="flex flex-col justify-start items-center w-full max-h-[250px] overflow-hidden mb-4">
-                                    <HighlightChart
-                                        titleContent={"Past Games"}
-                                        col1Title={"Date"}
-                                        col2Title={"Opponents"}
-                                        col3Title={"Team"}
-                                        col4Title={"Opps"}
-                                        col1data={completedGameDates}
-                                        col2data={previousOpponents}
-                                        col3data={teamScore}
-                                        col4data={opponentScore}
-                                        variant={1}
-                                    />
+                                <div className="w-full mx-3">
+                                    <div className="text-center bgorangegrad py-2 col-span-1  lg:col-span-1">Past games</div>
+                                    <div className="grid grid-flow-col bgbluegrad grid-cols-4">
+                                        <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Date</div>
+                                        <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Opponent</div>
+                                        <div className="text-center  col-span-1 border-white border-2 lg:col-span-2">Score</div>
+                                    </div>
+                                    {previousOpponents.map((o, idx) => (
+                                        <a href={`/steveWork/hist/${finishedGameIds[idx]}`} key={`matchup.past.${idx}`}> <MatchupRowMini date={completedGameDates[idx]} opponent={o} teamScore={teamScore[idx]} opponentScore={opponentScore[idx]} /></a>
+                                    ))}
                                 </div>
                             </div>
                             <div className="border-2 border-transparent bggrayd-nohov w-full whitespace-nowrap">
@@ -285,7 +294,7 @@ export default async function TeamsContent({ params }: IPage) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     );
 }

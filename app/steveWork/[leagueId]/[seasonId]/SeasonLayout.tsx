@@ -89,6 +89,7 @@ export default async function SeasonLayout({ params }: IPage) {
 
     const teams = await getTeamsForSeason(leagueId, seasonId);
     const games = await getGamesForSeason(leagueId, seasonId);
+    console.log(`TEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMS *********: ${JSON.stringify(teams, null, 2)}`);
 
     // Format games with team names and timestamps
     games.forEach((game) => {
@@ -96,13 +97,18 @@ export default async function SeasonLayout({ params }: IPage) {
         const teamB = getTeamNameFromCachedTeams(game.team2, teams);
         // const timestamp = game.date.toDate().toLocaleString();
         game.name = `${teamA} vs ${teamB}${game.name ? ` [${game.name}]` : ""}`;
+
     });
 
     // Sort games by date
     games.sort((a, b) => a.date.toDate().getTime() - b.date.toDate().getTime());
     //Separate Date and Time of games to variable
     const gameDates = games.map((game) => {
-        const date = game.date.toDate().toLocaleDateString();
+        const dateObj = game.date.toDate();
+        const date = dateObj.toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit'
+        });
         const time = game.date.toDate().toLocaleTimeString();
         return { date: date, time: time };
     });
@@ -130,7 +136,6 @@ export default async function SeasonLayout({ params }: IPage) {
     // console.log(`allTeamsPlayerStatTotals **************: ${JSON.stringify(allTeamsPlayerStatTotals, null, 2)}`);
 
     // const completedGamesData = filterGamesbyIds(games, finishedGameIds);
-    // console.log(`games *********: ${JSON.stringify(games, null, 2)}`);
     // console.log(`teams **************: ${JSON.stringify(teams, null, 2)}`);
     // console.log(`teamIds *********: ${JSON.stringify(teamIds, null, 2)}`);
     // console.log(`teamNames **************: ${JSON.stringify(teamNames, null, 2)}`);

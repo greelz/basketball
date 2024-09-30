@@ -64,7 +64,7 @@ export interface PlayerStat {
   turnovers?: number;
 }
 
-export interface PlayerStats extends PlayerStat, Player {}
+export interface PlayerStats extends PlayerStat, Player { }
 
 export const PlayerStatsStringForButtons = [
   { id: "two_point_miss", name: "2-miss" },

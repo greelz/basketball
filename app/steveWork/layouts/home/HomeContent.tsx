@@ -1,4 +1,4 @@
-"use client";
+
 import localFont from "next/font/local";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import HeaderContainer from "../../components/web/HeaderContainer";
@@ -15,6 +15,8 @@ import Form from "../../components/web/Form";
 import WebSectionList from "../../components/web/WebSectionList";
 import WebSectionList2 from "../../components/web/WebSectionList2";
 import Card from "../../components/web/Card";
+import TournamentBracket from "../../components/web/stats/TournamentBracket";
+import { getSeasons } from "@/app/database";
 const statfont = localFont({ src: "../../../../public/fonts/dsdigi.ttf" });
 
 // Dummy Data
@@ -88,23 +90,29 @@ interface ILinkListProps {
     data: IIdAndName[];
     slug: string;
 }
-export default function HomeContent({ data, slug }: ILinkListProps) {
+
+
+export default async function HomeContent({ data, slug }: ILinkListProps) {
     const tabPanel = [
         { title: 'Top Teams', content: <Card><WebSectionList /></Card> },
         { title: 'League History', content: <Card><WebSectionList2 /></Card> },
-        { title: 'Registration', content: <Form /> },
+        { title: 'Standings', content: <Card><TournamentBracket /></Card> },
+        { title: 'Login/Register', content: <Form /> },
     ];
 
     const leagueUrl = "placeholder";
     const leagueName = "placeholder";
     const amount = 3;
+
+    const seasons = await getSeasons('PzZH38lp1R6wYs5Luf67');
+    console.log(seasons);
     return (
         <>
             <div className="flex flex-col min-h-screen max-h-full">
                 <div className="flex-1 flex flex-col h-full">
                     <div className="flex h-full overflow-hidden homeRadial ">
                         {/* Left Column */}
-                        <div className="row-span-5">
+                        <div className="row-span-5 ">
                             <AdminSidebar />
                         </div>
 
@@ -121,21 +129,13 @@ export default function HomeContent({ data, slug }: ILinkListProps) {
                                 </div>
                             </div>
                             <div className="flex flex-row justify-evenly items-center max-h-[210px] w-full my-4">
-                                <div className="flex flex-col items-center">
-                                    <div className="flex grow-[5]">
-                                        <BigButton url={leagueUrl} content={"League 1"} />
+                                {seasons.map((s, i) => (
+                                    <div key={`${s}${i}`} className="flex flex-col items-center">
+                                        <div className="flex grow-[5]">
+                                            <BigButton url={`/steveWork/PzZH38lp1R6wYs5Luf67/${s.id}/`} content={s.name} />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="flex flex-col items-center">
-                                    <div className="flex grow-[5]">
-                                        <BigButton url={leagueUrl} content={"League 2"} />
-                                    </div>
-                                </div>
-                                <div className="flex flex-col items-center">
-                                    <div className="flex grow-[5]">
-                                        <BigButton url={leagueUrl} content={"League 3"} />
-                                    </div>
-                                </div>
+                                ))}
                             </div>
                             <div className="grid grid-cols-2 gap-4 w-full">
                                 {/* Upcoming Games */}
@@ -173,7 +173,7 @@ export default function HomeContent({ data, slug }: ILinkListProps) {
                             <Tabber tabPanel={tabPanel} />
                         </div>
                         {/* Right Column */}
-                        <div className="row-span-5">
+                        <div className="row-span-5 hidden 2xl:contents">
                             <RightSidebar />
                         </div>
                     </div>

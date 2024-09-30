@@ -205,7 +205,7 @@ export default async function TestPage() {
 
             {/* Center Column */}
             <div className="flex flex-col flex-1 justify-start items-center overflow-y-auto">
-              <img src="/bballSVG.svg" alt="Basketball" className="h-[150px] align-center animate-bobbing pt-4" />
+              <img src="/bballSVG.svg" alt="Basketball" className="h-[150px] align-center animate-bobbing " />
               <div className="flex flex-row w-full items-center mb-8">
                 <a className={`${statfont.className} flex h-full items-center justify-around text-4xl border-2 border-transparent text-center bggrayd-nohov w-full whitespace-nowrap hover:border-white cursor-pointer`}>
                   Pack Animals

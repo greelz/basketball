@@ -7,7 +7,7 @@ interface LiveGameParams {
     params: { gameId: string };
 }
 
-export default function LiveGame({ params }: LiveGameParams) {
+export default async function LiveGame({ params }: LiveGameParams) {
 
     return (
         <div className='steveBox '>

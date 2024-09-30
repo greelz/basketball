@@ -50,20 +50,20 @@ export default function AdminSidebar({ }) {
                         </a>
                     </li>
                     <li>
-                        <a href="/" className="sidebarli hover:bg-gray-700 block py-2 px-4 rounded transition-colors">
+                        <a href="/steveWork/PzZH38lp1R6wYs5Luf67/" className="sidebarli hover:bg-gray-700 block py-2 px-4 rounded transition-colors">
                             <LeagueIcon size={5} mr={5} />Leagues
                         </a>
                     </li>
                     <li>
-                        <a href="/" className="sidebarli hover:bg-gray-700 block py-2 px-4 rounded transition-colors">
+                        <a href="/steveWork/PzZH38lp1R6wYs5Luf67/hSIVrUtOGh69EeTZRwat" className="sidebarli hover:bg-gray-700 block py-2 px-4 rounded transition-colors">
                             <TeamsIcon size={5} mr={5} />Teams
                         </a>
                     </li>
-                    <li>
+                    {/* <li>
                         <a href="/" className="sidebarli hover:bg-gray-700 block py-2 px-4 rounded transition-colors">
                             <PlayerIcon size={5} mr={5} />Players
                         </a>
-                    </li>
+                    </li> */}
                     <li>
                         <a href="/steveWork/live/nxIQxmZ53A6LAoPlWdTW" className="sidebarli hover:bg-gray-700 block py-2 px-4 rounded transition-colors">
                             <StatsIcon size={5} mr={5} />LiveGame
