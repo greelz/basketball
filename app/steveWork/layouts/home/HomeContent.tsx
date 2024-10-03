@@ -16,7 +16,10 @@ import WebSectionList from "../../components/web/WebSectionList";
 import WebSectionList2 from "../../components/web/WebSectionList2";
 import Card from "../../components/web/Card";
 import TournamentBracket from "../../components/web/stats/TournamentBracket";
-import { getSeasons } from "@/app/database";
+import { getAllPlayerStats, getSeasons, getSeasonSchedule } from "@/app/database";
+import next from "next";
+import { Team } from "@/app/types";
+import MatchupBoardLarge from "../../components/web/MatchupBoardLarge";
 const statfont = localFont({ src: "../../../../public/fonts/dsdigi.ttf" });
 
 // Dummy Data
@@ -93,12 +96,6 @@ interface ILinkListProps {
 
 
 export default async function HomeContent({ data, slug }: ILinkListProps) {
-    const tabPanel = [
-        { title: 'Top Teams', content: <Card><WebSectionList /></Card> },
-        { title: 'League History', content: <Card><WebSectionList2 /></Card> },
-        { title: 'Standings', content: <Card><TournamentBracket /></Card> },
-        { title: 'Login/Register', content: <Form /> },
-    ];
 
     const leagueUrl = "placeholder";
     const leagueName = "placeholder";
@@ -106,6 +103,40 @@ export default async function HomeContent({ data, slug }: ILinkListProps) {
 
     const seasons = await getSeasons('PzZH38lp1R6wYs5Luf67');
     console.log(seasons);
+    const games = await getSeasonSchedule("PzZH38lp1R6wYs5Luf67", "NQ7C9eCOxkV6NWwi73Gj");
+
+
+    games.forEach((game) => {
+        const team1 = game.team1ref.name;
+        const team2 = game.team2ref.name;
+        game.name = `${team1} vs ${team2}`;
+        const dateObj = game.date.toDate();
+        const formattedDate = dateObj.toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit'
+        });
+        game.newDate = formattedDate;
+        game.team2ref.name = game.team2ref.name;
+    });
+
+    games.sort((a, b) => a.date.toDate().getTime() - b.date.toDate().getTime());
+    console.log('schedule in HomeLayout:', games);
+    const gameDates = games.map((game) => {
+        const dateObj = game.date.toDate();
+        const date = dateObj.toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit'
+        });
+        return { date: date };
+    });
+
+    const tabPanel = [
+        { title: 'Top Teams', content: <Card><WebSectionList /></Card> },
+        { title: 'League History', content: <Card><MatchupBoardLarge games={games.filter((g) => !g.gameover)} dates={games.filter((g) => !g.gameover).map((g) => g.newDate || next)} /></Card> },
+        { title: 'Standings', content: <Card><TournamentBracket /></Card> },
+        { title: 'Login/Register', content: <Form /> },
+    ];
+
     return (
         <>
             <div className="flex flex-col min-h-screen max-h-full">
@@ -143,11 +174,11 @@ export default async function HomeContent({ data, slug }: ILinkListProps) {
                                     <HighlightChart
                                         titleContent={"Upcoming Events"}
                                         col1Title={"Date"}
-                                        col2Title={"Event"}
-                                        col3Title={"Location"}
-                                        col1data={amount}
-                                        col2data={amount}
-                                        col3data={amount}
+                                        col2Title={"Team"}
+                                        col3Title={"Team"}
+                                        col1data={games.filter((g) => !g.gameover).map((g) => g.newDate || next)}
+                                        col2data={games.filter((g) => !g.gameover).map((g) => g.team1ref.name || next)}
+                                        col3data={games.filter((g) => !g.gameover).map((g) => g.team2ref.name || next)}
                                         variant={1}
                                     />
                                 </div>
@@ -182,4 +213,8 @@ export default async function HomeContent({ data, slug }: ILinkListProps) {
         </>
 
     )
+}
+
+function getTeamNameFromCachedTeams(teamId: string, games: Team[]) {
+    return games.find((g) => t.team1 === teamId)?.name;
 }

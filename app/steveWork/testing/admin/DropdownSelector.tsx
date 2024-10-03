@@ -1,3 +1,4 @@
+"use client"
 import ChevronDownIcon from "@heroicons/react/24/outline/ChevronDownIcon";
 import React, { useState } from "react";
 
@@ -13,8 +14,12 @@ interface DropdownSelectorProps {
 }
 
 const DropdownSelector: React.FC<DropdownSelectorProps> = ({ options, onSelect, label }) => {
+    if (!options || options.length === 0) {
+        return <div>Loading...</div>; // loader
+    }
     const [isOpen, setIsOpen] = useState(false);
     const [selected, setSelected] = useState<string | null>(null);
+    const { label, value } = options;
 
     const handleSelect = (value: string) => {
         setSelected(value);
@@ -40,9 +45,9 @@ const DropdownSelector: React.FC<DropdownSelectorProps> = ({ options, onSelect, 
                     }`}
             >
                 <div className="py-2">
-                    {options.map((option) => (
+                    {options.map((option, idx) => (
                         <button
-                            key={option.value}
+                            key={`${option.value}.${idx}`}
                             onClick={() => handleSelect(option.value)}
                             className="block w-full text-left px-4 py-2 text-sm text-white bg-gray-800 hover:bg-gray-700 transition-all duration-200 ease-in-out  w-full h-full p-4 rounded-md cursor-pointer border border-black flex align-center justify-center items-center text-md"
                         >

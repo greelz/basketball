@@ -89,7 +89,6 @@ export default async function SeasonLayout({ params }: IPage) {
 
     const teams = await getTeamsForSeason(leagueId, seasonId);
     const games = await getGamesForSeason(leagueId, seasonId);
-    console.log(`TEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMSTEAMS *********: ${JSON.stringify(teams, null, 2)}`);
 
     // Format games with team names and timestamps
     games.forEach((game) => {

@@ -8,7 +8,7 @@ import TeamsIcon from "../../components/web/Icons/TeamsIcon";
 
 
 export default function AdminSidebar({ }) {
-    const [sidebarWidth, setSidebarWidth] = useState(250); // Initial width
+    const [sidebarWidth, setSidebarWidth] = useState(175); // Initial width
     const [isDragging, setIsDragging] = useState(false);
 
     const handleMouseDown = (e: React.MouseEvent) => {

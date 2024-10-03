@@ -654,6 +654,12 @@ button {
   color: rgb(245, 124, 0);
 }
 
+.bggraygradSelected {
+  background: rgb(32, 44, 56);
+  background: linear-gradient(0deg, rgba(32, 44, 56, 1) 0%, rgba(6, 8, 10, 1) 65%);
+  color: rgb(245, 124, 0);
+}
+
 .bgdgray {
   background: #202C38;
   color: #fff;

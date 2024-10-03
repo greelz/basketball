@@ -1,3 +1,4 @@
+"use client"
 import LeagueIcon from "./Icons/LeagueIcon";
 
 interface Props {

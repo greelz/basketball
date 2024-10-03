@@ -4,6 +4,7 @@ import HomeContent from './HomeContent';
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../config";
 import { League } from "../../../types";
+import { getAllPlayerStats, getSeasonSchedule } from '@/app/database';
 
 interface LeaguesPageProps {
   leagues: League[];
@@ -16,7 +17,7 @@ export default async function HomeLayout() {
   return (<>
     <div className="flex flex-col h-screen">
       <div className="flex-1 flex flex-col">
-        <HomeContent data={data} slug="/steveWork"/>
+        <HomeContent data={data} slug="/steveWork" />
       </div>
       <AdminFooter />
     </div >

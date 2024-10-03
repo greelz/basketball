@@ -8,7 +8,14 @@ const statfont = localFont({ src: "../../../../public/fonts/dsdigi.ttf" });
 
 
 
-export default function MatchubBoardLarge(dates, games) {
+export default function MatchubBoardLarge({ dates, games }) {
+    games.forEach((game) => {
+        game.victor = game.team1ref.name;
+        game.loser = game.team2ref.name;
+        game.victorScore = 100;
+        game.loserScore = 12;
+    });
+
     return (
         <>
             <div className="grid grid-flow-col bgbluegrad grid-cols-10">
@@ -20,7 +27,7 @@ export default function MatchubBoardLarge(dates, games) {
 
             </div>
             {games.map((g, idx) => (
-                <a href="/" className=""><MatchupRow date={dates.idx} victor={g.victor} loser={g.loser} victorScore={216} loserScore={88} /> </a>
+                <a key={`gamematchup${idx}`} href="/" className=""><MatchupRow date={dates.idx} victor={g.victor} loser={g.loser} victorScore={216} loserScore={88} /> </a>
 
             ))}
         </>
