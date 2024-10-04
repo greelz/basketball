@@ -7,9 +7,11 @@ import DropdownSelector from "./DropdownSelector";
 import AdminPanelForm from "./AdminPanelForm";
 import UploadExport from "./UploadExport";
 
-import { Game, Season, Team } from "@/app/types";
+import { Game, Player, PlayerStats, Season, Team } from "@/app/types";
 import { useEffect, useState } from "react";
 import { getGamesForSeason, getTeamsForSeason } from "@/app/database";
+import Card from "../../components/web/Card";
+import AdminPlayerForm from "./AdminPlayerForm";
 const statfont = localFont({ src: "../../../../public/fonts/dsdigi.ttf" });
 
 //BEGIN DUMMY DATA
@@ -87,61 +89,112 @@ export default function AdminPanel({
     }
     //BEGIN FUNCTIONS
     const [selectedTeam, setSelectedTeam] = useState({ id: "", name: "" });
-    const [teamsList, setTeamsList] = useState([]);
-    const [gamesList, setGamesList] = useState([]);
-    const [fullGamesList, setFullGamesList] = useState([]);
-    const [selectedLeague, setSelectedLeague] = useState("");
-    const [selectedGame, setSelectedGame] = useState();
-    const [selectedTeamofGame, setSelectedTeamofGame] = useState("");
+    const [teamsList, setTeamsList] = useState<Team[]>([]);
+    const [gamesList, setGamesList] = useState<Game[]>([]);
+    const [fullGamesList, setFullGamesList] = useState<Game[]>([]);
+    const [selectedSeason, setSelectedSeason] = useState("");
+    const [selectedGame, setSelectedGame] = useState<Game>();
+    const [selectedTeamofGame, setSelectedTeamofGame] = useState();
+    const [gameStatOptions, setGameStatOptions] = useState<{ ddlabel: string; ddvalue: string }[]
+    >([])
+    const [opponent, setOpponent] = useState();
+    const [selectedPlayer, setSelectedPlayer] = useState<PlayerStats>();
 
+    //On Season Selection, Get Teams / Games, Assign Team/Game names / Format Dates
     const handleSeasonSelect = async (seasonId: string) => {
-        const teams = await getTeamsForSeason(leagueId, seasonId)
-        const games = await getGamesForSeason(leagueId, seasonId)
+        const [teams, games] = await Promise.all([
+            getTeamsForSeason(leagueId, seasonId),
+            getGamesForSeason(leagueId, seasonId)
+        ]);
+        games.sort((a, b) => a.date.toDate().getTime() - b.date.toDate().getTime());
         games.forEach((game) => {
             const teamA = getTeamNameFromCachedTeams(game.team1, teams);
             const teamB = getTeamNameFromCachedTeams(game.team2, teams);
-            // const timestamp = game.date.toDate().toLocaleString();
-            game.name = `${teamA} vs ${teamB}${game.name ? ` [${game.name}]` : ""}`;
 
+            const dateObj = game.date.toDate();
+            const formattedDate = dateObj.toLocaleDateString('en-US', {
+                month: '2-digit',
+                day: '2-digit'
+            });
+            const formattedTime = dateObj.toLocaleTimeString();
+
+            game.date = { date: formattedDate, time: formattedTime };
+            game.name = `${formattedDate} ${teamA} vs ${teamB}${game.name ? ` [${game.name}]` : ""}`;
+            game.team1name = teamA;
+            game.team2name = teamB;
         });
 
+        setSelectedSeason(seasonId);
         setTeamsList(teams);
-        console.log(`teams: ${JSON.stringify(teams, null, 2)}`);
         setFullGamesList(games);
-        console.log(`games: ${JSON.stringify(games, null, 2)}`);
         setSelectedTeam({ id: "", name: "" }); // Reset selected team when a new season is chosen
         return games;
     }
-
+    // On Team Button Select / Filter seasonGames to selectedTeamGamees
     const handleTeamSelect = (teamId: string, teamName: string) => {
         setSelectedTeam({ id: teamId, name: teamName });
         // Fetch games based on the selected team
         const filteredGames = fullGamesList.filter((g) => teamId === g.team1 || teamId === g.team2);
         setGamesList(filteredGames);
     }
+    //On Game Select, Determine win/loss and opponent / populate teamDropdown for player Stats
     const handleGameSelect = (gameId: string) => {
-        setSelectedGame(gameId);
+        const activeGame: Game = gamesList.find(g => g.id === gameId)!
+        if (!activeGame) {
+            console.error("Game not found");
+            return;
+        }
+        if (activeGame.team1score && activeGame.team1score > activeGame.team2score) {
+            activeGame.victor = activeGame.team1name;
+            activeGame.loser = activeGame.team2name;
+            activeGame.victorScore = activeGame.team1score;
+            activeGame.loserScore = activeGame.team2score;
+        } else if (activeGame.team1score && activeGame.team1score < activeGame.team2score) {
+            activeGame.victor = activeGame.team2name;
+            activeGame.loser = activeGame.team1name;
+            activeGame.victorScore = activeGame.team2score;
+            activeGame.loserScore = activeGame.team1score;
+        }
+        if (activeGame.team1 !== selectedTeam.id) {
+            activeGame.opponent = activeGame.team1name;
+            activeGame.opponentScore = activeGame.team1score;
+            activeGame.selectedTeamScore = activeGame.team2score;
+        } else if (activeGame.team1 === selectedTeam.id) {
+            activeGame.opponent = activeGame.team2name;
+            activeGame.opponentScore = activeGame.team2score;
+            activeGame.selectedTeamScore = activeGame.team1score;
+        }
+        setSelectedGame(activeGame);
+        setGameStatOptions([
+            {
+                ddlabel: teamsList.find(t => t.id === activeGame.team1)?.name || activeGame.team1,
+                ddvalue: activeGame.team1
+            },
+            {
+                ddlabel: teamsList.find(t => t.id === activeGame.team2)?.name || activeGame.team2,
+                ddvalue: activeGame.team2
+            }
+        ]);
+        setOpponent(teamsList.find(t => t.id === activeGame.team1 && t.id !== selectedTeam.id || t.id === activeGame.team2 && t.id !== selectedTeam.id));
     }
-
+    //setSelected TeamofGame as Team Stats to Edit
     const handleTeamofGameSelect = (teamId: string) => {
         setSelectedTeamofGame(teamId);
     }
 
 
     const seasonOptions = seasons.map((s) => ({
-        label: s.name,
-        value: s.id,
+        ddlabel: s.name,
+        ddvalue: s.id,
     }));
     const teamOptions = teamsList.map((t) => { t.id, t.name });
 
+    //autoUpdate for debugging purposes
     useEffect(() => {
-        // console.log(`Updated setFullGamesList: ${JSON.stringify(fullGamesList, null, 2)}`);
-        console.log(`Updated gamesList: ${JSON.stringify(gamesList, null, 2)}`);
-        console.log(`Updated selectedTeam: ${JSON.stringify(selectedTeam, null, 2)}`);
-        console.log(`Updated seasonOptions: ${JSON.stringify(seasonOptions, null, 2)}`);
+
         console.log(`Updated selectedGame: ${JSON.stringify(selectedGame, null, 2)}`);
-        console.log(`Updated selectedTeamofGame: ${JSON.stringify(selectedTeamofGame, null, 2)}`);
-    }, [gamesList, selectedTeam, seasonOptions, selectedGame, selectedTeamofGame]);
+
+    }, [gamesList, selectedTeam, seasonOptions, selectedGame, selectedTeamofGame, gameStatOptions, selectedSeason]);
 
 
     //END FUNCTIONS
@@ -151,14 +204,21 @@ export default function AdminPanel({
             title: 'Games',
             content:
                 (
-                    <AdminPanelForm handleGameSelect={handleGameSelect} selectedTeam={selectedTeam} gamesList={gamesList} teamsList={teamsList} selectedGame={selectedGame} handleTeamofGameSelect={handleTeamofGameSelect} selectedTeamofGame={selectedTeamofGame} />
+                    <AdminPanelForm handleGameSelect={handleGameSelect} selectedTeam={selectedTeam} gamesList={gamesList} teamsList={teamsList} selectedGame={selectedGame} handleTeamofGameSelect={handleTeamofGameSelect} selectedTeamofGame={selectedTeamofGame} gameStatOptions={gameStatOptions} selectedSeason={selectedSeason} leagueId={leagueId} opponent={opponent} />
+                )
+        },
+        {
+            title: `Player Roster`,
+            content:
+                (
+                    <AdminPlayerForm handleGameSelect={handleGameSelect} selectedTeam={selectedTeam} gamesList={gamesList} teamsList={teamsList} selectedGame={selectedGame} handleTeamofGameSelect={handleTeamofGameSelect} selectedTeamofGame={selectedTeamofGame} gameStatOptions={gameStatOptions} selectedSeason={selectedSeason} leagueId={leagueId} opponent={opponent} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} />
                 )
         },
         {
             title: 'Bulk Upload / Export',
             content:
                 (
-                    <UploadExport />
+                    <Card><UploadExport /></Card>
                 )
         },
 
@@ -166,17 +226,17 @@ export default function AdminPanel({
     return (
         <>
             <>
-                <div className="flex flex-col min-h-screen max-h-full">
+                <div className="flex flex-col min-h-screen max-h-full overflow-y-auto homeRadial">
                     <div className="flex-1 flex flex-col h-full">
-                        <div className="flex h-full overflow-y-auto homeRadial ">
+                        <div className="flex flex-1  ">
                             {/* Left Column */}
-                            <div className="row-span-5">
+                            <div className="row-span-5 hidden 2xl:contents">
                                 <AdminPanelSidebar />
                             </div>
                             {/* Center Column */}
                             <div className="flex-1 p-6 bg-transparent bg-transparent">
                                 <h1 className="text-center w-full">Admin Panel</h1>
-                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                                     <div className="bggrayd-nohov p-6 rounded-lg text-white">
                                         <h3 className="text-lg font-semibold">Total Leagues</h3>
                                         <p className="mt-2 text-3xl">1</p>
@@ -196,22 +256,30 @@ export default function AdminPanel({
                                 </div>
                                 <div className="mt-10 p-4 bggrayd-nohov rounded">
                                     <div className="mx-4 pt-4">
-                                        <DropdownSelector label="Select League" options={seasonOptions} onSelect={handleSeasonSelect} />
-                                        <div className="my-4">
-                                            Teams:
-                                        </div>
-                                        {teamsList.length > 0 && (
-                                            <div className="grid grid-flow-row sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                                                {teamsList.map((t, idx) => (
-                                                    <div key={`teamButton${t.name}.${t.id}`} onClick={() => handleTeamSelect(t.id, t.name)} className="w-full">
-                                                        <div className={`${selectedTeam.id === t.id ? 'bggraygradSelected' : 'bggraygrad'} w-full h-full p-4 rounded-md cursor-pointer border border-black flex align-center justify-center items-center text-md`}>{t.name}</div>
-                                                    </div>
-                                                ))}
+                                        <DropdownSelector title="Select League" options={seasonOptions} onSelect={handleSeasonSelect} />
+
+                                        {!teamsList || teamsList.length === 0 && (
+                                            <div className="my-4">
+                                                ....
                                             </div>
                                         )}
-                                        <div className="w-full my-8">
-                                            <Tabber tabPanel={tabPanel} />
-                                        </div>
+                                        {teamsList.length > 0 && (
+                                            <>
+                                                <div className="my-4">
+                                                    Teams:
+                                                </div>
+                                                <div className="grid grid-flow-row grid-cols-2 truncate xl:grid-cols-4 gap-4">
+                                                    {teamsList.map((t, idx) => (
+                                                        <div key={`teamButton${t.name}.${t.id}`} onClick={() => handleTeamSelect(t.id, t.name)} className="w-full">
+                                                            <div className={`${selectedTeam.id === t.id ? 'bggraygradSelected' : 'bggraygrad'} w-full h-full p-4 rounded-md cursor-pointer border border-black flex align-center justify-center items-center text-md`}>{t.name}</div>
+                                                        </div>
+                                                    ))}
+                                                </div></>
+                                        )}
+                                        {selectedTeam && selectedTeam.id != "" && selectedTeam.name != "" && (
+                                            <div className="w-full my-8">
+                                                <Tabber tabPanel={tabPanel} />
+                                            </div>)}
                                     </div>
                                 </div>
 

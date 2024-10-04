@@ -36,6 +36,17 @@ export interface Game {
   team2score: number;
   date: Timestamp;
   gameover: 1 | undefined;
+  team1name?: string;
+  team2name?: string;
+  victor?: string;
+  loser?: string;
+  victorScore?: number;
+  loserScore?: number;
+  team1players?: Player[];
+  team2players?: Player[];
+  opponent?: string;
+  opponentScore?: number;
+  selectedTeamScore?: number;
 }
 
 export interface GameForSeason extends Game {

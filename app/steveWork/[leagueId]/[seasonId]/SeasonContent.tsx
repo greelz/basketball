@@ -48,7 +48,7 @@ export default async function SeasonContent({ params, games, gameSlug, gameDates
     // Massive Database Query Aggregator
 
     const leaderboard = await sortTeamsByWins(teams);
-    console.log(`leaderboard in leaderboard leaderboard ****************************************: ${JSON.stringify(leaderboard, null, 2)}`);
+    // console.log(`leaderboard in leaderboard leaderboard ****************************************: ${JSON.stringify(leaderboard, null, 2)}`);
 
 
     const teamNames = teams.map((t) => t.name);
