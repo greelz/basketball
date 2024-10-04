@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import DropdownSelector from "./DropdownSelector";
 import localFont from "next/font/local";
 import { getTeamsForSeason } from "@/app/database";
-import { Game, Team } from "@/app/types";
+import { Game, PlayerStats, Team } from "@/app/types";
 import AdminTeamEditor from "./AdminTeamEditor";
+import AdminStatCell from "./AdminStatCell";
 const statfont = localFont({ src: "../../../../public/fonts/dsdigi.ttf" });
 
 //DUMMY DATA BEGIN
@@ -15,6 +16,45 @@ const statfont = localFont({ src: "../../../../public/fonts/dsdigi.ttf" });
 //     { label: "Another Kid", value: "playerId" },
 //     { label: "Some other Guy", value: "playerId" },
 // ];
+const playerStats: PlayerStats[] = [
+    {
+        name: "Jonas L",
+        id: "CRkCwB34bxCKFSUowV40",
+        teamId: "74k0M13yM3kY6Gd92vO8",
+        assists: 1,
+        two_point_miss: 6,
+        turnovers: 4,
+        three_point_made: 3,
+        "O rebounds": 1,
+        steals: 1,
+        two_point_made: 3,
+        three_point_miss: 3,
+        "D rebounds": 4,
+        points: 15,
+    },
+    {
+        name: "Caleb C",
+        id: "WBDcCNHozLy8P3fPdIxZ",
+        teamId: "74k0M13yM3kY6Gd92vO8",
+    },
+    {
+        name: "Dillon C",
+        id: "dKhU7oWusmsKUyCbH1FQ",
+        teamId: "74k0M13yM3kY6Gd92vO8",
+        three_point_made: 4,
+        steals: 5,
+        two_point_miss: 11,
+        two_point_made: 10,
+        "D rebounds": 6,
+        "O rebounds": 10,
+        three_point_miss: 9,
+        blocks: 2,
+        turnovers: 2,
+        assists: 3,
+        points: 32,
+    },
+];
+
 // const gameOptions = [
 //     { label: "vs AC130s 09/10", value: "gameId" },
 //     { label: "vs IronGiants 09/10", value: "gameId" },
@@ -134,6 +174,7 @@ export default function AdminPanelForm({ handleGameSelect, selectedTeam, gamesLi
                 {!selectedGame ? (<div></div>) : (<>
                     <hr className="border-t border-gray-600 my-6" />
                     <DropdownSelector title="Select Team" options={gameStatOptions} onSelect={handleTeamofGameSelect} />
+                    {/* Under Construction DB query TeamEditor */}
                     {/* <AdminTeamEditor
                         selectedGame={selectedGame}
                         seasonId={selectedSeason}
@@ -171,74 +212,9 @@ export default function AdminPanelForm({ handleGameSelect, selectedTeam, gamesLi
                             </tr>
                         </thead>
                         <tbody>
-                            <tr className="border-b bgtranshover1">
-                                <td className={`border-b text-md`}>Mike H</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >11</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >13</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >14</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >15</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >16</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >17</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >18</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >19</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >20</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >21</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >22</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >23</td>
-                                <td className={`${statfont.className} border-b text-2xl text-green-200`} >24</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >25</td>
-                            </tr>
-                            <tr className="border-b bgtranshover2">
-                                <td className={`border-b text-md`}>Greelz</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >12</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >13</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >14</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >15</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >16</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >17</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >18</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >19</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >20</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >21</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >22</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >23</td>
-                                <td className={`${statfont.className} border-b text-2xl text-green-200`} >24</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >25</td>
-                            </tr>
-                            <tr className="border-b bgtranshover1">
-                                <td className={`border-b text-md`}>Josh K</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >12</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >13</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >14</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >15</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >16</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >17</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >18</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >19</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >20</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >21</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >22</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >23</td>
-                                <td className={`${statfont.className} border-b text-2xl text-red-200`} >24</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >25</td>
-                            </tr>
-                            <tr className="border-b bgtranshover2">
-                                <td className={`border-b text-md`}>Another Kid</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >12</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >13</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >14</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >15</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >16</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >17</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >18</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >19</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >20</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >21</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >22</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >23</td>
-                                <td className={`${statfont.className} border-b text-2xl text-red-200`} >24</td>
-                                <td className={`${statfont.className} border-b text-2xl`}  >25</td>
-                            </tr>
+                            {playerStats.map((p, idx) => (
+                                <AdminStatCell key={`${p.name}.${idx}`} s={p} />
+                            ))}
                         </tbody>
                         <tfoot className="min-w-full border-black border-2 bggrayd-nohov w-full">
                             <tr >

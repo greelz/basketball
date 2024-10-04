@@ -9,9 +9,13 @@ interface Props {
     loser: string,
     victorScore: number,
     loserScore: number
+    noPlayers?: any;
 }
 
-export default function MatchupRow({ date, victor, loser, victorScore, loserScore }: Props) {
+export default function MatchupRow({ date, victor, loser, victorScore, loserScore, noPlayers }: Props) {
+    if (noPlayers) {
+
+    }
     return (
         <div className="relative group overflow-hidden border-black border-2 grid grid-flow-col bggrayd-nohov grid-cols-10">
             {/* Main Content */}
@@ -25,16 +29,16 @@ export default function MatchupRow({ date, victor, loser, victorScore, loserScor
                 <div className="hidden text-md pl-2 2xl:contents">VS</div>
                 <div className="text-md pl-2 w-full text-red-300">{loser}</div>
             </div>
-            <div className="flex items-center text-3xl justify-around col-span-2 text-green-200">
+            <div className="flex items-center text-3xl justify-around col-span-2 text-green-200 border-x border-gray-900">
                 <LEDDisplayColor color={"text-green-300"} amount={victorScore} />
                 <LEDDisplayColor color={"text-red-300"} amount={loserScore} />
             </div>
             <div className="flex col-span-2 items-center">
                 <UserIcon size={10} mr={0} />
-                <div className="flex flex-row 2xl:flex-col">
+                <div className="flex flex-row xl:flex-col">
                     <div className="text-md pl-2 w-full">Mike H</div>
                     <div className="flex flex-row 2xl:flex-none">
-                        <div className="hidden 2xl:contents">
+                        <div className="hidden xl:contents">
                             <div className="text-md pl-2 font-bold">18</div>
                             <div className="text-md pl-2">Pts</div>
                             <div className="text-md pl-2 font-bold">4</div>
@@ -48,7 +52,7 @@ export default function MatchupRow({ date, victor, loser, victorScore, loserScor
                 <div className="flex flex-col">
                     <div className="text-md pl-2 w-full">Josh K</div>
                     <div className="flex flex-row">
-                        <div className="hidden 2xl:contents">
+                        <div className="hidden xl:contents">
                             <div className="text-md pl-2 font-bold">18</div>
                             <div className="text-md pl-2">Pts</div>
                             <div className="text-md pl-2 font-bold">4</div>

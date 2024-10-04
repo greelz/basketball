@@ -8,16 +8,16 @@ interface Props {
     opponent: string,
     teamScore?: number,
     opponentScore?: number
+    override?: any;
 }
 
 
 
-export default function MatchupRowMini({ date, opponent, teamScore, opponentScore }: Props) {
+export default function MatchupRowMini({ date, opponent, teamScore, opponentScore, override }: Props) {
     let color = "text-white";
-    if (teamScore && opponentScore) {
+    if (override && teamScore && opponentScore) {
         color = teamScore > opponentScore ? "text-green-300" : "text-red-300";
     }
-
     // Adjust grid layout based on whether scores are available
     const colSize = teamScore !== undefined && opponentScore !== undefined ? "grid-cols-4" : "grid-cols-2";
 
@@ -31,13 +31,13 @@ export default function MatchupRowMini({ date, opponent, teamScore, opponentScor
             </div>
 
             {/* Opponent Column */}
-            <div className="flex flex-col text-center items-center justify-center col-span-1 whitespace-nowrap 2xl:flex-row">
+            <div className="flex flex-col text-center items-center justify-center col-span-1 lg:whitespace-nowrap 2xl:flex-row ">
                 <div className={`text-md pl-2 w-full ${color}`}>{opponent}</div>
             </div>
 
             {/* Score Columns, only show if scores exist */}
             {teamScore !== undefined && opponentScore !== undefined && (
-                <div className="flex items-center text-3xl justify-around col-span-2 text-green-200">
+                <div className="flex items-center text-3xl justify-around col-span-2 min-w-[200px]">
                     <LEDDisplayColor color={color} amount={teamScore} />
                     <LEDDisplayColor color={color} amount={opponentScore} />
                 </div>

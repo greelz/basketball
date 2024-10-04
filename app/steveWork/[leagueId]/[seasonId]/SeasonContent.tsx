@@ -93,7 +93,7 @@ export default async function SeasonContent({ params, games, gameSlug, gameDates
         { title: 'Login/Register', content: <Form /> },
     ];
 
-
+    let isAdmin = false;
     return (
         <div className="flex h-screen">
             {/* Left Column */}
@@ -101,24 +101,25 @@ export default async function SeasonContent({ params, games, gameSlug, gameDates
                 <AdminSidebar />
             </div>
             {/* Center Column */}
+
             <div className="flex-1 flex flex-col justify-start items-center border-white border-r-8 ">
                 <img src="/bballSVG.svg" alt="Basketball" className="max-w-sm align-center animate-bobbing" />
-                <div className="relative w-full">
-                    <div className="absolute w-[20%] top-2 z-10 whitespace-nowrap text-black">
-                        <ToggleCollapse variant={1} title={"Add a Matchup"} content={<GameForm params={params} />} />
+                {isAdmin ? (<>
+                    <div className="relative w-full">
+                        <div className="absolute w-[20%] top-2 z-10 whitespace-nowrap text-black">
+                            <ToggleCollapse variant={1} title={"Add a Matchup"} content={<GameForm params={params} />} />
+                        </div>
+                        <div className="absolute w-[20%] right-0 top-2 z-10 whitespace-nowrap text-black ">
+                            <ToggleCollapse variant={1} title={"Add a Team"} content={<TeamForm params={params} />} />
+                        </div>
                     </div>
-                    <div className="absolute w-[20%] right-0 top-2 z-10 whitespace-nowrap text-black ">
-                        <ToggleCollapse variant={1} title={"Add a Team"} content={<TeamForm params={params} />} />
-                    </div>
-                </div>
+                </>) : <></>}
                 <div className="border-2 border-transparent bggrayd-nohov w-full whitespace-nowrap hover:border-white cursor-pointer">
                     <div className="flex flex-row flex-1 items-center">
                         <TextTicker content={`Welcome to the ${seasonName}`} />
                     </div>
                 </div>
                 <Tabber tabPanel={tabPanel} />
-
-                ]
             </div>
             <div className="row-span-5">
                 <RightSidebar />

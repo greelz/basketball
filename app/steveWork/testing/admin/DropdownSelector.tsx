@@ -51,7 +51,7 @@ const DropdownSelector: React.FC<DropdownSelectorProps> = ({ options, onSelect, 
                         <button
                             key={`${option.ddvalue}.${idx}`}
                             onClick={() => handleSelect(option.ddvalue)}
-                            className="block w-full text-left px-4 py-2 text-sm text-white bg-gray-800 hover:bg-gray-700 transition-all duration-200 ease-in-out  w-full h-full p-4 rounded-md cursor-pointer border border-black flex align-center justify-center items-center text-md"
+                            className="block w-full text-left px-4 py-2 text-sm text-white bg-gray-800 hover:bg-gray-700 transition-all duration-200 ease-in-out  w-full h-full p-4 rounded-md cursor-pointer border border-black flex align-left justify-center items-center text-md"
                         >
                             {option.ddlabel}
                         </button>
