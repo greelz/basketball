@@ -57,7 +57,7 @@ export default function PlayerStatBlock({ allPlayers, selectedPlayer }) {
         <div className="w-full flex flex-row rounded-md transition-transform transform hover:scale-105 hover:-translate-y-2">
             <div className="grid grid-cols-9 gap-4 w-full">
                 <div className="w-full py-2 bggrayd-hov-inv text-center text-white flex items-center justify-center">
-                    {/* Player Name and Team */}
+                    {/* Player Name */}
                     <p className={`text-xl font-semibold w-full`}>
                         {player.name ? `${player.name}` : 'No player selected'}
                     </p>

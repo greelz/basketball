@@ -102,6 +102,7 @@ interface ILinkListProps {
     games: Game[];
 }
 
+
 // placeholder
 // HomeContent({ data, unfinishedGames, finishedGames, upcomingGames, seasons, teams, games }: ILinkListProps) {
 export default function HomeContent() {
@@ -374,7 +375,6 @@ export default function HomeContent() {
                 </div >
             </div >
         </>
-
     )
 }
 

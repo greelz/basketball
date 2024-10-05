@@ -11,7 +11,7 @@ import AdminSidebar from "../../components/admin/AdminSidebar";
 import HighlightChart from "../../components/web/HighlightChart";
 import BigButton from "../../components/web/BigButton";
 const statfont = localFont({ src: "../../../../public/fonts/dsdigi.ttf" });
-import { Team } from "@/app/types";
+import { Season, Team } from "@/app/types";
 import { useState } from "react";
 import ToggleCollapse from "../../components/web/ToggleCollapse";
 import TextTicker from "../../components/web/TextTicker";
@@ -33,57 +33,38 @@ interface IPage {
 interface Props {
     games: any; //stores name:gameName, team1id, team2id, date, and gameover if game is over
     gameSlug: string;
-    gameDates: any;
-    teams: any;
+    teams: Team[];
     teamSlug: string;
+    seasons: Season[];
 }
 
-const sortTeamsByWins = (teams) => {
+const sortTeamsByWins = (teams: Team[]) => {
     return teams.sort((a, b) => b.wins - a.wins);
 };
 
-export default async function SeasonContent({ params, games, gameSlug, gameDates, teams, teamSlug }: IPage & Props) {
-    const seasons = await getSeasons(params.leagueId);
+export default async function SeasonContent({ params, games, gameSlug, teams, teamSlug, seasons }: IPage & Props) {
+
     const seasonName = seasons.filter(s => s.id === params.seasonId).map((s) => s.name);
     // Massive Database Query Aggregator
-
-    const leaderboard = await sortTeamsByWins(teams);
-    // console.log(`leaderboard in leaderboard leaderboard ****************************************: ${JSON.stringify(leaderboard, null, 2)}`);
+    const leaderboard = sortTeamsByWins(teams);
 
 
-    const teamNames = teams.map((t) => t.name);
-    const wlratios = leaderboard.map((r) => `${r.wins ?? '0'} / ${r.losses ?? '0'}`);
-    const matchups = games.map((g) => g.name);
-    const matchupURLs = games.map((g) => `/steveWork/live/${g.id}`);
-    const teamURLs = teams.map((u) => `/steveWork/${params.leagueId}/${params.seasonId}/teams/${u.id}`);
-    const matchButtons = matchupURLs.map((url, idx) => {
-        return <BigButton key={`matchButton ${idx}`} url={url} content={`View Match`} />
-    });
-    const teamButtons = teamURLs.map((url, idx) => {
-        // console.log(url);
-        return <BigButton key={`teamButton ${idx}`} url={url} content={`View Team`} />
-    });
-    const gameTime = gameDates.map((t) => t.time);
-    const gameDateDates = gameDates.map((d) => d.date);
-    // console.log(`games in SEASON CONTENT ****************************************: ${JSON.stringify(games, null, 2)}`);
-    console.log(`teams: ${JSON.stringify(teams, null, 2)}`);
-    // console.log(`params SeasonContent: ${params}`);
-    // console.log(`matchupURLs: ${matchupURLs}`);
+    const gameDateDates = games.map((d) => d.date.date);
 
 
     const tabPanel = [
-        { title: 'Teams', content: <Card><LeaderboardLIVE teamSlug={teamSlug} leaderboard={await leaderboard} /></Card> },
+        { title: 'Teams', content: <Card><LeaderboardLIVE teamSlug={teamSlug} leaderboard={leaderboard} /></Card> },
         {
             title: 'Matchups', content:
                 <Card>
-                    <div className="w-full mx-4">
-                        <div className="grid grid-flow-col bgbluegrad grid-cols-2 w-full">
+                    <div className=" mx-4">
+                        <div className="grid grid-flow-col bgbluegrad grid-cols-2 ">
                             <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Date</div>
                             <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Matchup</div>
                         </div>
-                        <div className="w-full max-h-[450px] overflow-y-auto">
+                        <div className=" max-h-[450px] overflow-y-auto">
                             {games.map((g, idx) => (
-                                <a key={`matchup.next.${idx}`} href={new Date(gameDateDates[idx]) < new Date() ? `/steveWork/hist/${g.id}` : `/steveWork/live/${g.id}`} className={new Date(gameDateDates[idx]) < new Date() ? "text-red-400" : ""}>  <MatchupRowMini date={gameDateDates[idx]} opponent={g.name} /></a>
+                                <a key={`matchup.next.${idx}`} href={g.date.date < new Date() ? `/steveWork/hist/${g.id}` : `/steveWork/live/${g.id}`} className={g.date.date < new Date() ? "text-red-400" : ""}>  <MatchupRowMini date={gameDateDates[idx]} opponent={g.name} /></a>
                             ))}
                         </div>
                     </div>
@@ -102,7 +83,7 @@ export default async function SeasonContent({ params, games, gameSlug, gameDates
             </div>
             {/* Center Column */}
 
-            <div className="flex-1 flex flex-col justify-start items-center border-white border-r-8 ">
+            <div className=" flex flex-col justify-start items-center border-white border-r-8 ">
                 <img src="/bballSVG.svg" alt="Basketball" className="max-w-sm align-center animate-bobbing" />
                 {isAdmin ? (<>
                     <div className="relative w-full">

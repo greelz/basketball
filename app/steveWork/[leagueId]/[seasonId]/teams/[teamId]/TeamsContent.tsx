@@ -2,7 +2,7 @@
 
 import React from "react";
 import { getTeamStatsforGame, getGamesForSeason, getTeamPlayersFromGame, getThisTeamStatsFromGame, getPlayersFromTeam, getTeamNameByTeamId, findFinishedGameIdsByTeamId, findUpcomingGamesByTeamId, getTeamsForSeason } from "@/app/database";
-import { Game, PlayerStats, Team } from "@/app/types";
+import { Game, Player, PlayerStats, Team } from "@/app/types";
 import localFont from "next/font/local";
 import AdminSidebar from "@/app/steveWork/components/admin/AdminSidebar";
 import RightSidebar from "@/app/steveWork/components/admin/RightSidebar";
@@ -73,38 +73,19 @@ export default async function TeamsContent({ params }: IPage) {
                 opponent = teamB;
             } else if (teamName === teamB && teamName !== teamA) {
                 opponent = teamA;
-            } else {
-                // console.log(`******NO OPPONENT FOR GAME*`);
-                // console.log(`TeamName to match: ${teamName}`)
-                // console.log(`TeamA: ${teamA}`);
-                // console.log(`TeamB: ${teamB}`);
-
             }
             game.name = opponent ? `${opponent}` : `${teamA} vs ${teamB}`;
-            // console.log(`********GAME FOUND********`)
-            // console.log(`GAME FOUND: ${game.id}.`);
-            // console.log(`game.name value check: ${game.name}`);
-
-        } else {
-            // console.log(`**SKIPPED*`);
-            // console.log(`${game.id} due to missing team data.`);
         }
     });
     //sort games into order
     games.sort((a, b) => a.date.toDate().getTime() - b.date.toDate().getTime());
 
-    //{team1,team2,date(sec nano) id gameover?=1}
-    // console.log(`Full Formatted Game Array: ${JSON.stringify(games, null, 2)}`);
-    //filtergames into finished and unfinished (id:string arrays)
+    //filtergames into finished and unfinished for THIS team (id:string, Game[])
     const unfinishedGameIds = await findUpcomingGamesByTeamId(teamId, games);
     const finishedGameIds = await findFinishedGameIdsByTeamId(teamId, games);
     //separate Game[]data into upcoming and completedgames
-    const upcomingGameData = filterGamesbyIds(games, unfinishedGameIds);
-    const completedGamesData = filterGamesbyIds(games, finishedGameIds);
-
-    // console.log(`finishedGameIds Strings: ${JSON.stringify(finishedGameIds, null, 2)}`);
-    // console.log(`completedGamesData: ${JSON.stringify(completedGamesData, null, 2)}`);
-    // console.log(`upcomingGameData: ${JSON.stringify(upcomingGameData, null, 2)}`);
+    const upcomingGameData: Game[] = filterGamesbyIds(games, unfinishedGameIds);
+    const completedGamesData: Game[] = filterGamesbyIds(games, finishedGameIds);
 
     //set date and time of upcominggames to strings
     const upcomingGameDateData = upcomingGameData.map((game: Game) => {
@@ -116,12 +97,6 @@ export default async function TeamsContent({ params }: IPage) {
         const time = game.date.toDate().toLocaleTimeString();
         return { date: date, time: time };
     });
-    // console.log(`upcomingGameDateData: ${JSON.stringify(upcomingGameDateData, null, 2)}`);
-
-    const upcomingGameDates = upcomingGameDateData.map((d) => d.date);
-    const upcomingGameTimes = upcomingGameDateData.map((d) => d.time);
-    // console.log(`upcomingGameDates: ${JSON.stringify(upcomingGameDates, null, 2)}`);
-    // console.log(`upcomingGameTimes: ${JSON.stringify(upcomingGameTimes, null, 2)}`);
 
     //set date and time of completedGames to strings
     const completedGameDateData = completedGamesData.map((game: Game) => {
@@ -133,21 +108,19 @@ export default async function TeamsContent({ params }: IPage) {
         const time = game.date.toDate().toLocaleTimeString();
         return { date: date, time: time };
     });
-    // console.log(`completedGameDateData: ${JSON.stringify(completedGameDateData, null, 2)}`);
 
+    //Isolate Dates/Times to array for matchupRows
+    const upcomingGameDates = upcomingGameDateData.map((d) => d.date);
+    const upcomingGameTimes = upcomingGameDateData.map((d) => d.time);
     const completedGameDates = completedGameDateData.map((d) => d.date);
     const completedGameTimes = completedGameDateData.map((d) => d.time);
-    // console.log(`completedGameDates: ${JSON.stringify(completedGameDates, null, 2)}`);
-    // console.log(`completedGameTimes: ${JSON.stringify(completedGameTimes, null, 2)}`);
 
-    //get all player stats from all finished games
-    const seasonGameStats = await Promise.all(     //wait until the whole loop has finished
-        finishedGameIds.map((g) => {    //loop over the games
+    //get all player stats from all finished games of the season
+    const seasonGameStats = await Promise.all(
+        finishedGameIds.map((g) => {
             return getTeamStatsforGame(leagueId, seasonId, g, teamId);
         }));
-
-    // console.log(`seasonGameStats: ${JSON.stringify(seasonGameStats, null, 2)}`);
-
+    //loop over games of the season and sort into Player:{stats}
     const seasonGameStatArray = seasonGameStats.map((g) => g.teamPlayerStats);
     const combinePlayerStats = (seasonGameStatArray) => {
         const playerStatTotals = {};
@@ -167,30 +140,20 @@ export default async function TeamsContent({ params }: IPage) {
         // Convert the playerStatsTotals object back into an array
         return Object.values(playerStatTotals);
     };
-    //sum up all player stats of every game of the season to a seasonPlayerValue
+    //sum up all playerStats
     const seasonPlayerValues = combinePlayerStats(seasonGameStatArray);
-    console.log(`TeamNAME**********************************************************`);
-    console.log(`${teamName}`);
-    console.log(`${teamId}`);
-    console.log(`seasonPlayerValues: ${JSON.stringify(seasonPlayerValues, null, 2)}`);
 
     //map variables for charting
-    const teamScore = completedGamesData.map((g) => {
+    const teamScore: number[] = completedGamesData.map((g) => {
         return teamId === g.team1 ? g.team1score : g.team2score;
     });
-    // console.log(`teamScore: ${JSON.stringify(teamScore, null, 2)}`);
-    const opponentScore = completedGamesData.map((g) => {
+    const opponentScore: number[] = completedGamesData.map((g) => {
         return teamId === g.team1 ? g.team2score : g.team1score;
     });
-    // console.log(`opponentScore: ${JSON.stringify(opponentScore, null, 2)}`);
 
-    const teamPlayerNames = seasonPlayerValues.map((p) => p.name);
-    const upcomingOpponents = upcomingGameData.map((g) => g.name);
-    const previousOpponents = completedGamesData.map((g) => g.name);
-    // const playerURLs = seasonPlayerValues.map((u) => `/steveWork/${leagueId}/${seasonId}/${u.id}`);
-    // console.log(`teamPlayerNames: ${JSON.stringify(teamPlayerNames, null, 2)}`);
-    // console.log(`upcomingOpponents: ${JSON.stringify(upcomingOpponents, null, 2)}`);
-    // console.log(`previousOpponents: ${JSON.stringify(previousOpponents, null, 2)}`);
+    const teamPlayerNames: string[] = seasonPlayerValues.map((p) => p.name);
+    const upcomingOpponents: string[] = upcomingGameData.map((g) => g.name);
+    const previousOpponents: string[] = completedGamesData.map((g) => g.name);
 
     const tabPanel = [
         {
@@ -223,7 +186,7 @@ export default async function TeamsContent({ params }: IPage) {
                 <div className="flex-1 flex flex-col h-full">
                     <div className="flex h-full overflow-hidden homeRadial ">
                         {/* Left Column */}
-                        <div className="row-span-5">
+                        <div className="row-span-5 hidden 2xl:contents">
                             <AdminSidebar />
                         </div>
 
@@ -233,17 +196,16 @@ export default async function TeamsContent({ params }: IPage) {
                             <a className={`${statfont.className} text-6xl border-2 border-transparent text-center bggrayd-nohov w-full whitespace-nowrap hover:border-white cursor-pointer`}>
                                 {teamName} Stats
                             </a>
-
                             <div className="flex flex-row justify-evenly items-center max-h-[210px] w-full my-4">
                                 <div className="flex flex-col items-center">
                                     <div className="flex grow-[5]">
-                                        <LEDTracker variant={1} amount={myTeam.wins} />
+                                        <LEDTracker variant={1} amount={myTeam!.wins} />
                                     </div>
                                     <p className="text-center font-bold">Wins</p>
                                 </div>
                                 <div className="flex flex-col items-center">
                                     <div className="flex grow-[5]">
-                                        <LEDTracker variant={1} amount={myTeam.losses} />
+                                        <LEDTracker variant={1} amount={myTeam!.losses} />
                                     </div>
                                     <p className="text-center font-bold">Losses</p>
                                 </div>
@@ -254,31 +216,37 @@ export default async function TeamsContent({ params }: IPage) {
                                     <p className="text-center font-bold">Games Played</p>
                                 </div>
                             </div>
-                            <div className="flex flex-row w-full items-start justify-around mb-6">
+                            <div className="grid grid-cols-1 my-6 w-full xl:grid-cols-2 ">
                                 {/* Upcoming Games */}
-                                <div className="w-full mx-4">
-                                    <div className="text-center bgorangegrad py-2 col-span-2  lg:col-span-1">Upcoming games</div>
-                                    <div className="grid grid-flow-col bgbluegrad grid-cols-2 w-full">
-                                        <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Date</div>
-                                        <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Opponent</div>
-                                    </div>
-                                    <div className="max-h-[250px] w-full">
-                                        {upcomingOpponents.map((o, idx) => (
-                                            <a key={`matchup.next.${idx}`} href={`/steveWork/live/${unfinishedGameIds[idx]}`}>  <MatchupRowMini date={upcomingGameDates[idx]} opponent={o} /></a>
-                                        ))}
+                                <div className="mx-5">
+                                    <div className="flex flex-col w-full my-2 xl:my-0">
+                                        <div className="text-center bgorangegrad py-2 col-span-2  lg:col-span-1">Upcoming games</div>
+                                        <div className="grid grid-flow-col bgbluegrad grid-cols-2 w-full">
+                                            <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Date</div>
+                                            <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Opponenent</div>
+                                        </div>
+                                        <div className="max-h-[250px] w-full overflow-y-auto">
+                                            {upcomingOpponents.map((o, idx) => (
+                                                <a key={`matchup.next.${idx}`} href={`/steveWork/live/${unfinishedGameIds[idx]}`}>  <MatchupRowMini date={upcomingGameDates[idx]} opponent={o} /></a>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                                 {/* Past Games */}
-                                <div className="w-full mx-3">
-                                    <div className="text-center bgorangegrad py-2 col-span-1  lg:col-span-1">Past games</div>
-                                    <div className="grid grid-flow-col bgbluegrad grid-cols-4">
-                                        <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Date</div>
-                                        <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Opponent</div>
-                                        <div className="text-center  col-span-1 border-white border-2 lg:col-span-2">Score</div>
+                                <div className="mx-5">
+                                    <div className="flex flex-col w-full my-2 xl:my-0">
+                                        <div className="text-center bgorangegrad py-2 col-span-1  lg:col-span-1">Past games</div>
+                                        <div className="grid grid-flow-col bgbluegrad grid-cols-4">
+                                            <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Date</div>
+                                            <div className="text-center  col-span-1 border-white border-2 lg:col-span-1">Opponent</div>
+                                            <div className="text-center  col-span-2 border-white border-2 lg:col-span-2">Score</div>
+                                        </div>
+                                        <div className="max-h-[250px] w-full overflow-y-auto">
+                                            {previousOpponents.map((o, idx) => (
+                                                <a href={`/steveWork/hist/${finishedGameIds[idx]}`} key={`matchup.past.${idx}`}> <MatchupRowMini date={completedGameDates[idx]} opponent={o} teamScore={teamScore[idx]} opponentScore={opponentScore[idx]} override={true} /></a>
+                                            ))}
+                                        </div>
                                     </div>
-                                    {previousOpponents.map((o, idx) => (
-                                        <a href={`/steveWork/hist/${finishedGameIds[idx]}`} key={`matchup.past.${idx}`}> <MatchupRowMini date={completedGameDates[idx]} opponent={o} teamScore={teamScore[idx]} opponentScore={opponentScore[idx]} /></a>
-                                    ))}
                                 </div>
                             </div>
                             <div className="border-2 border-transparent bggrayd-nohov w-full whitespace-nowrap">
@@ -289,7 +257,7 @@ export default async function TeamsContent({ params }: IPage) {
                             <Tabber tabPanel={tabPanel} />
                         </div>
                         {/* Right Column */}
-                        <div className="row-span-5">
+                        <div className="row-span-5 hidden">
                             <RightSidebar />
                         </div>
                     </div>

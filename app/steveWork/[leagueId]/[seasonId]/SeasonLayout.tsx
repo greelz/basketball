@@ -16,9 +16,7 @@ interface IPage {
     params: { leagueId: string; seasonId: string };
 }
 
-function getTeamNameFromCachedTeams(teamId: string, teams: Team[]) {
-    return teams.find((t) => t.id === teamId)?.name;
-}
+
 
 const filterGamesbyIds = (games, gameIds) => {
     if (!Array.isArray(gameIds)) {
@@ -87,58 +85,32 @@ export default async function SeasonLayout({ params }: IPage) {
     const leagueId = params.leagueId;
     const seasonId = params.seasonId;
 
-    const teams = await getTeamsForSeason(leagueId, seasonId);
-    const games = await getGamesForSeason(leagueId, seasonId);
 
-    // Format games with team names and timestamps
-    games.forEach((game) => {
-        const teamA = getTeamNameFromCachedTeams(game.team1, teams);
-        const teamB = getTeamNameFromCachedTeams(game.team2, teams);
-        // const timestamp = game.date.toDate().toLocaleString();
-        game.name = `${teamA} vs ${teamB}${game.name ? ` [${game.name}]` : ""}`;
+    //filtergames into finished and unfinished (id:string arrays)
+    const unfinishedGameData = games.filter((g) => !g.gameover);
+    const completedGameData = games.filter((g) => g.gameover);
+    const finishedGameIds = completedGameData.map((g) => g.id);
 
-    });
+    //get all player stats from all finished games returns{"teamplayerstats: [], "teamID"}
+    const allTeamsSeasonGameStats = await Promise.all(
+        teams.flatMap((t) =>  // use flatMap to flatten the nested arrays of promises
+            finishedGameIds.map((g) =>
+                getSeasonTeamStatsforAverages(leagueId, seasonId, g, t.id)
+            )
+        )
+    );
 
-    // Sort games by date
-    games.sort((a, b) => a.date.toDate().getTime() - b.date.toDate().getTime());
-    //Separate Date and Time of games to variable
-    const gameDates = games.map((game) => {
-        const dateObj = game.date.toDate();
-        const date = dateObj.toLocaleDateString('en-US', {
-            month: '2-digit',
-            day: '2-digit'
-        });
-        const time = game.date.toDate().toLocaleTimeString();
-        return { date: date, time: time };
-    });
-    //get teamIds and names
-    const teamIds = teams.map((t) => { t.id });
-    const teamNames = teams.map((t) => t.name);
-    // //filtergames into finished and unfinished (id:string arrays)
-    // const unfinishedGameData = games.filter((g) => !g.gameover);
-    // const completedGameData = games.filter((g) => g.gameover);
-    // const finishedGameIds = completedGameData.map((g) => g.id);
+    const allTeamsSeasonPlayerStats = groupPlayersByTeam(allTeamsSeasonGameStats);
+    const allTeamsPlayerStatTotals = combineTeamStats(allTeamsSeasonPlayerStats);
 
-    // //get all player stats from all finished games returns{"teamplayerstats: [], "teamID"}
-    // const allTeamsSeasonGameStats = await Promise.all(
-    //     teams.flatMap((t) =>  // use flatMap to flatten the nested arrays of promises
-    //         finishedGameIds.map((g) =>
-    //             getSeasonTeamStatsforAverages(leagueId, seasonId, g, t.id)
-    //         )
-    //     )
-    // );
+    allTeamsSeasonGameStats.map((g, idx) => console.log(`g.TeamPlayerStats ${idx} **************: ${JSON.stringify(g.teamPlayerStats, null, 2)}`));
+    console.log(`allTeamsPlayerStatTotals **************: ${JSON.stringify(allTeamsPlayerStatTotals, null, 2)}`);
 
-    // const allTeamsSeasonPlayerStats = groupPlayersByTeam(allTeamsSeasonGameStats);
-    // const allTeamsPlayerStatTotals = combineTeamStats(allTeamsSeasonPlayerStats);
-
-    // allTeamsSeasonGameStats.map((g, idx) => console.log(`g.TeamPlayerStats ${idx} **************: ${JSON.stringify(g.teamPlayerStats, null, 2)}`));
-    // console.log(`allTeamsPlayerStatTotals **************: ${JSON.stringify(allTeamsPlayerStatTotals, null, 2)}`);
-
-    // const completedGamesData = filterGamesbyIds(games, finishedGameIds);
-    // console.log(`teams **************: ${JSON.stringify(teams, null, 2)}`);
-    // console.log(`teamIds *********: ${JSON.stringify(teamIds, null, 2)}`);
-    // console.log(`teamNames **************: ${JSON.stringify(teamNames, null, 2)}`);
-    // console.log(`completedGamesData **************: ${JSON.stringify(completedGamesData, null, 2)}`);
+    const completedGamesData = filterGamesbyIds(games, finishedGameIds);
+    console.log(`teams **************: ${JSON.stringify(teams, null, 2)}`);
+    console.log(`teamIds *********: ${JSON.stringify(teamIds, null, 2)}`);
+    console.log(`teamNames **************: ${JSON.stringify(teamNames, null, 2)}`);
+    console.log(`completedGamesData **************: ${JSON.stringify(completedGamesData, null, 2)}`);
     return (
         <>
             <div className="flex flex-col h-screen">

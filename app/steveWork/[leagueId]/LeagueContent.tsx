@@ -21,7 +21,7 @@ interface ILinkListProps {
   data: IIdAndName[];
   slug: string;
 }
-export default async function LeagueContent({ params, data, slug }: LeaguePageProps & ILinkListProps) {
+export default async function LeagueContent({ params, data }: LeaguePageProps & ILinkListProps) {
   console.log('Data in LeagueContent:', data);
   return (
     <div className="flex h-screen">
@@ -40,7 +40,7 @@ export default async function LeagueContent({ params, data, slug }: LeaguePagePr
         <div className="grid grid-flow-col gap-4 w-full mt-5">
           {data.map((d) => (
             <div key={d.id} className="flex flex-col justify-center align-center mx-6">
-              <BigButton url={`${slug}/${d.id}`} content={d.name} />
+              <BigButton url={`${params.leagueId}/${d.id}`} content={d.name} />
             </div>))}
         </div>
       </div>
