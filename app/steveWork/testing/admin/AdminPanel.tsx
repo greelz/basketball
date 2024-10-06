@@ -119,7 +119,7 @@ export default function AdminPanel({
             const formattedTime = dateObj.toLocaleTimeString();
 
             game.date = { date: formattedDate, time: formattedTime };
-            game.name = `${formattedDate} ${teamA} vs ${teamB}${game.name ? ` [${game.name}]` : ""}`;
+            game.name = `${teamA} vs ${teamB}`;
             game.team1name = teamA;
             game.team2name = teamB;
         });
