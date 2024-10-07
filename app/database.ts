@@ -443,6 +443,106 @@ export async function getSeasonStatisticsRegenerate(
   return records;
 }
 
+//STEVE UPDATE TO GETSEASONSTATISTICSGENERATE FOR HOMEPAGE DATAPOPULATION
+export async function getSeasonStatisticsUXsb(
+  leagueId: string,
+  seasonId: string,
+  games?: Game[]
+) {
+  if (!games) games = await getGamesForSeason(leagueId, seasonId);
+
+  let records: Map<string, TeamRecord> = new Map();
+  for (const g of games) {
+    if (g.gameover) {
+      try {
+        const stats = await getPlayerStatisticsFromGame(leagueId, seasonId, g.id);
+        const team1 = stats.team1.id;
+        const team2 = stats.team2.id;
+
+        // Initialize records if not already present
+        if (!records.has(team1)) {
+          records.set(team1, { teamId: team1, wins: 0, losses: 0, ties: 0 });
+        }
+        if (!records.has(team2)) {
+          records.set(team2, { teamId: team2, wins: 0, losses: 0, ties: 0 });
+        }
+
+        // Update win/loss/tie records
+        if (stats.team1.score > stats.team2.score) {
+          records.get(team1)!.wins += 1;
+          records.get(team2)!.losses += 1;
+        } else if (stats.team1.score < stats.team2.score) {
+          records.get(team1)!.losses += 1;
+          records.get(team2)!.wins += 1;
+        } else {
+          records.get(team1)!.ties += 1;
+          records.get(team2)!.ties += 1;
+        }
+      } catch (error) {
+        console.error(`Error fetching stats for game ${g.id}:`, error);
+        continue; // Skip game if error occurs
+      }
+
+      // Fetch team names and update game information in parallel
+      try {
+        const [teamA, teamB] = await Promise.all([
+          getTeamNameByTeamId(leagueId, seasonId, g.team1),
+          getTeamNameByTeamId(leagueId, seasonId, g.team2)
+        ]);
+
+        const dateObj = g.date.toDate();
+        const formattedDate = dateObj.toLocaleDateString('en-US', {
+          month: '2-digit',
+          day: '2-digit'
+        });
+        g.name = `${teamA} vs ${teamB}`;
+        g.team1name = teamA;
+        g.team2name = teamB;
+        g.formattedDate = formattedDate; // formattedDate to avoid messing w g.date
+
+        // Mark victor and loser
+        if (g.team1score > g.team2score) {
+          g.victor = g.team1name;
+          g.loser = g.team2name;
+          g.victorScore = g.team1score;
+          g.loserScore = g.team2score;
+        } else {
+          g.victor = g.team2name;
+          g.loser = g.team1name;
+          g.victorScore = g.team2score;
+          g.loserScore = g.team1score;
+        }
+      } catch (error) {
+        console.error(`Error fetching team names for game ${g.id}:`, error);
+      }
+    } else {
+      try {
+        const [teamA, teamB] = await Promise.all([
+          getTeamNameByTeamId(leagueId, seasonId, g.team1),
+          getTeamNameByTeamId(leagueId, seasonId, g.team2)
+        ]);
+
+        const dateObj = g.date.toDate();
+        console.log(`this is the dateObj ${dateObj} for g.date: ${g.date}`)
+        const formattedDate = dateObj.toLocaleDateString('en-US', {
+          month: '2-digit',
+          day: '2-digit'
+        });
+        const formattedTime = dateObj.toLocaleTimeString();
+        g.name = `${teamA} vs ${teamB}`;
+        g.team1name = teamA;
+        g.team2name = teamB;
+        g.formattedDate = formattedDate; // formattedDate to avoid messing w g.date
+      } catch (error) {
+
+        console.error(`Error fetching data for UNFINALIZED game ${g.id}:`, error);
+      }
+    }
+  }
+  return [records, games];
+}
+
+
 export async function isGameOver(
   leagueId: string,
   seasonId: string,

@@ -37,7 +37,7 @@ export default async function LiveLayout({ params }: LiveGameParams) {
 
   return (<>
     <div className="flex flex-col h-screen">
-      <div className="flex-1 flex ">
+      <div className="flex-1 flex hidden 2xl:contents">
         <AdminSidebar />
         <div className="flex-1 flex flex-col">
           <LiveContent params={params}

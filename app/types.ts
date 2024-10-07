@@ -47,6 +47,7 @@ export interface Game {
   opponent?: string;
   opponentScore?: number;
   selectedTeamScore?: number;
+  formattedDate?: string;
 }
 
 export interface GameForSeason extends Game {

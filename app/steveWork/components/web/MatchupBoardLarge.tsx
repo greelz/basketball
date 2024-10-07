@@ -32,7 +32,7 @@ export default function MatchubBoardLarge({ dates, games }: Props) {
             </div>
             <div className="max-h-[250px] overflow-y-auto">
                 {games.map((g, idx) => (
-                    <a key={`gamematchup${idx}`} href="/" className=""><MatchupRow date={g.date.date} victor={g.victor || g.team1name || g.team1Name} loser={g.loser || g.team2name || g.team2Name} victorScore={g.victorScore || g.team1score || 0} loserScore={g.loserScore || g.team2score || 0} /> </a>
+                    <a key={`gamematchup${idx}`} href="/" className=""><MatchupRow date={g.formattedDate} victor={g.victor || g.team1name || g.team1Name} loser={g.loser || g.team2name || g.team2Name} victorScore={g.victorScore || g.team1score || 0} loserScore={g.loserScore || g.team2score || 0} /> </a>
 
                 ))}
             </div>
