@@ -2,6 +2,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../config";
 import { League } from "../types";
 import LinkList from "../components/LinkList";
+import { addLeague } from "../database";
 
 interface LeaguesPageProps {
   leagues: League[];
@@ -9,10 +10,20 @@ interface LeaguesPageProps {
 
 export default async function LeaguesPage() {
   const data = await getData();
+
+  async function createLeague(formData: FormData) {
+    'use server'
+    addLeague("Who Cares", formData.get('seasonName') as string);
+  }
   return (
     <>
       <h1>Leagues</h1>
       <LinkList data={data} slug="/admin" />
+      <form action={createLeague}>
+        <input placeholder="enter a season name" type="input" id="seasonName">
+        </input>
+        <button type="submit">Create new season</button>
+      </form>
     </>
   );
 }

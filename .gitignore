@@ -41,3 +41,6 @@ python/data.json
 python/data-orange.csv
 python/data.json
 python/data.json
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
