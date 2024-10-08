@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { Firestore, getFirestore } from "firebase/firestore";
+import { connectFirestoreEmulator, Firestore, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.apiKey,
@@ -15,6 +15,9 @@ let app, db: Firestore;
 try {
   app = initializeApp(firebaseConfig);
   db = getFirestore(app);
+  if (process.env.NODE_ENV === "development") {
+    connectFirestoreEmulator(db, "localhost", 8080);  // 8080 is the default port for the Firestore emulator
+  }
 } catch (e) {
   console.error(`Error initializing Firebase ${e}`);
 }

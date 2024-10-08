@@ -10,7 +10,7 @@ export default async function Home() {
     const data = await getData();
     console.log('Data in HomeLayout:', data);
 
-    const seasons = getSeasons(data.)
+    const seasons = getSeasons(data);
 
 
     return (
