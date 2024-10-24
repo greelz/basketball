@@ -34,3 +34,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+python/key.json
+python/ids.txt
+python/file.json
+python/data.json
+python/data-orange.csv
+python/data.json
+python/data.json
+firebase-debug.log
+firestore-debug.log
+ui-debug.log

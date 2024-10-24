@@ -13,13 +13,13 @@ export default async function LeaguesPage() {
 
   async function createLeague(formData: FormData) {
     'use server'
-    addLeague("SlabLeague", formData.get('seasonName') as string);
+    addLeague("Who Cares", formData.get('seasonName') as string);
   }
   return (
     <>
       <h1>Leagues</h1>
       <LinkList data={data} slug="/admin" />
-      <form action={createLeague} className="text-black">
+      <form action={createLeague}>
         <input placeholder="enter a season name" type="input" id="seasonName">
         </input>
         <button type="submit">Create new season</button>
