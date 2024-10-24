@@ -9,7 +9,6 @@ interface IPage {
     teamId: string;
   };
 }
-
 export default async function SeasonPage({ params }: IPage) {
   const { leagueId, seasonId, teamId } = params;
   const players = await getPlayersFromTeam(
@@ -17,41 +16,30 @@ export default async function SeasonPage({ params }: IPage) {
     seasonId,
     teamId
   );
-
-  console.log('team params?::*******************************************');
-  console.log(params);
-  console.log('players?:*******************************************');
-  console.log(players);
-  console.log('games?:*******************************************');
-  console.log('idk bro hope this helps!:*******************************************');
-
   return (
-    <div className="steveBox">
+    <>
       <h1>Players</h1>
       <LinkList data={players} slug={`/admin/${leagueId}/${seasonId}/teams/${teamId}`} />
-      <div className="container">
-        <form
-          action={async (formData) => {
-            "use server";
-            const playerName = formData.get("playerName") as string;
-            await addPlayer(
-              params.leagueId,
-              params.seasonId,
-              params.teamId,
-              playerName
-            );
-            revalidatePath("/");
-          }}
-          className="min-w-full"
-        >
-          <div className="flex-1 flex-col">
-            <label className="text-black" htmlFor="playerName">Name: </label>
-            <input className="min-w-full" type="text" id="playerName" name="playerName" autoComplete="off" />
-            <button className="mt-2" type="submit">Add Player</button>
-          </div>
-
-        </form>
-      </div>
-    </div>
+      <form
+        action={async (formData) => {
+          "use server";
+          const playerName = formData.get("playerName") as string;
+          await addPlayer(
+            params.leagueId,
+            params.seasonId,
+            params.teamId,
+            playerName
+          );
+          revalidatePath("/");
+        }}
+        className="text-black"
+      >
+        <div>
+          <label htmlFor="playerName">Name: </label>
+          <input type="text" name="playerName" autoComplete="off" />
+        </div>
+        <button type="submit">Add Player</button>
+      </form>
+    </>
   );
 }

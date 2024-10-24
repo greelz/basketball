@@ -15,7 +15,7 @@ import AdminPlayerForm from "./AdminPlayerForm";
 const statfont = localFont({ src: "../../../../public/fonts/dsdigi.ttf" });
 
 //BEGIN DUMMY DATA
-const leagueId = "PzZH38lp1R6wYs5Luf67"
+const leagueId = "v6Drfl2JmEDvFaWzwYvm"
 // const seasonId = "NQ7C9eCOxkV6NWwi73Gj"
 // const seasons = [
 //     { name: "Spring Playoffs", id: "LxMULlyBcOCZNt4WPa3L" },
@@ -80,7 +80,7 @@ interface Props {
     seasons: Season[];
 }
 
-export default function AdminPanel({
+export default async function AdminPanel({
     leagueId,
     seasons }: Props
 ) {
@@ -94,18 +94,26 @@ export default function AdminPanel({
     const [fullGamesList, setFullGamesList] = useState<Game[]>([]);
     const [selectedSeason, setSelectedSeason] = useState("");
     const [selectedGame, setSelectedGame] = useState<Game>();
-    const [selectedTeamofGame, setSelectedTeamofGame] = useState();
+    const [selectedTeamofGame, setSelectedTeamofGame] = useState<string>();
     const [gameStatOptions, setGameStatOptions] = useState<{ ddlabel: string; ddvalue: string }[]
     >([])
-    const [opponent, setOpponent] = useState();
+    const [opponent, setOpponent] = useState<Team>();
     const [selectedPlayer, setSelectedPlayer] = useState<PlayerStats>();
+
+    const handleDropdownSelect = async (value: string) => {
+        try {
+            await handleSeasonSelect(value); // Await the async function
+            console.error("value value value:", value);
+        } catch (error) {
+            console.error("Error selecting season:", error);
+        }
+    };
 
     //On Season Selection, Get Teams / Games, Assign Team/Game names / Format Dates
     const handleSeasonSelect = async (seasonId: string) => {
-        const [teams, games] = await Promise.all([
-            getTeamsForSeason(leagueId, seasonId),
-            getGamesForSeason(leagueId, seasonId)
-        ]);
+
+        const teams = await getTeamsForSeason(leagueId, seasonId);
+        const games = await getGamesForSeason(leagueId, seasonId);
         games.sort((a, b) => a.date.toDate().getTime() - b.date.toDate().getTime());
         games.forEach((game) => {
             const teamA = getTeamNameFromCachedTeams(game.team1, teams);
@@ -192,7 +200,7 @@ export default function AdminPanel({
     //autoUpdate for debugging purposes
     useEffect(() => {
 
-        console.log(`Updated selectedGame: ${JSON.stringify(selectedGame, null, 2)}`);
+        console.log(`Updated selectedSeason: ${JSON.stringify(selectedSeason, null, 2)}`);
 
     }, [gamesList, selectedTeam, seasonOptions, selectedGame, selectedTeamofGame, gameStatOptions, selectedSeason]);
 
@@ -234,7 +242,7 @@ export default function AdminPanel({
                                 <AdminPanelSidebar />
                             </div>
                             {/* Center Column */}
-                            <div className="flex-1 p-6 bg-transparent bg-transparent">
+                            <div className="flex-1 p-6 bg-transparent">
                                 <h1 className="text-center w-full">Admin Panel</h1>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                                     <div className="bggrayd-nohov p-6 rounded-lg text-white">
@@ -256,7 +264,7 @@ export default function AdminPanel({
                                 </div>
                                 <div className="mt-10 p-4 bggrayd-nohov rounded">
                                     <div className="mx-4 pt-4">
-                                        <DropdownSelector title="Select League" options={seasonOptions} onSelect={handleSeasonSelect} />
+                                        <DropdownSelector title="Select League" options={seasonOptions} onSelect={handleDropdownSelect} />
 
                                         {!teamsList || teamsList.length === 0 && (
                                             <div className="my-4">

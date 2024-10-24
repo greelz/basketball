@@ -23,7 +23,7 @@ export function LinkList({ data, slug }: ILinkListProps) {
             className="block p-4 text-center text-black bg-white transition duration-200 hover:bg-sky-100 hover:text-sky-600"
             href={`${slug}/${d.id}`}
           >
-            {d.name}
+            {d.name} {d.gameover ? 'GG' : ''}
           </Link>
         </li>
       ))}

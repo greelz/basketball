@@ -43,23 +43,23 @@ export default function StatCell({ s, setPlayer, player }: Props) {
       }}
     >
       <td>{s.name}</td>
-      <td className="text-xs text-center border-l">{totalTwosAttempted}</td>
-      <td className="text-xs text-center border-l">{s.two_point_made ?? 0}</td>
-      <td className="text-xs text-center border-l">{totalThreesAttempted}</td>
-      <td className="text-xs text-center border-l">{s.three_point_made ?? 0}</td>
-      <td className="text-xs text-center border-l">
+      <td className="text-xs">{totalTwosAttempted}</td>
+      <td className="text-xs">{s.two_point_made ?? 0}</td>
+      <td className="text-xs">{totalThreesAttempted}</td>
+      <td className="text-xs">{s.three_point_made ?? 0}</td>
+      <td>
         {totalMakes}-{totalAttempts}
       </td>
-      <td className="text-xs text-center border-l">
+      <td>
         {s.three_point_made ?? 0}-{totalThreesAttempted}
       </td>
-      <td className="text-xs text-center border-l">{s["O rebounds"]}</td>
-      <td className="text-xs text-center border-l">{s["D rebounds"]}</td>
-      <td className="text-xs text-center border-l">{s.assists}</td>
-      <td className="text-xs text-center border-l">{s.steals}</td>
-      <td className="text-xs text-center border-l">{s.blocks}</td>
-      <td className="text-xs text-center border-l">{s.turnovers}</td>
-      <td className="text-xs text-center border-l">{s.points}</td>
+      <td>{s["O rebounds"]}</td>
+      <td>{s["D rebounds"]}</td>
+      <td>{s.assists}</td>
+      <td>{s.steals}</td>
+      <td>{s.blocks}</td>
+      <td>{s.turnovers}</td>
+      <td>{s.points}</td>
     </tr>
   );
 }

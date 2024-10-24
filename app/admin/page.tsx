@@ -2,6 +2,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../config";
 import { League } from "../types";
 import LinkList from "../components/LinkList";
+import { addLeague } from "../database";
 
 interface LeaguesPageProps {
   leagues: League[];
@@ -9,14 +10,20 @@ interface LeaguesPageProps {
 
 export default async function LeaguesPage() {
   const data = await getData();
-  console.log('getLeagues data:');
-  console.log(data);
+
+  async function createLeague(formData: FormData) {
+    'use server'
+    addLeague("SlabLeague", formData.get('seasonName') as string);
+  }
   return (
     <>
-      <div className=' bg-white/75 my-20 px-36 pb-20 pt-10 h-3/4' >
-        <h1>Leagues</h1>
-        <LinkList data={data} slug="/admin" />
-      </div>
+      <h1>Leagues</h1>
+      <LinkList data={data} slug="/admin" />
+      <form action={createLeague} className="text-black">
+        <input placeholder="enter a season name" type="input" id="seasonName">
+        </input>
+        <button type="submit">Create new season</button>
+      </form>
     </>
   );
 }
@@ -27,10 +34,6 @@ async function getData(): Promise<League[]> {
     id: doc.id,
     ...doc.data(),
   })) as League[];
-  console.log('getdataFunction:*******************************************');
-  console.log('leaguessnapshot::*******************************************');
-  console.log(leaguesSnapshot);
-  console.log('leagues::*******************************************');
-  console.log(leagues);
+
   return leagues;
 }
