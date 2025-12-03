@@ -7,7 +7,7 @@ export default function Page() {
     <div className="mx-auto">
       <PrettyForm
         title="Get ready to play the funnest trivia you'll (possibly) ever play in your life."
-        elements={["Name", "Game Code"]}
+        elements={["Game Code"]}
         action={async (formData) => {
           "use server";
           const gameId = formData.get("Game Code")?.toString();
@@ -15,10 +15,7 @@ export default function Page() {
             return;
           }
 
-          const nameForDb = await tryAddPlayerFormData(gameId, formData);
-          if (nameForDb) {
-            redirect(`/trivia/${formData.get("Game Code")}/${nameForDb}`);
-          }
+          redirect(`/trivia/join/${gameId}`);
         }}
         actionButtonText="Join"
       ></PrettyForm>

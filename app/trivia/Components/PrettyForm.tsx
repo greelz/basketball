@@ -1,12 +1,12 @@
 "use server";
 
-import {ReactNode} from "react";
+import { ReactNode } from "react";
 
 interface IFormProps {
   title: string;
-  elements: string[];
+  elements?: string[];
   action?: string | ((formData: FormData) => void | Promise<void>);
-  actionButtonText: string;
+  actionButtonText?: string;
   children?: ReactNode;
 }
 
@@ -18,7 +18,7 @@ export default async function PrettyForm(props: IFormProps) {
         action={props.action}
         className="flex flex-col p-6 px-14 gap-6 border-1 border-slate-600 rounded-md shadow-md shadow-slate-800"
       >
-        {props.elements.map((elem, idx) => {
+        {props.elements?.map((elem, idx) => {
           return (
             <div key={elem} className="flex flex-col gap-1">
               <label key={elem} htmlFor={elem}>

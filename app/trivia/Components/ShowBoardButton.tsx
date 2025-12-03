@@ -2,7 +2,7 @@
 
 import { db } from "@/app/config";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import IJeopardyGame, { IServerBoard } from "../Interfaces/Jeopardy";
+import IJeopardyGame, { IServerBoard } from "@/app/trivia/Interfaces/Jeopardy";
 
 interface IShowBoardButtonProps {
   gameId: string;

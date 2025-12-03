@@ -1,5 +1,5 @@
-import PrettyForm from "../Components/PrettyForm";
-import { IJeopardyBoard, parseTsv } from "../Interfaces/Jeopardy";
+import PrettyForm from "@/app/trivia/Components/PrettyForm";
+import { IJeopardyBoard, parseTsv } from "@/app/trivia/Interfaces/Jeopardy";
 import { db } from "@/app/config";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { redirect } from "next/navigation";

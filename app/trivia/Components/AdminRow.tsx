@@ -1,19 +1,19 @@
 "use client";
 
-import {FaChevronRight} from "react-icons/fa";
-import {IPlayer} from "../Interfaces/Jeopardy";
-import {useCallback, useRef} from "react";
+import { FaChevronRight } from "react-icons/fa";
+import { IPlayer } from "@/app/trivia/Interfaces/Jeopardy";
+import { useCallback, useRef } from "react";
 import AdminEditPopup from "./AdminEditPopup";
-import {Timestamp} from "firebase/firestore";
-import {useBuzzerStartTime} from "./hooks";
-import {db} from "@/app/config";
+import { Timestamp } from "firebase/firestore";
+import { useBuzzerStartTime } from "./hooks";
+import { db } from "@/app/config";
 
 interface IAdminRowProps {
   player: IPlayer;
   gameId: string;
   buzzData?: Timestamp;
 }
-export default function AdminRow({player, gameId, buzzData}: IAdminRowProps) {
+export default function AdminRow({ player, gameId, buzzData }: IAdminRowProps) {
   const popoverRef = useRef<HTMLDivElement>(null);
   const startTime = useBuzzerStartTime(gameId, db);
 

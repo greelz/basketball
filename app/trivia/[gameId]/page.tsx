@@ -1,5 +1,5 @@
 import LiveBoard from "@/app/trivia/Components/LiveBoard";
-import PlayersAndPointsList from "../Components/PlayersAndPointsList";
+import PlayersAndPointsList from "@/app/trivia/Components/PlayersAndPointsList";
 
 export default async function Page(props: PageProps<"/trivia/[gameId]">) {
   const params = await props.params;
@@ -7,10 +7,10 @@ export default async function Page(props: PageProps<"/trivia/[gameId]">) {
 
   return (
     <div className="h-dvh flex-1">
-      <div className="h-[80%]">
+      <div className="h-[78%]">
         <LiveBoard gameId={gameId} />
       </div>
-      <div className="h-[20%]">
+      <div className="h-[22%]">
         <PlayersAndPointsList gameId={gameId} />
       </div>
     </div>

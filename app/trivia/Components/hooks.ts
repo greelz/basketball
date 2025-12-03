@@ -7,8 +7,12 @@ import {
   onSnapshot,
   Timestamp,
 } from "firebase/firestore";
-import {useEffect, useState} from "react";
-import {IJeopardyBoard, IPlayer, IServerBoard} from "../Interfaces/Jeopardy";
+import { useEffect, useState } from "react";
+import {
+  IJeopardyBoard,
+  IPlayer,
+  IServerBoard,
+} from "@/app/trivia/Interfaces/Jeopardy";
 
 export function useBoard(gameId: string, db: Firestore) {
   const [board, setBoard] = useState<IJeopardyBoard | null>();
@@ -70,8 +74,6 @@ export function useHasBuzzed(gameId: string, db: Firestore, player: string) {
     const realtime = onSnapshot(
       doc(db, "trivia", gameId, "players", player),
       (doc) => {
-        console.log(player);
-        console.log(doc.data());
         setHasBuzzed(doc.data()?.t != null);
       }
     );
@@ -118,4 +120,3 @@ export function useBuzzersEnabled(gameId: string, db: Firestore) {
 
   return enabled;
 }
-
