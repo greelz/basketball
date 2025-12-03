@@ -9,10 +9,11 @@ import { TeamRecord } from "@/app/types";
 import React from "react";
 
 interface IPage {
-  params: { leagueId: string; seasonId: string };
+  params: Promise<{ leagueId: string; seasonId: string }>;
 }
 
-export default async function SeasonPage({ params }: IPage) {
+export default async function SeasonPage(props: IPage) {
+  const params = await props.params;
   const leagueId = params.leagueId;
   const seasonId = params.seasonId;
   const schedule = await getSeasonSchedule(leagueId, seasonId);

@@ -3,14 +3,15 @@ import { addPlayer, getPlayersFromTeam } from "@/app/database";
 import { revalidatePath } from "next/cache";
 
 interface IPage {
-  params: {
+  params: Promise<{
     leagueId: string;
     seasonId: string;
     teamId: string;
     playerId: string;
-  };
+  }>;
 }
-export default async function SeasonPage({ params }: IPage) {
+export default async function SeasonPage(props: IPage) {
+  const params = await props.params;
   const { leagueId, seasonId, teamId, playerId } = params;
   return (
     <>

@@ -3,10 +3,11 @@ import { addSeason, addTeam, getSeasons } from "@/app/database";
 import LinkList from "@/app/components/LinkList";
 
 interface LeaguePageProps {
-  params: { leagueId: string };
+  params: Promise<{ leagueId: string }>;
 }
 
-export default async function LeaguePage({ params }: LeaguePageProps) {
+export default async function LeaguePage(props: LeaguePageProps) {
+  const params = await props.params;
   const seasons = await getSeasons(params.leagueId);
   return (
     <>

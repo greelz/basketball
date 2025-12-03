@@ -299,11 +299,9 @@ export async function getSeasonStatisticsRegenerate(
 
       if (!records.has(team1)) {
         records.set(team1, { teamId: team1, wins: 0, losses: 0, ties: 0 });
-        console.log(`Adding ${team1} to map`);
       }
       if (!records.has(team2)) {
         records.set(team2, { teamId: team2, wins: 0, losses: 0, ties: 0 });
-        console.log(`Adding ${team2} to map`);
       }
 
       addScoreToGame(

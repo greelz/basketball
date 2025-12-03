@@ -11,10 +11,11 @@ import PlayerIncrementor from "./PlayerIncrementor";
 import { revalidatePath } from "next/cache";
 
 interface LiveGameParams {
-  params: { gameId: string };
+  params: Promise<{ gameId: string }>;
 }
 
-export default async function LiveGame({ params }: LiveGameParams) {
+export default async function LiveGame(props: LiveGameParams) {
+  const params = await props.params;
   const gameId = params.gameId;
   const findLeagueResult = await findLeagueAndSeasonByGameId(params.gameId);
   let leagueId: string, seasonId: string;

@@ -1,120 +1,90 @@
-import { DataSnapshot } from "firebase/database";
+import {Timestamp} from "firebase/firestore";
 
 export default interface IJeopardyGame {
-  title: string;
-  board: IJeopardyBoard;
-  author?: string;
+	title: string;
+	board: IJeopardyBoard;
+	author?: string;
 }
 
 export interface IJeopardyBoard {
-  isDoubleJeopardy?: boolean;
-  categories: IJeopardyCategory[];
+	isDoubleJeopardy?: boolean;
+	categories: IJeopardyCategory[];
+}
+
+export interface IPlayer {
+	name: string;
+	score?: number;
+	t?: Timestamp;
 }
 
 export interface IJeopardyCategory {
-  title: string;
-  questions: IJeopardyQuestion[];
+	title: string;
+	questions: IJeopardyQuestion[];
 }
 
 export interface IJeopardyQuestion {
-  answer: string;
-  prompt: string;
-  value: number;
-  isDailyDouble?: boolean;
-  hide?: boolean;
+	answer: string;
+	prompt: string;
+	value: number;
+	id: string;
+	isDailyDouble?: boolean;
+	hide?: boolean;
+	currentQuestion?: boolean;
+}
+
+export interface ILiveBoardProps {
+	gameId: string;
+}
+
+export interface IServerGame {
+	author: string;
+	board: IJeopardyBoard;
+	title: string;
+}
+
+export interface IServerGameState {
+	current: string;
+}
+
+export interface IServerMetadata {
+	createInstant: Date;
+}
+
+export interface IServerBoard {
+	jeopardyGame?: IServerGame;
+	gameState?: IServerGameState;
+	metadata: IServerMetadata;
+	players?: Record<string, IPlayer>;
 }
 
 export function parseTsv(tsv: string): IJeopardyBoard {
-  let board: IJeopardyBoard = {
-    isDoubleJeopardy: false,
-    categories: [],
-  };
+	const board: IJeopardyBoard = {
+		isDoubleJeopardy: false,
+		categories: [],
+	};
 
-  tsv.split("\n").forEach((line, idx) => {
-    if (idx !== 0) {
-      const [category, prompt, answer, value, isDailyDouble] = line.split("\t");
-      const newQuestion: IJeopardyQuestion = {
-        prompt: prompt,
-        answer: answer,
-        value: Number.parseInt(value),
-        isDailyDouble: isDailyDouble.includes("TRUE"),
-      };
+	tsv.split("\n").forEach((line, index) => {
+		if (index !== 0) {
+			const [category, prompt, answer, value, isDailyDouble] = line.split("\t");
+			const newQuestion: IJeopardyQuestion = {
+				prompt: prompt,
+				answer: answer,
+				value: Number.parseInt(value),
+				isDailyDouble: isDailyDouble.includes("TRUE"),
+				id: index.toString(),
+			};
 
-      const idx = board.categories.find((cat) => cat.title === category);
-      if (!idx) {
-        board.categories.push({
-          title: category,
-          questions: [newQuestion],
-        });
-      } else {
-        idx.questions.push(newQuestion);
-      }
-    }
-  });
+			const idx = board.categories.find((cat) => cat.title === category);
+			if (!idx) {
+				board.categories.push({
+					title: category,
+					questions: [newQuestion],
+				});
+			} else {
+				idx.questions.push(newQuestion);
+			}
+		}
+	});
 
-  return board;
-}
-
-export function setJeopardyBoard(
-  gameData: DataSnapshot | undefined,
-  board: IJeopardyBoard
-) {}
-
-export function getJeopardyGame(
-  gameData: DataSnapshot | undefined
-): IJeopardyGame | undefined {
-
-  type Category = {
-    questions: Map<string, IJeopardyQuestion>;
-    title: string;
-  };
-
-  type Board = {
-    categories: Map<string, Category>;
-    isDoubleJeopardy: boolean;
-  };
-
-  type Game = {
-    author: string,
-    board: Board,
-    title: string
-  }
-
-  if (!gameData) return;
-
-  const gameVal: Game = gameData.child("jeopardyGame").val();
-  if (!gameVal) return;
-
-  const board: Board = gameVal.board;
-  if (!board) return;
-
-  const author = gameVal.author;
-  const title = gameVal.title;
-
-  let categories: IJeopardyCategory[] = [];
-  Object.values(board.categories).forEach((c: Category) => {
-    let newQuestions: IJeopardyQuestion[] = [];
-    categories.push({
-      title: c.title,
-      questions: newQuestions,
-    });
-
-    Object.values(c.questions).forEach((q: IJeopardyQuestion) => {
-      if (q.hide === true) console.log('it is true');
-      newQuestions.push(q);
-    });
-    newQuestions.sort((a, b) => {
-      if (a.value > b.value) return 1;
-      if (a.value < b.value) return -1;
-      return 0;
-    })
-  });
-
-  console.log(categories);
-
-  return {
-    author: author,
-    title: title,
-    board: { categories: categories, isDoubleJeopardy: false },
-  };
+	return board;
 }

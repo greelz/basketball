@@ -1,0 +1,11 @@
+import {usePlayerList} from "@/app/trivia/Components/hooks";
+import {db} from "@/app/trivia";
+
+interface IAwardPointsButtonProps {
+	gameId: string;
+}
+export default function AwardPointsButton(props: IAwardPointsButtonProps) {
+
+	const players = usePlayerList(gameId, db);
+
+}

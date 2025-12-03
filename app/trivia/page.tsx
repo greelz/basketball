@@ -1,50 +1,25 @@
-'use client'
-
-import { useState } from "react";
-import HomePage, { IGameInfo } from "./pages/HomePage";
-import Game from "./pages/Game";
-import { push, ref, set } from "firebase/database";
-import { database } from "./Hooks/FirebaseApp";
+import Link from "next/link";
 
 export default function TriviaPage() {
-    const [gameId, setGameId] = useState("");
-    const [name, setName] = useState("");
-
-    const addUserToGame = async (gameId: string) => {
-        console.log("Adding a user to a game...");
-        return push(ref(database, `games/${gameId}/players`), name);
-    };
-
-    const onCreateNewGame = (gameInfo: IGameInfo) => {
-        console.log("creating a new game...");
-        setGameId(gameInfo.gameId);
-        const reference = ref(database, `games/${gameInfo.gameId}`);
-        set(reference, {
-            status: "lobby",
-        });
-
-        addUserToGame(gameInfo.gameId);
-    };
-
-    if (gameId !== "" && name !== "") {
-        return <div className="triviaBackground">
-            <Game gameId={gameId} name={name} />
+  return (
+    <div className="flex flex-1 h-dvh items-center text-white justify-center">
+      <div className="border-full p-2 flex flex-col gap-30 max-w-lg items-center">
+        <div className="items-center flex flex-col gap-6">
+          <div className="text-center">
+            Have someone else hosting a game for you? First, say &quot;wow, that
+            host is super cool!&quot;-- and dive right in!
+          </div>
+          <Link href="/trivia/join" className="text-lg btn-blue">
+            Join a game
+          </Link>
         </div>
-    } else {
-        return (
-            <div className="triviaBackground">
-                <HomePage
-                    name={name}
-                    onSetName={(name) => setName(name)}
-                    onCreateNewGame={(gameInfo) => {
-                        onCreateNewGame(gameInfo);
-                    }}
-                    onJoinGame={async (gameId, exists) => {
-                        setGameId(gameId);
-                        if (!exists) addUserToGame(gameId);
-                    }}
-                />
-            </div>
-        );
-    }
+        <div className="items-center flex flex-col gap-6">
+          <div className="text-center">Know what you&apos;re doing?</div>
+          <Link href="/trivia/create" className="btn-green">
+            Create a game
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 }
