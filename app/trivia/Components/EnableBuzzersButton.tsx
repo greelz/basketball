@@ -1,9 +1,9 @@
 "use client";
 
-import {db} from "@/app/config";
-import {disableBuzzers, enableBuzzers} from "./apis";
-import {useBuzzersEnabled} from "./hooks";
-import {MdOutlinePhoneEnabled, MdPhoneEnabled} from "react-icons/md";
+import { db } from "@/app/config";
+import { disableBuzzers, enableBuzzers } from "./apis";
+import { useBuzzersEnabled } from "./hooks";
+import { MdOutlinePhoneEnabled, MdPhoneEnabled } from "react-icons/md";
 
 interface IEnableBuzzersButtonProps {
   gameId: string;
@@ -19,9 +19,9 @@ export default function EnableBuzzersButton({
         if (buzzersEnabled) disableBuzzers(gameId);
         else enableBuzzers(gameId);
       }}
-
       type="button"
-      className={`!m-0 ${buzzersEnabled ? 'btn-red' : 'btn-green'}`}
+      title={`${buzzersEnabled ? "Disable buzzers" : "Enable buzzers"}`}
+      className={`!m-0 ${buzzersEnabled ? "btn-red" : "btn-green"}`}
     >
       {buzzersEnabled ? <MdPhoneEnabled /> : <MdOutlinePhoneEnabled />}
     </button>

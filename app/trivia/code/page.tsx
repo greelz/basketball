@@ -1,6 +1,5 @@
 import PrettyForm from "@/app/trivia/Components/PrettyForm";
 import { redirect } from "next/navigation";
-import { tryAddPlayerFormData } from "@/app/trivia/Components/apis";
 
 export default function Page() {
   return (
@@ -10,7 +9,7 @@ export default function Page() {
         elements={["Game Code"]}
         action={async (formData) => {
           "use server";
-          const gameId = formData.get("Game Code")?.toString();
+          const gameId = formData.get("Game Code")?.toString().toUpperCase();
           if (!gameId || gameId.length !== 4) {
             return;
           }

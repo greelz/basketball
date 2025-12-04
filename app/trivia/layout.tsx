@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <section
-      className={`flex bg-black text-white min-h-dvh ${passion.className}`}
+      className={`flex bg-black text-white min-h-dvh w-screen ${passion.className}`}
     >
       {children}
     </section>

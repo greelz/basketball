@@ -6,7 +6,7 @@ export default async function Page(props: PageProps<"/trivia/[gameId]">) {
   const gameId = params.gameId;
 
   return (
-    <div className="h-dvh flex-1">
+    <div className="flex flex-col w-full">
       <div className="h-[78%]">
         <LiveBoard gameId={gameId} />
       </div>

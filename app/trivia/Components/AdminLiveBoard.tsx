@@ -1,22 +1,17 @@
 "use client";
 
-import {useCallback, useRef, useState} from "react";
+import { useCallback, useRef, useState } from "react";
 import LiveBoard from "./LiveBoard";
-import {
-  doc,
-  getDoc,
-  increment,
-  updateDoc,
-} from "firebase/firestore";
-import {db} from "@/app/config";
+import { doc, getDoc, increment, updateDoc } from "firebase/firestore";
+import { db } from "@/app/config";
 import IJeopardyGame, {
   IJeopardyCategory,
   IJeopardyQuestion,
   IServerBoard,
 } from "../Interfaces/Jeopardy";
-import {usePlayerList} from "./hooks";
-import {FaX} from "react-icons/fa6";
-import {disableBuzzers, removeBuzzData} from "./apis";
+import { usePlayerList } from "./hooks";
+import { FaX } from "react-icons/fa6";
+import { disableBuzzers, removeBuzzData } from "./apis";
 
 interface IAdminLiveBoardProps {
   gameId: string;
@@ -26,7 +21,7 @@ async function getQuestion(
   questionId: string,
   gameId: string
 ): Promise<
-  {question: IJeopardyQuestion; category: IJeopardyCategory} | undefined
+  { question: IJeopardyQuestion; category: IJeopardyCategory } | undefined
 > {
   const ref = doc(db, "trivia", gameId);
   const data = await getDoc(ref);
@@ -44,7 +39,7 @@ async function getQuestion(
   for (const cat of board.categories) {
     for (const question of cat.questions) {
       if (question.id === questionId) {
-        return {question: question, category: cat};
+        return { question: question, category: cat };
       }
     }
   }
@@ -68,7 +63,7 @@ async function editQuestion(
   removeBuzzData(gameId);
 
   const data = snap.data();
-  const jeopardyGame = {...(data.jeopardyGame as IJeopardyGame)};
+  const jeopardyGame = { ...(data.jeopardyGame as IJeopardyGame) };
 
   jeopardyGame.board = {
     ...jeopardyGame.board,
@@ -92,9 +87,8 @@ async function editQuestion(
   });
 }
 
-export default function AdminLiveBoard({gameId}: IAdminLiveBoardProps) {
+export default function AdminLiveBoard({ gameId }: IAdminLiveBoardProps) {
   const questionPopupRef = useRef<HTMLDivElement>(null);
-  const pointsPopoverRef = useRef<HTMLDivElement>(null);
 
   const [question, setQuestion] = useState<IJeopardyQuestion>();
   const [category, setCategory] = useState("");

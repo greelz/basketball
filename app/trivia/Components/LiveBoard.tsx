@@ -1,8 +1,8 @@
 "use client";
 
-import {db} from "@/app/config";
-import {ILiveBoardProps} from "@/app/trivia/Interfaces/Jeopardy";
-import {useBoard} from "./hooks";
+import { db } from "@/app/config";
+import { ILiveBoardProps } from "@/app/trivia/Interfaces/Jeopardy";
+import { useBoard } from "./hooks";
 
 interface ILiveBoardPageProps {
   fontsize?: string;
@@ -25,13 +25,20 @@ export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
   if (currentQuestion) {
     return (
       <div
-        className={`flex flex-col gap-4 w-full h-full p-10 text-shadow-lg/50 text-center items-center justify-center bg-jeopardy uppercase ${props.fontsize
-          ? props.fontsize
-          : "lg:text-6xl/20 md:text-4xl/15 sm:text-3xl/12 text-2xl/10 "
-          }`}
+        className={`flex flex-col gap-4 w-full h-full p-10 text-shadow-lg/50 text-center items-center justify-center bg-jeopardy uppercase ${
+          props.fontsize
+            ? props.fontsize
+            : "lg:text-6xl/20 md:text-4xl/15 sm:text-3xl/12 text-2xl/10 "
+        }`}
       >
         <div className="max-w-300">{currentQuestion.prompt}</div>
-        {props.hostMode && <div className="max-w-300 text-sm">{currentQuestion.answer}</div>}
+        {props.hostMode && (
+          <div>
+            <div className="max-w-300 text-sm">{currentQuestion.answer}</div>
+
+            <div className="max-w-300 text-sm">${currentQuestion.value}</div>
+          </div>
+        )}
       </div>
     );
   }
@@ -63,9 +70,10 @@ export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
                   <div
                     className={`text-jeopardytext text-shadow-lg/50 text-outline-black flex-1 bg-jeopardy w-full 
                       text-base sm:text-lg md:text-3xl lg:text-4xl xl:text-6xl xxl:text-8xl
-                      text-center flex justify-center items-center ${props.onBoardClick
-                        ? "hover:cursor-pointer hover:bg-blue-700 active:bg-blue-800"
-                        : ""
+                      text-center flex justify-center items-center ${
+                        props.onBoardClick
+                          ? "hover:cursor-pointer hover:bg-blue-700 active:bg-blue-800"
+                          : ""
                       }`}
                     key={q.value}
                     onClick={() => {

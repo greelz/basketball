@@ -5,6 +5,7 @@ import {
   doc,
   Firestore,
   onSnapshot,
+  query,
   Timestamp,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -61,10 +62,35 @@ export function usePlayerList(gameId: string, db: Firestore) {
     );
 
     // Unsubscribe at the end
-    return () => realtime();
+    return () => {
+      realtime();
+    };
   }, [gameId, db]);
 
   return players;
+}
+
+export function usePlayer(gameId: string, name: string, db: Firestore) {
+  const [player, setPlayer] = useState<IPlayer | undefined>(undefined);
+
+  useEffect(() => {
+    const realtime = onSnapshot(
+      doc(db, "trivia", gameId, "players", name),
+      (doc) => {
+        const data = doc.data();
+        setPlayer({
+          name: doc.id,
+          score: data?.score,
+          t: data?.t,
+        });
+      }
+    );
+
+    // Unsubscribe at the end
+    return () => realtime();
+  }, [gameId, name]);
+
+  return player;
 }
 
 export function useHasBuzzed(gameId: string, db: Firestore, player: string) {

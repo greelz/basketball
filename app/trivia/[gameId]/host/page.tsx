@@ -12,7 +12,7 @@ import AwardPointsButton from "@/app/trivia/Components/AwardPointsButton";
 
 async function addPlayerLocal(gameId: string, formData: FormData) {
   "use server";
-  tryAddPlayer(gameId, formData.get("Name")?.toString() ?? "");
+  await tryAddPlayer(gameId, formData.get("Name")?.toString() ?? "");
 }
 
 export default async function Page(props: PageProps<"/trivia/[gameId]/host">) {
@@ -33,6 +33,7 @@ export default async function Page(props: PageProps<"/trivia/[gameId]/host">) {
             <button
               className="btn-blue max-w-30 text-xs"
               popoverTarget="addPlayerPopover"
+              title="Add a player"
             >
               <IoMdAdd />
             </button>

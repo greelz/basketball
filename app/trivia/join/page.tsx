@@ -10,14 +10,14 @@ export default function Page() {
         elements={["Name", "Game Code"]}
         action={async (formData) => {
           "use server";
-          const gameId = formData.get("Game Code")?.toString();
+          const gameId = formData.get("Game Code")?.toString().toUpperCase();
           if (!gameId || gameId.length !== 4) {
             return;
           }
 
           const nameForDb = await tryAddPlayerFormData(gameId, formData);
           if (nameForDb) {
-            redirect(`/trivia/${formData.get("Game Code")}/${nameForDb}`);
+            redirect(`/trivia/${gameId}/${nameForDb}`);
           }
         }}
         actionButtonText="Join"
