@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { TikTok_Sans } from "next/font/google";
+import { Roboto } from "next/font/google";
 
-const passion = TikTok_Sans({
-  subsets: ["latin", "latin-ext"],
+const roboto = Roboto({
+  display: 'swap'
 });
+
 
 export const metadata: Metadata = {
   title: "Trivia",
@@ -17,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <section
-      className={`flex bg-black text-white min-h-dvh w-screen ${passion.className}`}
+      className={`flex bg-black text-white min-h-dvh w-screen ${roboto.className}`}
     >
       {children}
     </section>

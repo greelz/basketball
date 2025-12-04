@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { db } from "@/app/config";
-import { usePlayerList, useBuzzerStartTime } from "./hooks";
-import AdminRow from "./AdminRow";
-import { IPlayer } from "@/app/trivia/Interfaces/Jeopardy";
-import { useRef, useState } from "react";
+import { db } from '@/app/config';
+import { usePlayerList, useBuzzerStartTime } from './hooks';
+import AdminRow from './AdminRow';
+import { IPlayer } from '@/app/trivia/Interfaces/Jeopardy';
+import { useRef, useState } from 'react';
 
 interface IAdminComponentProps {
   gameId: string;
@@ -44,24 +44,42 @@ export default function AdminComponent(props: IAdminComponentProps) {
 
   const [calledOnPlayer, setCalledOnPlayer] = useState<IPlayer | undefined>();
 
-  if (startTime && players?.some((p) => p.t)) {
-    // Set a 1 second timeout to wait for other answers to come up, then pop up the buzzer selection
-    timeout.current = setTimeout(() => {
-      const;
-    }, 1000);
-  }
-
   if (!players) {
     return null;
   }
 
+  if (startTime && !timeout.current) {
+    if (players.some((p) => p.t)) {
+      timeout.current = setTimeout(() => {
+        // Get the fastest player
+        const bestPlayer = players.sort((a, b) => {
+          const at = a.t;
+          const bt = b.t;
+          if (!at && !bt) return 0;
+          if (!at) return 1;
+          if (!bt) return -1;
+
+          return at.toMillis() - bt.toMillis();
+        })[0];
+
+        setCalledOnPlayer(bestPlayer);
+      }, 1000);
+    }
+  }
+
   return (
     <div className="h-full p-2 flex flex-col">
+      <div>{startTime && calledOnPlayer && `The best player is ${calledOnPlayer?.name}`}</div>
       {players
         .sort((a, b) => sortSpecial(a, b, startTime))
         .map((p, idx) => (
-          <div key={p.name + "asdf"}>
-            <AdminRow gameId={props.gameId} player={p} buzzData={p.t} />
+          <div key={p.name + 'asdf'}>
+            <AdminRow
+              gameId={props.gameId}
+              player={p}
+              buzzData={p.t}
+              calledOn={calledOnPlayer?.name === p.name}
+            />
             {idx !== players.length - 1 && (
               <hr className="border-slate-700 flex items-center justify-center" />
             )}
