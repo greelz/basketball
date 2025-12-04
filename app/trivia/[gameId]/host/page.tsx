@@ -8,7 +8,7 @@ import DeleteBuzzDataButton from "@/app/trivia/Components/DeleteBuzzDataButton";
 import PrettyForm from "@/app/trivia/Components/PrettyForm";
 import { tryAddPlayer } from "@/app/trivia/Components/apis";
 import { IoMdAdd } from "react-icons/io";
-import AwardPointsButton from "@/app/trivia/Components/AwardPointsButton";
+import Link from "next/link";
 
 async function addPlayerLocal(gameId: string, formData: FormData) {
   "use server";
@@ -26,6 +26,9 @@ export default async function Page(props: PageProps<"/trivia/[gameId]/host">) {
           <h1 className="flex-1 text-xl text-center pt-1">
             Host Mode - {gameId}
           </h1>
+          <Link className="btn-yellow text-xs" href={`/trivia/join/${gameId}`}>
+            Join
+          </Link>
         </div>
         <div className="flex-1 flex flex-col">
           <AdminComponent gameId={gameId} />
@@ -40,7 +43,6 @@ export default async function Page(props: PageProps<"/trivia/[gameId]/host">) {
             <EnableBuzzersButton gameId={gameId} />
             <DeleteBuzzDataButton gameId={gameId} />
             <ShowBoardButton gameId={gameId} />
-            <AwardPointsButton gameId={gameId} />
           </div>
         </div>
         <AdminLiveBoard gameId={gameId} />

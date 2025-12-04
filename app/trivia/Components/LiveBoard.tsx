@@ -3,10 +3,12 @@
 import { db } from "@/app/config";
 import { ILiveBoardProps } from "@/app/trivia/Interfaces/Jeopardy";
 import { useBoard } from "./hooks";
+import { RxReset } from "react-icons/rx";
 
 interface ILiveBoardPageProps {
   fontsize?: string;
   onBoardClick?: (questionId: string) => void;
+  onResetClick?: () => void;
   hostMode?: boolean;
 }
 
@@ -25,7 +27,7 @@ export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
   if (currentQuestion) {
     return (
       <div
-        className={`flex flex-col gap-4 w-full h-full p-10 text-shadow-lg/50 text-center items-center justify-center bg-jeopardy uppercase ${
+        className={`relative flex flex-col gap-4 w-full h-full p-10 text-shadow-lg/50 text-center items-center justify-center bg-jeopardy uppercase ${
           props.fontsize
             ? props.fontsize
             : "lg:text-6xl/20 md:text-4xl/15 sm:text-3xl/12 text-2xl/10 "
@@ -33,12 +35,18 @@ export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
       >
         <div className="max-w-300">{currentQuestion.prompt}</div>
         {props.hostMode && (
-          <div>
+          <div className="relative">
             <div className="max-w-300 text-sm">{currentQuestion.answer}</div>
 
             <div className="max-w-300 text-sm">${currentQuestion.value}</div>
           </div>
         )}
+        <button
+          className="text-xs btn-red absolute top-px right-px"
+          onClick={props.onResetClick}
+        >
+          <RxReset />
+        </button>
       </div>
     );
   }

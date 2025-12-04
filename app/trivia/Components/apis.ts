@@ -63,6 +63,8 @@ export async function tryAddPlayer(
 
   const nameForDb = name.replace(/[^A-Za-z0-9._~-]+/g, "");
 
+  if (name === "host") return;
+
   // If the gameId doesn't exist, return an error.
   const gameRef = doc(db, "trivia", gameId);
   if (!(await getDoc(gameRef)).exists()) return undefined;

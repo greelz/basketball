@@ -47,7 +47,7 @@ async function getQuestion(
 
 async function editQuestion(
   gameId: string,
-  question: IJeopardyQuestion,
+  question: IJeopardyQuestion | undefined,
   editType: "show" | "reset"
 ) {
   if (!question) return;
@@ -103,16 +103,14 @@ export default function AdminLiveBoard({ gameId }: IAdminLiveBoardProps) {
         <LiveBoard
           hostMode
           gameId={gameId}
+          onResetClick={() => editQuestion(gameId, question, "reset")}
           onBoardClick={async (qId: string) => {
-            if (qId !== question?.id) {
-              const result = await getQuestion(qId, gameId);
-              if (result) {
-                setQuestion(result.question);
-                setCategory(result.category.title);
-              }
+            const result = await getQuestion(qId, gameId);
+            if (result) {
+              setQuestion(result.question);
+              setCategory(result.category.title);
+              editQuestion(gameId, result.question, "show");
             }
-
-            questionPopupRef.current?.showPopover();
           }}
         />
       </div>

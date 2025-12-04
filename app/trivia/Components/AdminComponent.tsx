@@ -4,6 +4,7 @@ import { db } from "@/app/config";
 import { usePlayerList, useBuzzerStartTime } from "./hooks";
 import AdminRow from "./AdminRow";
 import { IPlayer } from "@/app/trivia/Interfaces/Jeopardy";
+import { useRef, useState } from "react";
 
 interface IAdminComponentProps {
   gameId: string;
@@ -37,9 +38,18 @@ function sortSpecial(a: IPlayer, b: IPlayer, startTime: number | undefined) {
 }
 
 export default function AdminComponent(props: IAdminComponentProps) {
-  console.log("here");
   const players = usePlayerList(props.gameId, db);
   const startTime = useBuzzerStartTime(props.gameId, db)?.toMillis();
+  const timeout = useRef<NodeJS.Timeout>(null);
+
+  const [calledOnPlayer, setCalledOnPlayer] = useState<IPlayer | undefined>();
+
+  if (startTime && players?.some((p) => p.t)) {
+    // Set a 1 second timeout to wait for other answers to come up, then pop up the buzzer selection
+    timeout.current = setTimeout(() => {
+      const;
+    }, 1000);
+  }
 
   if (!players) {
     return null;
