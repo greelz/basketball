@@ -6,13 +6,14 @@ import AdminRow from './AdminRow';
 import { IPlayer } from '@/app/trivia/Interfaces/Jeopardy';
 import { useRef, useState, useCallback } from 'react';
 import {
-  awardPoints,
+  awardPointsInBatch,
   disableBuzzers,
-  enableBuzzers,
-  removeBuzzData,
+  enableBuzzersInBatch,
+  removeBuzzDataInBatch,
   setBuzzedThisRound,
   showBoard,
 } from './apis';
+import { writeBatch } from 'firebase/firestore';
 
 interface IAdminComponentProps {
   gameId: string;
@@ -34,14 +35,16 @@ export default function AdminComponent({ gameId }: IAdminComponentProps) {
 
   const answered = useCallback(
     async (correctly: boolean, gameId: string, name: string) => {
+      const batch = writeBatch(db);
       if (correctly) {
-        await awardPoints(gameId, name, currentQuestion?.value ?? 0);
-        removeBuzzData(gameId, true);
+        awardPointsInBatch(gameId, name, currentQuestion?.value ?? 0, batch);
+        removeBuzzDataInBatch(gameId, true, batch);
         showBoard(gameId);
       } else {
-        removeBuzzData(gameId);
-        enableBuzzers(gameId);
+        removeBuzzDataInBatch(gameId, false, batch);
+        enableBuzzersInBatch(gameId, batch);
       }
+      await batch.commit();
       setCalledOnPlayer(undefined);
     },
     [gameId, currentQuestion]

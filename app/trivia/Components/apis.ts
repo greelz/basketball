@@ -10,12 +10,25 @@ import {
   updateDoc,
   increment,
   writeBatch,
+  WriteBatch,
 } from 'firebase/firestore';
 import { IPlayer, IServerBoard, IJeopardyGame } from '@/app/trivia/Interfaces/Jeopardy';
 
 export async function enableBuzzers(gameId: string) {
   await setDoc(
     doc(db, 'trivia', gameId, 'state', 'game'),
+    {
+      enableBuzzers: true,
+      buzzerStartTime: serverTimestamp(),
+    },
+    { merge: true }
+  );
+}
+
+export async function enableBuzzersInBatch(gameId: string, batch: WriteBatch) {
+  const gameRef = doc(db, 'trivia', gameId, 'state', 'game');
+  batch.set(
+    gameRef,
     {
       enableBuzzers: true,
       buzzerStartTime: serverTimestamp(),
@@ -99,6 +112,61 @@ export async function getPlayersList(gameId: string) {
   docs.forEach((p) => players.push({ name: p.id, score: p.data().score, t: p.data().t }));
 
   return players;
+}
+
+export async function awardPointsInBatch(
+  gameId: string,
+  name: string,
+  value: number,
+  batch: WriteBatch
+) {
+  const playerRef = doc(db, 'trivia', gameId, 'players', name);
+  batch.update(playerRef, { score: increment(value) });
+}
+
+export async function removeBuzzDataInBatch(gameId: string, removeAll: boolean, batch: WriteBatch) {
+  const gameRef = doc(db, 'trivia', gameId, 'state', 'game');
+  const playersRef = collection(db, 'trivia', gameId, 'players');
+
+  batch.set(
+    gameRef,
+    { buzzerStartTime: deleteField(), enableBuzzers: deleteField() },
+    { merge: true }
+  );
+
+  const snapshot = await getDocs(playersRef);
+
+  snapshot.docs.forEach((doc) => {
+    batch.update(doc.ref, { t: deleteField() });
+    if (removeAll) {
+      batch.update(doc.ref, { buzzedThisRound: deleteField() });
+    }
+  });
+}
+
+export async function showBoardInBatch(gameId: string, batch: WriteBatch) {
+  const gameRef = doc(db, 'trivia', gameId);
+  const snap = await getDoc(gameRef);
+
+  if (!snap.exists()) {
+    console.error(`Couldn't find ${gameId}`);
+    return;
+  }
+
+  const data = snap.data() as IServerBoard;
+  const game = { ...(data.jeopardyGame as IJeopardyGame) };
+
+  game.board.categories = game.board.categories?.map((cat) => ({
+    ...cat,
+    questions: cat.questions.map((q) => ({
+      ...q,
+      currentQuestion: false,
+    })),
+  }));
+
+  await updateDoc(gameRef, {
+    jeopardyGame: game,
+  });
 }
 
 export async function awardPoints(gameId: string, name: string, value: number): Promise<void> {
