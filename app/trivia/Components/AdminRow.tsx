@@ -1,30 +1,22 @@
-"use client";
+'use client';
 
-import { FaChevronRight } from "react-icons/fa";
-import { IPlayer } from "@/app/trivia/Interfaces/Jeopardy";
-import { ButtonHTMLAttributes, EventHandler, useCallback, useRef } from "react";
-import AdminEditPopup from "./AdminEditPopup";
-import { Timestamp } from "firebase/firestore";
-import { useBuzzerStartTime } from "./hooks";
-import { db } from "@/app/config";
+import { FaChevronRight } from 'react-icons/fa';
+import { IPlayer } from '@/app/trivia/Interfaces/Jeopardy';
+import { useCallback, useRef } from 'react';
+import AdminEditPopup from './AdminEditPopup';
+import { Timestamp } from 'firebase/firestore';
 
 interface IAdminRowProps {
   player: IPlayer;
   gameId: string;
   buzzData?: Timestamp;
-  calledOn?: boolean;
+  buzzerStartTime?: Timestamp;
 }
-export default function AdminRow({
-  player,
-  gameId,
-  buzzData,
-  calledOn,
-}: IAdminRowProps) {
+export default function AdminRow({ player, gameId, buzzData, buzzerStartTime }: IAdminRowProps) {
   const popoverRef = useRef<HTMLDivElement>(null);
-  const startTime = useBuzzerStartTime(gameId, db);
 
   const buzzMillis = buzzData?.toMillis();
-  const startMillis = startTime?.toMillis();
+  const startMillis = buzzerStartTime?.toMillis();
 
   let diff;
   if (!buzzMillis || !startMillis) {
@@ -45,29 +37,15 @@ export default function AdminRow({
     <>
       <div
         onClick={showPopup}
-        className={`hover:cursor-pointer grid grid-cols-[2fr_1fr_1fr_15%] gap-2 items-center py-2 ${calledOn ? "bg-slate-600" : ""}`}
+        className={`hover:cursor-pointer grid grid-cols-[2fr_1fr_1fr_15%] gap-2 items-center py-2`}
       >
         <div className="text-sm flex-1 whitespace-nowrap overflow-hidden text-ellipsis">
           {player.name}
         </div>
         <div className="font-bold">{player.score ?? 0}</div>
         <div className="font-bold">{diff}</div>
-        {calledOn && (
-          <div className="flex items-center gap-2 justify-center">
-            <button
-              className="btn-green"
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                alert("yes");
-                e.stopPropagation();
-              }}
-            >
-              Yes
-            </button>
-            <button className="btn-red">No</button>
-          </div>
-        )}
         <div className="flex justify-end opacity-20">
-          <FaChevronRight size={".5em"} />
+          <FaChevronRight size={'.5em'} />
         </div>
       </div>
       <div

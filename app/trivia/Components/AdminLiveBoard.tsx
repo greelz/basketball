@@ -1,17 +1,18 @@
-"use client";
+'use client';
 
-import { useCallback, useRef, useState } from "react";
-import LiveBoard from "./LiveBoard";
-import { doc, getDoc, increment, updateDoc } from "firebase/firestore";
-import { db } from "@/app/config";
-import IJeopardyGame, {
+import { useCallback, useRef, useState } from 'react';
+import LiveBoard from '@/app/trivia/Components/LiveBoard';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '@/app/config';
+import {
+  IJeopardyGame,
   IJeopardyCategory,
   IJeopardyQuestion,
   IServerBoard,
-} from "../Interfaces/Jeopardy";
-import { usePlayerList } from "./hooks";
-import { FaX } from "react-icons/fa6";
-import { disableBuzzers, removeBuzzData } from "./apis";
+} from '@/app/trivia/Interfaces/Jeopardy';
+import { FaX } from 'react-icons/fa6';
+import { disableBuzzers, removeBuzzData } from '@/app/trivia/Components/apis';
+import { useBoard } from './hooks';
 
 interface IAdminLiveBoardProps {
   gameId: string;
@@ -20,10 +21,8 @@ interface IAdminLiveBoardProps {
 async function getQuestion(
   questionId: string,
   gameId: string
-): Promise<
-  { question: IJeopardyQuestion; category: IJeopardyCategory } | undefined
-> {
-  const ref = doc(db, "trivia", gameId);
+): Promise<{ question: IJeopardyQuestion; category: IJeopardyCategory } | undefined> {
+  const ref = doc(db, 'trivia', gameId);
   const data = await getDoc(ref);
 
   if (!data.exists()) {
@@ -48,10 +47,10 @@ async function getQuestion(
 async function editQuestion(
   gameId: string,
   question: IJeopardyQuestion | undefined,
-  editType: "show" | "reset"
+  editType: 'show' | 'reset'
 ) {
   if (!question) return;
-  const ref = doc(db, "trivia", gameId);
+  const ref = doc(db, 'trivia', gameId);
   const snap = await getDoc(ref);
 
   if (!snap.exists()) {
@@ -60,7 +59,7 @@ async function editQuestion(
   }
 
   disableBuzzers(gameId);
-  removeBuzzData(gameId);
+  removeBuzzData(gameId, true);
 
   const data = snap.data();
   const jeopardyGame = { ...(data.jeopardyGame as IJeopardyGame) };
@@ -73,8 +72,8 @@ async function editQuestion(
         if (q.id === question.id) {
           return {
             ...q,
-            currentQuestion: editType === "show",
-            hide: editType === "show",
+            currentQuestion: editType === 'show',
+            hide: editType === 'show',
           };
         }
         return q;
@@ -89,9 +88,8 @@ async function editQuestion(
 
 export default function AdminLiveBoard({ gameId }: IAdminLiveBoardProps) {
   const questionPopupRef = useRef<HTMLDivElement>(null);
-
-  const [question, setQuestion] = useState<IJeopardyQuestion>();
-  const [category, setCategory] = useState("");
+  const board = useBoard(gameId, db);
+  const question = board?.categories.flatMap((c) => c.questions).find((q) => q.currentQuestion);
 
   const closeQuestionPopup = useCallback(() => {
     questionPopupRef.current?.hidePopover();
@@ -102,14 +100,13 @@ export default function AdminLiveBoard({ gameId }: IAdminLiveBoardProps) {
       <div className="min-h-100">
         <LiveBoard
           hostMode
+          board={board}
           gameId={gameId}
-          onResetClick={() => editQuestion(gameId, question, "reset")}
+          onResetClick={() => editQuestion(gameId, question, 'reset')}
           onBoardClick={async (qId: string) => {
             const result = await getQuestion(qId, gameId);
             if (result) {
-              setQuestion(result.question);
-              setCategory(result.category.title);
-              editQuestion(gameId, result.question, "show");
+              editQuestion(gameId, result.question, 'show');
             }
           }}
         />
@@ -125,9 +122,7 @@ export default function AdminLiveBoard({ gameId }: IAdminLiveBoardProps) {
         {/* This one fills the popover and controls layout */}
         <div className="flex min-h-[30dvh] flex-col">
           <div className="flex justify-between mb-5">
-            <div>
-              {category} - {question?.value}
-            </div>
+            <div>{question?.value}</div>
             <button onClick={closeQuestionPopup} className="ml-auto btn-gray">
               <FaX />
             </button>
@@ -144,7 +139,7 @@ export default function AdminLiveBoard({ gameId }: IAdminLiveBoardProps) {
             <button
               onClick={() => {
                 if (question) {
-                  editQuestion(gameId, question, "show");
+                  editQuestion(gameId, question, 'show');
                   closeQuestionPopup();
                 }
               }}
@@ -155,7 +150,7 @@ export default function AdminLiveBoard({ gameId }: IAdminLiveBoardProps) {
             <button
               onClick={() => {
                 if (question) {
-                  editQuestion(gameId, question, "reset");
+                  editQuestion(gameId, question, 'reset');
                   closeQuestionPopup();
                 }
               }}

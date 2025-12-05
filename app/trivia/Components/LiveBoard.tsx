@@ -1,11 +1,10 @@
-"use client";
+'use client';
 
-import { db } from "@/app/config";
-import { ILiveBoardProps } from "@/app/trivia/Interfaces/Jeopardy";
-import { useBoard } from "./hooks";
-import { RxReset } from "react-icons/rx";
+import { ILiveBoardProps, IJeopardyBoard } from '@/app/trivia/Interfaces/Jeopardy';
+import { RxReset } from 'react-icons/rx';
 
-interface ILiveBoardPageProps {
+export interface ILiveBoardPageProps {
+  board?: IJeopardyBoard;
   fontsize?: string;
   onBoardClick?: (questionId: string) => void;
   onResetClick?: () => void;
@@ -13,8 +12,7 @@ interface ILiveBoardPageProps {
 }
 
 export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
-  const gameId = props.gameId;
-  const board = useBoard(gameId, db);
+  const board = props.board;
 
   if (!board) {
     return <div>Loading the board...</div>;
@@ -30,23 +28,25 @@ export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
         className={`relative flex flex-col gap-4 w-full h-full p-10 text-shadow-lg/50 text-center items-center justify-center bg-jeopardy uppercase ${
           props.fontsize
             ? props.fontsize
-            : "lg:text-6xl/20 md:text-4xl/15 sm:text-3xl/12 text-2xl/10 "
+            : 'lg:text-6xl/20 md:text-4xl/15 sm:text-3xl/12 text-2xl/10 '
         }`}
       >
         <div className="max-w-300">{currentQuestion.prompt}</div>
         {props.hostMode && (
-          <div className="relative">
-            <div className="max-w-300 text-sm">{currentQuestion.answer}</div>
+          <>
+            <div className="relative">
+              <div className="max-w-300 text-sm">{currentQuestion.answer}</div>
 
-            <div className="max-w-300 text-sm">${currentQuestion.value}</div>
-          </div>
+              <div className="max-w-300 text-sm">${currentQuestion.value}</div>
+            </div>
+            <button
+              className="text-xs btn-red absolute top-px right-px"
+              onClick={props.onResetClick}
+            >
+              <RxReset />
+            </button>
+          </>
         )}
-        <button
-          className="text-xs btn-red absolute top-px right-px"
-          onClick={props.onResetClick}
-        >
-          <RxReset />
-        </button>
       </div>
     );
   }
@@ -68,10 +68,7 @@ export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
         ))}
         {board.categories.map((cats) => {
           return (
-            <div
-              className="flex flex-col justify-center gap-1"
-              key={cats.title}
-            >
+            <div className="flex flex-col justify-center gap-1" key={cats.title}>
               {cats.questions
                 .sort((a, b) => a.value - b.value) // Ensure lowest values at the bottom
                 .map((q) => (
@@ -80,8 +77,8 @@ export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
                       text-base sm:text-lg md:text-3xl lg:text-4xl xl:text-6xl xxl:text-8xl
                       text-center flex justify-center items-center ${
                         props.onBoardClick
-                          ? "hover:cursor-pointer hover:bg-blue-700 active:bg-blue-800"
-                          : ""
+                          ? 'hover:cursor-pointer hover:bg-blue-700 active:bg-blue-800'
+                          : ''
                       }`}
                     key={q.value}
                     onClick={() => {
@@ -90,7 +87,7 @@ export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
                       }
                     }}
                   >
-                    {!q.hide && "$" + q.value}
+                    {!q.hide && '$' + q.value}
                   </div>
                 ))}
             </div>

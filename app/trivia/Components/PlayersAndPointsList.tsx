@@ -11,7 +11,7 @@ export default function PlayersAndPointsList(
 ) {
   const players = usePlayerList(props.gameId, db);
   return (
-    <div className="flex gap-6 flex-nowrap h-full overflow-x-auto justify-center">
+    <div className="flex gap-6 flex-nowrap h-full overflow-x-auto">
       {players
         ?.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
         .map((p) => (

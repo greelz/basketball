@@ -1,14 +1,14 @@
-import Buzzer from "@/app/trivia/Components/Buzzer";
-import LiveBoard from "@/app/trivia/Components/LiveBoard";
-import PlayerChipList from "@/app/trivia/Components/PlayerChipList";
-import PlayerPointsChip from "../../Components/PlayerPointsChip";
+import Buzzer from '@/app/trivia/Components/Buzzer';
+import LiveBoardSelf from '@/app/trivia/Components/LiveBoardSelf';
+import PlayerChipList from '@/app/trivia/Components/PlayerChipList';
+import PlayerPointsChip from '@/app/trivia/Components/PlayerPointsChip';
 
 interface IPlayerPageProps {
   showBoard?: boolean;
 }
 
 export default async function Page(
-  props: PageProps<"/trivia/[gameId]/[player]"> & IPlayerPageProps
+  props: PageProps<'/trivia/[gameId]/[player]'> & IPlayerPageProps
 ) {
   const params = await props.params;
   const { gameId, player } = params;
@@ -31,7 +31,7 @@ export default async function Page(
       </div>
       {!props.showBoard && (
         <div className="flex-0">
-          <LiveBoard fontsize="text-xs/6" gameId={gameId} />
+          <LiveBoardSelf fontsize="text-xs/6" gameId={gameId} />
         </div>
       )}
     </div>

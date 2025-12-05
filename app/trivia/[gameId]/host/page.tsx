@@ -1,21 +1,21 @@
-"use server";
+'use server';
 
-import AdminComponent from "@/app/trivia/Components/AdminComponent";
-import AdminLiveBoard from "@/app/trivia/Components/AdminLiveBoard";
-import ShowBoardButton from "@/app/trivia/Components/ShowBoardButton";
-import EnableBuzzersButton from "@/app/trivia/Components/EnableBuzzersButton";
-import DeleteBuzzDataButton from "@/app/trivia/Components/DeleteBuzzDataButton";
-import PrettyForm from "@/app/trivia/Components/PrettyForm";
-import { tryAddPlayer } from "@/app/trivia/Components/apis";
-import { IoMdAdd } from "react-icons/io";
-import Link from "next/link";
+import AdminComponent from '@/app/trivia/Components/AdminComponent';
+import AdminLiveBoard from '@/app/trivia/Components/AdminLiveBoard';
+import ShowBoardButton from '@/app/trivia/Components/ShowBoardButton';
+import EnableBuzzersButton from '@/app/trivia/Components/EnableBuzzersButton';
+import DeleteBuzzDataButton from '@/app/trivia/Components/DeleteBuzzDataButton';
+import PrettyForm from '@/app/trivia/Components/PrettyForm';
+import { tryAddPlayer } from '@/app/trivia/Components/apis';
+import { IoMdAdd } from 'react-icons/io';
+import Link from 'next/link';
 
 async function addPlayerLocal(gameId: string, formData: FormData) {
-  "use server";
-  await tryAddPlayer(gameId, formData.get("Name")?.toString() ?? "");
+  'use server';
+  await tryAddPlayer(gameId, formData.get('Name')?.toString() ?? '');
 }
 
-export default async function Page(props: PageProps<"/trivia/[gameId]/host">) {
+export default async function Page(props: PageProps<'/trivia/[gameId]/host'>) {
   const params = await props.params;
   const { gameId } = params;
 
@@ -23,9 +23,7 @@ export default async function Page(props: PageProps<"/trivia/[gameId]/host">) {
     <>
       <div className="flex flex-col flex-1">
         <div className="flex p-2">
-          <h1 className="flex-1 text-xl text-center pt-1">
-            Host Mode - {gameId}
-          </h1>
+          <h1 className="flex-1 text-xl text-center pt-1">Host Mode - {gameId}</h1>
           <Link className="btn-yellow text-xs" href={`/trivia/join/${gameId}`}>
             Join
           </Link>
@@ -54,7 +52,7 @@ export default async function Page(props: PageProps<"/trivia/[gameId]/host">) {
       >
         <PrettyForm
           title="Add Player"
-          elements={["Name"]}
+          elements={['Name']}
           actionButtonText="Add"
           action={addPlayerLocal.bind(null, gameId)}
         />
