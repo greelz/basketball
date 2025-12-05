@@ -73,8 +73,7 @@ export function usePlayer(gameId: string, name: string, db: Firestore) {
       const data = doc.data();
       setPlayer({
         name: doc.id,
-        score: data?.score,
-        t: data?.t,
+        ...data,
       });
     });
 

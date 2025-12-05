@@ -15,6 +15,7 @@ export interface IPlayer {
   name: string;
   score?: number;
   t?: Timestamp;
+  buzzedThisRound?: boolean;
 }
 
 export interface IJeopardyCategory {

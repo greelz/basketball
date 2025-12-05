@@ -1,17 +1,10 @@
 'use client';
 
 import { db } from '@/app/config';
-import {
-  doc,
-  getDoc,
-  setDoc,
-  onSnapshot,
-  serverTimestamp,
-  runTransaction,
-} from 'firebase/firestore';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { doc, serverTimestamp, runTransaction } from 'firebase/firestore';
+import { useCallback, useRef, useState } from 'react';
 import { IoMdRadioButtonOff } from 'react-icons/io';
-import { useHasBuzzed } from './hooks';
+import { useBuzzersEnabled, usePlayer } from './hooks';
 
 interface IBuzzerProps {
   player: string;
@@ -20,32 +13,13 @@ interface IBuzzerProps {
 
 export default function Buzzer({ player, gameId }: IBuzzerProps) {
   const [isBuzzing, setIsBuzzing] = useState(false);
-  const hasBuzzedAlready = useHasBuzzed(gameId, db, player);
-  const [buzzerEnabled, setBuzzerEnabled] = useState(false);
   const [isCoolingDown, setIsCoolingDown] = useState(false);
 
+  const playerData = usePlayer(gameId, player, db);
+  const buzzerEnabled = useBuzzersEnabled(gameId, db);
+
+  const hasBuzzedAlready = playerData?.buzzedThisRound === true;
   const cooldownTimer = useRef<NodeJS.Timeout | undefined>(undefined);
-
-  // Buzzers enabled useEffect
-  useEffect(() => {
-    const gameRef = doc(db, 'trivia', gameId, 'state', 'game'); // assumes enableBuzzers is here
-
-    const unsubscribe = onSnapshot(gameRef, (snap) => {
-      if (!snap.exists()) {
-        setBuzzerEnabled(false);
-        return;
-      }
-
-      setBuzzerEnabled(snap.data().enableBuzzers === true);
-    });
-
-    return () => {
-      unsubscribe();
-      if (cooldownTimer.current) {
-        clearTimeout(cooldownTimer.current);
-      }
-    };
-  }, [gameId]);
 
   const enabled = !hasBuzzedAlready && !isBuzzing && buzzerEnabled && !isCoolingDown;
 
@@ -57,7 +31,7 @@ export default function Buzzer({ player, gameId }: IBuzzerProps) {
       cooldownTimer.current = setTimeout(() => {
         setIsCoolingDown(false);
         cooldownTimer.current = undefined;
-      }, 1000);
+      }, 500);
       return;
     }
 
@@ -85,6 +59,9 @@ export default function Buzzer({ player, gameId }: IBuzzerProps) {
         enabled ? 'bg-green-400' : 'bg-red-900'
       }`}
     >
+      <div className="absolute end-px top-px">
+        {playerData?.score ? `\$${playerData.score}` : null}
+      </div>
       <IoMdRadioButtonOff color="white" size={'20%'} />
       {(hasBuzzedAlready || isBuzzing) && <div className="text-xs">You buzzed!</div>}
     </div>

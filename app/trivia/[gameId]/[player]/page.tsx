@@ -1,7 +1,4 @@
 import Buzzer from '@/app/trivia/Components/Buzzer';
-import LiveBoardSelf from '@/app/trivia/Components/LiveBoardSelf';
-import PlayerChipList from '@/app/trivia/Components/PlayerChipList';
-import PlayerPointsChip from '@/app/trivia/Components/PlayerPointsChip';
 
 interface IPlayerPageProps {
   showBoard?: boolean;
@@ -17,23 +14,13 @@ export default async function Page(
 
   return (
     <div className="flex flex-col flex-1">
-      <div className="flex justify-center relative items-center">
+      <div className="flex flex-col gap-1 justify-center relative items-center">
         <h1 className="text-xl">Good luck, {decodedPlayer}!</h1>
-        <div className="absolute end-[10px]">
-          <PlayerPointsChip gameId={gameId} name={decodedPlayer} />
-        </div>
-      </div>
-      <div className="mx-auto">
-        <PlayerChipList gameId={gameId} />
+        <h3 className="text-sm">Buzz in when the buzzer turns green!</h3>
       </div>
       <div className="flex-1">
         <Buzzer player={decodedPlayer} gameId={gameId} />
       </div>
-      {!props.showBoard && (
-        <div className="flex-0">
-          <LiveBoardSelf fontsize="text-xs/6" gameId={gameId} />
-        </div>
-      )}
     </div>
   );
 }
