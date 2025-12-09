@@ -5,6 +5,8 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
+  limit,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -12,7 +14,12 @@ import {
   writeBatch,
   WriteBatch,
 } from 'firebase/firestore';
-import { IPlayer, IServerBoard, IJeopardyGame } from '@/app/trivia/Interfaces/Jeopardy';
+import {
+  IPlayer,
+  IServerBoard,
+  IJeopardyGame,
+  IJeopardyBoard,
+} from '@/app/trivia/Interfaces/Jeopardy';
 
 export async function enableBuzzers(gameId: string) {
   await setDoc(
@@ -58,7 +65,9 @@ export async function setBuzzedThisRound(gameId: string, name: string) {
 }
 
 export async function removeBuzzData(gameId: string, removeAll?: boolean) {
-  setDoc(
+  const batch = writeBatch(db);
+
+  batch.set(
     doc(db, 'trivia', gameId, 'state', 'game'),
     {
       buzzerStartTime: deleteField(),
@@ -66,16 +75,8 @@ export async function removeBuzzData(gameId: string, removeAll?: boolean) {
     },
     { merge: true }
   );
-  const colRef = collection(db, 'trivia', gameId, 'players');
-  const snapshot = await getDocs(colRef);
 
-  const batch = writeBatch(db);
-  snapshot.docs.forEach((doc) => {
-    batch.update(doc.ref, { t: deleteField() });
-    if (removeAll) {
-      batch.update(doc.ref, { buzzedThisRound: deleteField() });
-    }
-  });
+  batch.delete(doc(db, 'trivia', gameId, 'state', 'buzzers'));
 
   await batch.commit();
 }
@@ -206,4 +207,62 @@ export async function showBoard(gameId: string) {
   await updateDoc(gameRef, {
     jeopardyGame: game,
   });
+}
+
+// ****************** GET ********************
+
+export async function getBoard(gameId: string) {
+  const gameRef = doc(db, 'trivia', gameId);
+  const snap = await getDoc(gameRef);
+
+  if (!snap.exists()) {
+    console.error(`Couldn't find ${gameId}`);
+    return;
+  }
+
+  return snap.data()?.jeopardyGame?.board as IJeopardyBoard;
+}
+
+export async function deleteCollection(path: string, batchSize = 50) {
+  const colRef = collection(db, path);
+
+  while (true) {
+    // 1. Get a page of documents
+    const q = query(colRef, limit(batchSize));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      console.log('Done deleting collection:', path);
+      return;
+    }
+
+    // 2. Create a batch
+    const batch = writeBatch(db);
+
+    snapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    // 3. Commit the batch
+    await batch.commit();
+  }
+}
+
+export async function deleteCollectionInBatch(path: string, batch: WriteBatch) {
+  const colRef = collection(db, path);
+
+  // 1. Get a page of documents
+  const q = query(colRef);
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    return;
+  }
+
+  // 2. Create a batch
+  snapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref);
+  });
+
+  // 3. Commit the batch
 }

@@ -2,7 +2,12 @@
 
 import { collection, doc, Firestore, onSnapshot, Timestamp } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { IJeopardyBoard, IPlayer, IServerBoard } from '@/app/trivia/Interfaces/Jeopardy';
+import {
+  IJeopardyBoard,
+  IPlayer,
+  IServerBoard,
+  IJeopardyQuestion,
+} from '@/app/trivia/Interfaces/Jeopardy';
 
 export function useBoard(gameId: string, db: Firestore) {
   const [board, setBoard] = useState<IJeopardyBoard>();
@@ -28,10 +33,27 @@ export function useBoard(gameId: string, db: Firestore) {
   return board;
 }
 
-export function useCurrentQuestion(gameId: string, db: Firestore) {
-  const currentBoard = useBoard(gameId, db);
-  const q = currentBoard?.categories.flatMap((cat) => cat.questions).find((q) => q.currentQuestion);
-  return q;
+export function useCurrentQuestionId(gameId: string, db: Firestore) {
+  const [questionId, setQuestionId] = useState<string | undefined>();
+
+  useEffect(() => {
+    const realtime = onSnapshot(
+      doc(db, 'trivia', gameId, 'state', 'currentQuestion'),
+      (doc) => {
+        if (doc.exists()) {
+          setQuestionId(doc.data().id);
+        } else {
+          setQuestionId(undefined);
+        }
+      },
+      (e) => console.error(e)
+    );
+
+    // Unsubscribe at the end
+    return () => realtime();
+  }, [gameId, db]);
+
+  return questionId;
 }
 
 export function usePlayerList(gameId: string, db: Firestore) {
@@ -82,6 +104,22 @@ export function usePlayer(gameId: string, name: string, db: Firestore) {
   }, [gameId, name]);
 
   return player;
+}
+
+export function usePlayerBuzzerData(gameId: string, name: string, db: Firestore) {
+  const [buzzTime, setBuzzTime] = useState<number>();
+
+  useEffect(() => {
+    const realtime = onSnapshot(doc(db, 'trivia', gameId, 'state', 'buzzers'), (doc) => {
+      const data = doc.data();
+      setBuzzTime(data ? data[name] : undefined);
+    });
+
+    // Unsubscribe at the end
+    return () => realtime();
+  }, [gameId, name]);
+
+  return buzzTime;
 }
 
 export function useHasBuzzed(gameId: string, db: Firestore, player: string) {

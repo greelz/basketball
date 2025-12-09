@@ -6,7 +6,7 @@ import ShowBoardButton from '@/app/trivia/Components/ShowBoardButton';
 import EnableBuzzersButton from '@/app/trivia/Components/EnableBuzzersButton';
 import DeleteBuzzDataButton from '@/app/trivia/Components/DeleteBuzzDataButton';
 import PrettyForm from '@/app/trivia/Components/PrettyForm';
-import { tryAddPlayer } from '@/app/trivia/Components/apis';
+import { getBoard, tryAddPlayer } from '@/app/trivia/Components/apis';
 import { IoMdAdd } from 'react-icons/io';
 import Link from 'next/link';
 
@@ -19,6 +19,8 @@ export default async function Page(props: PageProps<'/trivia/[gameId]/host'>) {
   const params = await props.params;
   const { gameId } = params;
 
+  const board = await getBoard(gameId);
+
   return (
     <>
       <div className="flex flex-col flex-1">
@@ -29,7 +31,7 @@ export default async function Page(props: PageProps<'/trivia/[gameId]/host'>) {
           </Link>
         </div>
         <div className="flex-1 flex flex-col">
-          <AdminComponent gameId={gameId} />
+          <AdminComponent gameId={gameId} board={board} />
           <div className="flex gap-2 lg:gap-3 lg:text-base p-2 text-xs flex-wrap justify-center">
             <button
               className="btn-blue max-w-30 text-xs"
@@ -43,7 +45,7 @@ export default async function Page(props: PageProps<'/trivia/[gameId]/host'>) {
             <ShowBoardButton gameId={gameId} />
           </div>
         </div>
-        <AdminLiveBoard gameId={gameId} />
+        <AdminLiveBoard gameId={gameId} board={board} />
       </div>
       <div
         popover="auto"

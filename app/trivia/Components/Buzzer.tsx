@@ -1,10 +1,10 @@
 'use client';
 
 import { db } from '@/app/config';
-import { doc, serverTimestamp, runTransaction } from 'firebase/firestore';
-import { useCallback, useRef, useState } from 'react';
+import { doc, setDoc } from 'firebase/firestore';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { IoMdRadioButtonOff } from 'react-icons/io';
-import { useBuzzersEnabled, usePlayer } from './hooks';
+import { useBuzzersEnabled, usePlayer, usePlayerBuzzerData } from './hooks';
 
 interface IBuzzerProps {
   player: string;
@@ -17,9 +17,23 @@ export default function Buzzer({ player, gameId }: IBuzzerProps) {
 
   const playerData = usePlayer(gameId, player, db);
   const buzzerEnabled = useBuzzersEnabled(gameId, db);
+  const buzzerData = usePlayerBuzzerData(gameId, player, db);
 
-  const hasBuzzedAlready = playerData?.buzzedThisRound === true;
+  const hasBuzzedAlready = buzzerData !== undefined;
   const cooldownTimer = useRef<NodeJS.Timeout | undefined>(undefined);
+  const buzzEnabledLocalDate = useRef<Date | undefined>(undefined);
+
+  // On/off switch for the buzzerEnabled hook
+  useEffect(() => {
+    if (buzzerEnabled) {
+      if (!buzzEnabledLocalDate.current) {
+        buzzEnabledLocalDate.current = new Date();
+      }
+    } else {
+      // This block will run on every remount
+      buzzEnabledLocalDate.current = undefined;
+    }
+  }, [buzzerEnabled]);
 
   const enabled = !hasBuzzedAlready && !isBuzzing && buzzerEnabled && !isCoolingDown;
 
@@ -35,21 +49,22 @@ export default function Buzzer({ player, gameId }: IBuzzerProps) {
       return;
     }
 
-    setIsBuzzing(true);
-    try {
-      await runTransaction(db, async (tx) => {
-        const ref = doc(db, 'trivia', gameId, 'players', player);
-        const snap = await tx.get(ref);
-        const tValInDb = snap.data()?.t;
+    if (!buzzEnabledLocalDate.current) return; // They never got an enabled timestamp, quit
 
-        if (!tValInDb) {
-          tx.set(ref, { t: serverTimestamp() }, { merge: true });
-        }
-      });
-    } finally {
-      // After 5 seconds, reset is buzzing
-      setTimeout(() => setIsBuzzing(false), 5000);
-    }
+    setIsBuzzing(true);
+    // Just immediately submit the player's time based on an offset of buzzEnabledLocalDate
+
+    const diff = Date.now() - buzzEnabledLocalDate.current!.getTime();
+
+    setDoc(
+      doc(db, 'trivia', gameId, 'state', 'buzzers'),
+      {
+        [player]: diff,
+      },
+      { merge: true }
+    );
+
+    setTimeout(() => setIsBuzzing(false), 5000);
   }, [player, enabled, gameId]);
 
   return (

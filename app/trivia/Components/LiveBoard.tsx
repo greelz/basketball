@@ -1,13 +1,20 @@
 'use client';
 
-import { ILiveBoardProps, IJeopardyBoard } from '@/app/trivia/Interfaces/Jeopardy';
+import {
+  ILiveBoardProps,
+  IJeopardyBoard,
+  IJeopardyQuestion,
+} from '@/app/trivia/Interfaces/Jeopardy';
 import { RxReset } from 'react-icons/rx';
+import { db } from '@/app/config';
+import { useCurrentQuestionId } from '@/app/trivia/Components/hooks';
 
 export interface ILiveBoardPageProps {
+  gameId: string;
   board?: IJeopardyBoard;
   fontsize?: string;
-  onBoardClick?: (questionId: string) => void;
-  onResetClick?: () => void;
+  onBoardClick?: (question: IJeopardyQuestion) => void;
+  onResetClick?: (question: IJeopardyQuestion) => void;
   hostMode?: boolean;
 }
 
@@ -18,8 +25,9 @@ export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
     return <div>Loading the board...</div>;
   }
 
+  const questionId = useCurrentQuestionId(props.gameId, db);
   const allQuestions = board.categories.flatMap((cat) => cat.questions);
-  const currentQuestion = allQuestions.find((q) => q.currentQuestion);
+  const currentQuestion = allQuestions.find((q) => q.id === questionId);
 
   // If there's a current question, render it fullscreen
   if (currentQuestion) {
@@ -41,7 +49,7 @@ export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
             </div>
             <button
               className="text-xs btn-red absolute top-px right-px"
-              onClick={props.onResetClick}
+              onClick={() => (props.onResetClick ? props.onResetClick(currentQuestion) : null)}
             >
               <RxReset />
             </button>
@@ -83,7 +91,7 @@ export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
                     key={q.value}
                     onClick={() => {
                       if (props.onBoardClick) {
-                        props.onBoardClick(q.id);
+                        props.onBoardClick(q);
                       }
                     }}
                   >

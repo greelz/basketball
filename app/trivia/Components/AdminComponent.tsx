@@ -1,7 +1,7 @@
 'use client';
 
 import { db } from '@/app/config';
-import { usePlayerList, useBuzzerStartTime, useCurrentQuestion } from './hooks';
+import { usePlayerList, useBuzzerStartTime, useCurrentQuestionId } from './hooks';
 import AdminRow from './AdminRow';
 import { IPlayer } from '@/app/trivia/Interfaces/Jeopardy';
 import { useRef, useState, useCallback } from 'react';
@@ -17,6 +17,7 @@ import { writeBatch } from 'firebase/firestore';
 
 interface IAdminComponentProps {
   gameId: string;
+  board: IJeopardyBoard;
 }
 
 function sortByScoreOrName(a: IPlayer, b: IPlayer) {
@@ -25,10 +26,14 @@ function sortByScoreOrName(a: IPlayer, b: IPlayer) {
   return (b.score ?? 0) - (a.score ?? 0);
 }
 
-export default function AdminComponent({ gameId }: IAdminComponentProps) {
+export default function AdminComponent({ gameId, board }: IAdminComponentProps) {
   const players = usePlayerList(gameId, db);
-  const currentQuestion = useCurrentQuestion(gameId, db);
   const startTime = useBuzzerStartTime(gameId, db);
+  const questionId = useCurrentQuestionId(gameId, db);
+  const currentQuestion = board.categories
+    .flatMap((c) => c.questions)
+    .find((q) => q.id === questionId);
+
   const timeout = useRef<NodeJS.Timeout>(null);
 
   const [calledOnPlayer, setCalledOnPlayer] = useState<IPlayer | undefined>();
