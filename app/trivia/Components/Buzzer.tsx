@@ -4,7 +4,13 @@ import { db } from '@/app/config';
 import { doc, setDoc } from 'firebase/firestore';
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { IoMdRadioButtonOff } from 'react-icons/io';
-import { useBuzzersEnabled, usePlayer, usePlayerBuzzerData } from './hooks';
+import {
+  useBuzzersEnabled,
+  useCurrentQuestionBuzzers,
+  useCurrentQuestionId,
+  usePlayer,
+  usePlayerBuzzerData,
+} from './hooks';
 
 interface IBuzzerProps {
   player: string;
@@ -17,9 +23,12 @@ export default function Buzzer({ player, gameId }: IBuzzerProps) {
 
   const playerData = usePlayer(gameId, player, db);
   const buzzerEnabled = useBuzzersEnabled(gameId, db);
-  const buzzerData = usePlayerBuzzerData(gameId, player, db);
+  const playerBuzzerData = usePlayerBuzzerData(gameId, player, db);
+  const currentQuestionBuzzing = useCurrentQuestionBuzzers(gameId, db);
 
-  const hasBuzzedAlready = buzzerData !== undefined;
+  const hasBuzzedAlready = playerBuzzerData !== undefined;
+  const hasBuzzedThisRound = currentQuestionBuzzing?.some((name) => name === player);
+
   const cooldownTimer = useRef<NodeJS.Timeout | undefined>(undefined);
   const buzzEnabledLocalDate = useRef<Date | undefined>(undefined);
 
@@ -35,7 +44,8 @@ export default function Buzzer({ player, gameId }: IBuzzerProps) {
     }
   }, [buzzerEnabled]);
 
-  const enabled = !hasBuzzedAlready && !isBuzzing && buzzerEnabled && !isCoolingDown;
+  const enabled =
+    !hasBuzzedAlready && !hasBuzzedThisRound && !isBuzzing && buzzerEnabled && !isCoolingDown;
 
   const buzzIn = useCallback(async () => {
     // If the user clicks when the buzzer isn't enabled, give a .5s cooldown
@@ -78,7 +88,9 @@ export default function Buzzer({ player, gameId }: IBuzzerProps) {
         {playerData?.score ? `\$${playerData.score}` : null}
       </div>
       <IoMdRadioButtonOff color="white" size={'20%'} />
-      {(hasBuzzedAlready || isBuzzing) && <div className="text-xs">You buzzed!</div>}
+      {(hasBuzzedAlready || isBuzzing || hasBuzzedThisRound) && (
+        <div className="text-xs">You buzzed!</div>
+      )}
     </div>
   );
 }

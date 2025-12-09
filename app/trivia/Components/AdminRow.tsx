@@ -9,21 +9,10 @@ import { Timestamp } from 'firebase/firestore';
 interface IAdminRowProps {
   player: IPlayer;
   gameId: string;
-  buzzData?: Timestamp;
-  buzzerStartTime?: Timestamp;
+  ms?: number;
 }
-export default function AdminRow({ player, gameId, buzzData, buzzerStartTime }: IAdminRowProps) {
+export default function AdminRow({ player, gameId, ms }: IAdminRowProps) {
   const popoverRef = useRef<HTMLDivElement>(null);
-
-  const buzzMillis = buzzData?.toMillis();
-  const startMillis = buzzerStartTime?.toMillis();
-
-  let diff;
-  if (!buzzMillis || !startMillis) {
-    diff = null;
-  } else {
-    diff = (buzzMillis - startMillis) / 1000;
-  }
 
   const showPopup = useCallback(() => {
     popoverRef.current?.showPopover();
@@ -43,7 +32,7 @@ export default function AdminRow({ player, gameId, buzzData, buzzerStartTime }: 
           {player.name}
         </div>
         <div className="font-bold">{player.score ?? 0}</div>
-        <div className="font-bold">{diff}</div>
+        <div className="font-bold">{ms ?? null}</div>
         <div className="flex justify-end opacity-20">
           <FaChevronRight size={'.5em'} />
         </div>

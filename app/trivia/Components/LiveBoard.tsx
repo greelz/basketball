@@ -7,7 +7,7 @@ import {
 } from '@/app/trivia/Interfaces/Jeopardy';
 import { RxReset } from 'react-icons/rx';
 import { db } from '@/app/config';
-import { useCurrentQuestionId } from '@/app/trivia/Components/hooks';
+import { useCurrentQuestionId, useHiddenQuestions } from '@/app/trivia/Components/hooks';
 
 export interface ILiveBoardPageProps {
   gameId: string;
@@ -26,6 +26,7 @@ export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
   }
 
   const questionId = useCurrentQuestionId(props.gameId, db);
+  const hiddenQuestions = useHiddenQuestions(props.gameId, db);
   const allQuestions = board.categories.flatMap((cat) => cat.questions);
   const currentQuestion = allQuestions.find((q) => q.id === questionId);
 
@@ -95,7 +96,7 @@ export default function Page(props: ILiveBoardProps & ILiveBoardPageProps) {
                       }
                     }}
                   >
-                    {!q.hide && '$' + q.value}
+                    {!hiddenQuestions?.some((hq) => hq === q.id) && '$' + q.value}
                   </div>
                 ))}
             </div>

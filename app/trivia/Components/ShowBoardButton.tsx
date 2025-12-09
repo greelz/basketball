@@ -1,6 +1,6 @@
 'use client';
 
-import { showBoard } from "./apis";
+import { showBoard } from './apis';
 
 interface IShowBoardButtonProps {
   gameId: string;
@@ -8,7 +8,11 @@ interface IShowBoardButtonProps {
 
 export default function ShowBoardButton({ gameId }: IShowBoardButtonProps) {
   return (
-    <button onClick={() => showBoard(gameId)} type="button" className="btn-purple">
+    <button
+      onClick={async () => await showBoard(gameId).commit()}
+      type="button"
+      className="btn-purple"
+    >
       Show Board
     </button>
   );

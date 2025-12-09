@@ -1,5 +1,7 @@
 import { db } from '@/app/config';
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteField,
   doc,
@@ -9,20 +11,16 @@ import {
   limit,
   serverTimestamp,
   setDoc,
-  updateDoc,
   increment,
   writeBatch,
   WriteBatch,
 } from 'firebase/firestore';
-import {
-  IPlayer,
-  IServerBoard,
-  IJeopardyGame,
-  IJeopardyBoard,
-} from '@/app/trivia/Interfaces/Jeopardy';
+import { IPlayer, IJeopardyBoard } from '@/app/trivia/Interfaces/Jeopardy';
 
-export async function enableBuzzers(gameId: string) {
-  await setDoc(
+export function enableBuzzers(gameId: string, batch?: WriteBatch) {
+  const b = batch ?? writeBatch(db);
+
+  b.set(
     doc(db, 'trivia', gameId, 'state', 'game'),
     {
       enableBuzzers: true,
@@ -30,44 +28,42 @@ export async function enableBuzzers(gameId: string) {
     },
     { merge: true }
   );
+
+  return b;
 }
 
-export async function enableBuzzersInBatch(gameId: string, batch: WriteBatch) {
-  const gameRef = doc(db, 'trivia', gameId, 'state', 'game');
-  batch.set(
-    gameRef,
-    {
-      enableBuzzers: true,
-      buzzerStartTime: serverTimestamp(),
-    },
-    { merge: true }
-  );
-}
+export function disableBuzzers(gameId: string, batch?: WriteBatch) {
+  const b = batch ?? writeBatch(db);
 
-export async function disableBuzzers(gameId: string) {
-  return await setDoc(
+  b.set(
     doc(db, 'trivia', gameId, 'state', 'game'),
     {
       enableBuzzers: deleteField(),
     },
     { merge: true }
   );
+
+  return b;
 }
 
-export async function setBuzzedThisRound(gameId: string, name: string) {
-  return await setDoc(
-    doc(db, 'trivia', gameId, 'players', name),
+export function setBuzzedThisRound(gameId: string, name: string, batch?: WriteBatch) {
+  const b = batch ?? writeBatch(db);
+
+  b.set(
+    doc(db, 'trivia', gameId, 'state', 'currentQuestion'),
     {
-      buzzedThisRound: true,
+      buzzedThisRound: arrayUnion(name),
     },
     { merge: true }
   );
+
+  return b;
 }
 
-export async function removeBuzzData(gameId: string, removeAll?: boolean) {
-  const batch = writeBatch(db);
+export function removeBuzzData(gameId: string, batch?: WriteBatch) {
+  const b = batch ?? writeBatch(db);
 
-  batch.set(
+  b.set(
     doc(db, 'trivia', gameId, 'state', 'game'),
     {
       buzzerStartTime: deleteField(),
@@ -76,9 +72,9 @@ export async function removeBuzzData(gameId: string, removeAll?: boolean) {
     { merge: true }
   );
 
-  batch.delete(doc(db, 'trivia', gameId, 'state', 'buzzers'));
+  b.delete(doc(db, 'trivia', gameId, 'state', 'buzzers'));
 
-  await batch.commit();
+  return b;
 }
 
 export async function tryAddPlayer(gameId: string, name: string): Promise<string | undefined> {
@@ -106,107 +102,58 @@ export async function tryAddPlayerFormData(
   return tryAddPlayer(gameId, str);
 }
 
-export async function getPlayersList(gameId: string) {
-  const players: IPlayer[] = [];
-  const colRef = collection(db, 'trivia', gameId, 'players');
-  const docs = await getDocs(colRef);
-  docs.forEach((p) => players.push({ name: p.id, score: p.data().score, t: p.data().t }));
+export function awardPoints(gameId: string, name: string, value: number, batch?: WriteBatch) {
+  const b = batch ?? writeBatch(db);
 
-  return players;
-}
-
-export async function awardPointsInBatch(
-  gameId: string,
-  name: string,
-  value: number,
-  batch: WriteBatch
-) {
   const playerRef = doc(db, 'trivia', gameId, 'players', name);
-  batch.update(playerRef, { score: increment(value) });
+  b.update(playerRef, { score: increment(value) });
+
+  return b;
 }
 
-export async function removeBuzzDataInBatch(gameId: string, removeAll: boolean, batch: WriteBatch) {
-  const gameRef = doc(db, 'trivia', gameId, 'state', 'game');
-  const playersRef = collection(db, 'trivia', gameId, 'players');
+export function showQuestion(gameId: string, questionId: string, batch?: WriteBatch) {
+  const b = batch ?? writeBatch(db);
 
-  batch.set(
-    gameRef,
-    { buzzerStartTime: deleteField(), enableBuzzers: deleteField() },
+  b.set(
+    doc(db, 'trivia', gameId, 'state', 'currentQuestion'),
+    {
+      id: questionId,
+    },
     { merge: true }
   );
 
-  const snapshot = await getDocs(playersRef);
+  b.set(
+    doc(db, 'trivia', gameId, 'state', 'hiddenQuestions'),
+    {
+      questions: arrayUnion(questionId),
+    },
+    { merge: true }
+  );
 
-  snapshot.docs.forEach((doc) => {
-    batch.update(doc.ref, { t: deleteField() });
-    if (removeAll) {
-      batch.update(doc.ref, { buzzedThisRound: deleteField() });
-    }
-  });
+  return b;
 }
 
-export async function showBoardInBatch(gameId: string, batch: WriteBatch) {
-  const gameRef = doc(db, 'trivia', gameId);
-  const snap = await getDoc(gameRef);
+export function hideQuestion(gameId: string, questionId?: string, batch?: WriteBatch) {
+  const b = batch ?? writeBatch(db);
 
-  if (!snap.exists()) {
-    console.error(`Couldn't find ${gameId}`);
-    return;
+  b.delete(doc(db, 'trivia', gameId, 'state', 'currentQuestion'));
+
+  if (questionId !== undefined) {
+    b.update(doc(db, 'trivia', gameId, 'state', 'hiddenQuestions'), {
+      questions: arrayRemove(questionId),
+    });
   }
 
-  const data = snap.data() as IServerBoard;
-  const game = { ...(data.jeopardyGame as IJeopardyGame) };
-
-  game.board.categories = game.board.categories?.map((cat) => ({
-    ...cat,
-    questions: cat.questions.map((q) => ({
-      ...q,
-      currentQuestion: false,
-    })),
-  }));
-
-  await updateDoc(gameRef, {
-    jeopardyGame: game,
-  });
+  return b;
 }
 
-export async function awardPoints(gameId: string, name: string, value: number): Promise<void> {
-  const playerRef = doc(db, 'trivia', gameId, 'players', name);
-  const snap = await getDoc(playerRef);
+export function showBoard(gameId: string, batch?: WriteBatch) {
+  const b = batch ?? writeBatch(db);
 
-  if (!snap.exists()) {
-    console.error(`Couldn't find ${name}`);
-    return;
-  }
+  removeBuzzData(gameId, b);
+  hideQuestion(gameId, undefined, b);
 
-  await updateDoc(playerRef, {
-    score: increment(value),
-  });
-}
-
-export async function showBoard(gameId: string) {
-  const gameRef = doc(db, 'trivia', gameId);
-  const snap = await getDoc(gameRef);
-
-  if (!snap.exists()) {
-    console.error(`Couldn't find ${gameId}`);
-    return;
-  }
-
-  const data = snap.data() as IServerBoard;
-  const game = { ...(data.jeopardyGame as IJeopardyGame) };
-
-  game.board.categories = game.board.categories?.map((cat) => ({
-    ...cat,
-    questions: cat.questions.map((q) => ({
-      ...q,
-      currentQuestion: false,
-    })),
-  }));
-
-  await updateDoc(gameRef, {
-    jeopardyGame: game,
-  });
+  return b;
 }
 
 // ****************** GET ********************
@@ -221,6 +168,15 @@ export async function getBoard(gameId: string) {
   }
 
   return snap.data()?.jeopardyGame?.board as IJeopardyBoard;
+}
+
+export async function getPlayersList(gameId: string) {
+  const players: IPlayer[] = [];
+  const colRef = collection(db, 'trivia', gameId, 'players');
+  const docs = await getDocs(colRef);
+  docs.forEach((p) => players.push({ name: p.id, score: p.data().score, t: p.data().t }));
+
+  return players;
 }
 
 export async function deleteCollection(path: string, batchSize = 50) {
@@ -246,23 +202,4 @@ export async function deleteCollection(path: string, batchSize = 50) {
     // 3. Commit the batch
     await batch.commit();
   }
-}
-
-export async function deleteCollectionInBatch(path: string, batch: WriteBatch) {
-  const colRef = collection(db, path);
-
-  // 1. Get a page of documents
-  const q = query(colRef);
-  const snapshot = await getDocs(q);
-
-  if (snapshot.empty) {
-    return;
-  }
-
-  // 2. Create a batch
-  snapshot.docs.forEach((doc) => {
-    batch.delete(doc.ref);
-  });
-
-  // 3. Commit the batch
 }

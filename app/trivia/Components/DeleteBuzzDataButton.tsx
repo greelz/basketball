@@ -9,7 +9,7 @@ interface IDeleteBuzzDataButtonProps {
 export default function DeleteBuzzDataButton({ gameId }: IDeleteBuzzDataButtonProps) {
   return (
     <button
-      onClick={() => removeBuzzData(gameId, true)}
+      onClick={async () => await removeBuzzData(gameId).commit()}
       type="button"
       className="btn-red flex items-center gap-1"
       title="Remove all buzz data"

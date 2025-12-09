@@ -1,15 +1,15 @@
 'use client';
 
 import { db } from '@/app/config';
-import { usePlayerList, useBuzzerStartTime, useCurrentQuestionId } from './hooks';
+import { usePlayerList, useCurrentQuestionId, useBuzzData } from './hooks';
 import AdminRow from './AdminRow';
 import { IPlayer, IJeopardyBoard } from '@/app/trivia/Interfaces/Jeopardy';
 import { useRef, useState, useCallback } from 'react';
 import {
-  awardPointsInBatch,
+  awardPoints,
+  removeBuzzData,
+  enableBuzzers,
   disableBuzzers,
-  enableBuzzersInBatch,
-  removeBuzzDataInBatch,
   setBuzzedThisRound,
   showBoard,
 } from './apis';
@@ -28,7 +28,7 @@ function sortByScoreOrName(a: IPlayer, b: IPlayer) {
 
 export default function AdminComponent({ gameId, board }: IAdminComponentProps) {
   const players = usePlayerList(gameId, db);
-  const startTime = useBuzzerStartTime(gameId, db);
+  const buzzers = useBuzzData(gameId, db);
   const questionId = useCurrentQuestionId(gameId, db);
   const currentQuestion = board.categories
     .flatMap((c) => c.questions)
@@ -42,12 +42,13 @@ export default function AdminComponent({ gameId, board }: IAdminComponentProps) 
     async (correctly: boolean, gameId: string, name: string) => {
       const batch = writeBatch(db);
       if (correctly) {
-        awardPointsInBatch(gameId, name, currentQuestion?.value ?? 0, batch);
-        removeBuzzDataInBatch(gameId, true, batch);
-        showBoard(gameId);
+        awardPoints(gameId, name, currentQuestion?.value ?? 0, batch);
+        removeBuzzData(gameId, batch);
+        showBoard(gameId, batch);
       } else {
-        removeBuzzDataInBatch(gameId, false, batch);
-        enableBuzzersInBatch(gameId, batch);
+        removeBuzzData(gameId, batch);
+        enableBuzzers(gameId, batch);
+        setBuzzedThisRound(gameId, name, batch);
       }
       await batch.commit();
       setCalledOnPlayer(undefined);
@@ -59,29 +60,24 @@ export default function AdminComponent({ gameId, board }: IAdminComponentProps) 
     return null;
   }
 
-  if (startTime && !timeout.current) {
-    if (players.some((p) => p.t && p.t > startTime)) {
-      timeout.current = setTimeout(() => {
-        // Get the fastest player
-        const bestPlayer = players.sort((a, b) => {
-          const at = a.t;
-          const bt = b.t;
-          if (!at && !bt) return 0;
-          if (!at) return 1;
-          if (!bt) return -1;
+  if (buzzers && !timeout.current && currentQuestion) {
+    timeout.current = setTimeout(() => {
+      // Get the fastest player
+      const bestPlayer = buzzers.sort((a, b) => {
+        const at = a.ms;
+        const bt = b.ms;
+        if (!at && !bt) return 0;
+        if (!at) return 1;
+        if (!bt) return -1;
 
-          if (at < startTime) return 1;
-          if (bt < startTime) return -1;
+        return at - bt;
+      })[0];
 
-          return at.toMillis() - bt.toMillis();
-        })[0];
-
-        setCalledOnPlayer(bestPlayer);
-        setBuzzedThisRound(gameId, bestPlayer.name);
-        disableBuzzers(gameId);
-      }, 500);
-    }
-  } else if (!startTime) {
+      setCalledOnPlayer(bestPlayer);
+      setBuzzedThisRound(gameId, bestPlayer.name);
+      disableBuzzers(gameId);
+    }, 500);
+  } else if (!buzzers) {
     timeout.current = null;
   }
 
@@ -91,7 +87,11 @@ export default function AdminComponent({ gameId, board }: IAdminComponentProps) 
         const isCalledOn = calledOnPlayer?.name === p.name;
         return (
           <div className={`px-2 ${isCalledOn ? 'bg-slate-800' : null}`} key={p.name}>
-            <AdminRow gameId={gameId} player={p} buzzData={p.t} buzzerStartTime={startTime} />
+            <AdminRow
+              gameId={gameId}
+              player={p}
+              ms={buzzers ? buzzers.find((p_ms) => p_ms.name === p.name)?.ms : undefined}
+            />
             {isCalledOn && (
               <div className="flex gap-2 items-center">
                 <span>

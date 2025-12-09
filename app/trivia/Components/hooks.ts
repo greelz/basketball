@@ -1,6 +1,13 @@
 'use client';
 
-import { collection, doc, Firestore, onSnapshot, Timestamp } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  DocumentData,
+  Firestore,
+  onSnapshot,
+  Timestamp,
+} from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import {
   IJeopardyBoard,
@@ -31,6 +38,52 @@ export function useBoard(gameId: string, db: Firestore) {
   }, [gameId, db]);
 
   return board;
+}
+
+export function useHiddenQuestions(gameId: string, db: Firestore) {
+  const [hiddenQuestions, setHiddenQuestions] = useState<string[] | undefined>();
+
+  useEffect(() => {
+    const realtime = onSnapshot(
+      doc(db, 'trivia', gameId, 'state', 'hiddenQuestions'),
+      (doc) => {
+        if (doc.exists()) {
+          setHiddenQuestions(doc.data().questions);
+        } else {
+          setHiddenQuestions(undefined);
+        }
+      },
+      (e) => console.error(e)
+    );
+
+    // Unsubscribe at the end
+    return () => realtime();
+  }, [gameId, db]);
+
+  return hiddenQuestions;
+}
+
+export function useCurrentQuestionBuzzers(gameId: string, db: Firestore) {
+  const [buzzedThisRound, setBuzzedThisRound] = useState<string[] | undefined>();
+
+  useEffect(() => {
+    const realtime = onSnapshot(
+      doc(db, 'trivia', gameId, 'state', 'currentQuestion'),
+      (doc) => {
+        if (doc.exists()) {
+          setBuzzedThisRound(doc.data().buzzedThisRound);
+        } else {
+          setBuzzedThisRound(undefined);
+        }
+      },
+      (e) => console.error(e)
+    );
+
+    // Unsubscribe at the end
+    return () => realtime();
+  }, [gameId, db]);
+
+  return buzzedThisRound;
 }
 
 export function useCurrentQuestionId(gameId: string, db: Firestore) {
@@ -104,6 +157,37 @@ export function usePlayer(gameId: string, name: string, db: Firestore) {
   }, [gameId, name]);
 
   return player;
+}
+
+interface IPlayerBuzz {
+  name: string;
+  ms: number;
+}
+
+export function useBuzzData(gameId: string, db: Firestore) {
+  const [buzzData, setBuzzData] = useState<IPlayerBuzz[]>();
+
+  useEffect(() => {
+    const realtime = onSnapshot(doc(db, 'trivia', gameId, 'state', 'buzzers'), (doc) => {
+      const d: IPlayerBuzz[] = [];
+      const data = doc.data();
+      if (!data) {
+        setBuzzData(undefined);
+        return;
+      }
+
+      Object.keys(data).forEach((player) => {
+        d.push({ name: player, ms: data[player] });
+      });
+
+      setBuzzData(d);
+    });
+
+    // Unsubscribe at the end
+    return () => realtime();
+  }, [gameId]);
+
+  return buzzData;
 }
 
 export function usePlayerBuzzerData(gameId: string, name: string, db: Firestore) {
