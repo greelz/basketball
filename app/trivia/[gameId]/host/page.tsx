@@ -21,6 +21,10 @@ export default async function Page(props: PageProps<'/trivia/[gameId]/host'>) {
 
   const board = await getBoard(gameId);
 
+  if (!board) {
+    return <div>Loading board...</div>;
+  }
+
   return (
     <>
       <div className="flex flex-col flex-1">

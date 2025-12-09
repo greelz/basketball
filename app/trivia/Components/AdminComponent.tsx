@@ -3,7 +3,7 @@
 import { db } from '@/app/config';
 import { usePlayerList, useBuzzerStartTime, useCurrentQuestionId } from './hooks';
 import AdminRow from './AdminRow';
-import { IPlayer } from '@/app/trivia/Interfaces/Jeopardy';
+import { IPlayer, IJeopardyBoard } from '@/app/trivia/Interfaces/Jeopardy';
 import { useRef, useState, useCallback } from 'react';
 import {
   awardPointsInBatch,
