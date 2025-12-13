@@ -4,10 +4,6 @@ import { League } from "../types";
 import LinkList from "../components/LinkList";
 import { addLeague } from "../database";
 
-interface LeaguesPageProps {
-  leagues: League[];
-}
-
 export default async function LeaguesPage() {
   const data = await getData();
 
