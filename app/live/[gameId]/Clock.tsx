@@ -17,7 +17,6 @@ export default function Clock() {
         <button
           className="p-1 m-1"
           onClick={() => {
-            console.log(interval.current);
             if (!interval.current) {
               interval.current = setInterval(
                 () => setTime((prev) => --prev),

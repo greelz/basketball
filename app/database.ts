@@ -1,31 +1,25 @@
-import {
-  getDocs,
-  increment,
-  onSnapshot,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { collection, addDoc, doc, getDoc } from "firebase/firestore";
+'use server';
+
+import {getDocs, increment, setDoc, updateDoc} from 'firebase/firestore';
+import {collection, addDoc, doc, getDoc} from 'firebase/firestore';
 import {
   Game,
   GameForSeason,
-  League,
   Player,
   PlayerStat,
   PlayerStats,
   Season,
   Team,
   TeamRecord,
-} from "./types";
-import { db } from "./config";
-import { ref } from "firebase/database";
+} from './types';
+import {db} from './config';
 
 // ************** ADD FUNCTIONS ***************** //
 
 //#region Add functions
 export async function addLeague(leagueName: string, season: string) {
   try {
-    const leagueRef = await addDoc(collection(db, "leagues"), {
+    const leagueRef = await addDoc(collection(db, 'leagues'), {
       name: leagueName,
       season: season,
     });
@@ -35,25 +29,15 @@ export async function addLeague(leagueName: string, season: string) {
 }
 
 export async function addSeason(seasonName: string, leagueId: string) {
-  const seasonRef = await addDoc(
-    collection(db, `leagues/${leagueId}/seasons`),
-    {
-      name: seasonName,
-    }
-  );
+  const seasonRef = await addDoc(collection(db, `leagues/${leagueId}/seasons`), {
+    name: seasonName,
+  });
 }
 
-export async function addTeam(
-  leagueId: string,
-  seasonId: string,
-  teamName: string
-) {
-  const teamRef = await addDoc(
-    collection(db, `leagues/${leagueId}/seasons/${seasonId}/teams`),
-    {
-      name: teamName,
-    }
-  );
+export async function addTeam(leagueId: string, seasonId: string, teamName: string) {
+  const teamRef = await addDoc(collection(db, `leagues/${leagueId}/seasons/${seasonId}/teams`), {
+    name: teamName,
+  });
 }
 
 export async function addPlayer(
@@ -63,10 +47,7 @@ export async function addPlayer(
   playerName: string
 ) {
   const playerRef = await addDoc(
-    collection(
-      db,
-      `leagues/${leagueId}/seasons/${seasonId}/teams/${teamId}/players`
-    ),
+    collection(db, `leagues/${leagueId}/seasons/${seasonId}/teams/${teamId}/players`),
     {
       name: playerName,
     }
@@ -81,15 +62,12 @@ export async function addGame(
   gameName: string,
   date: Date
 ) {
-  const gameRef = await addDoc(
-    collection(db, `leagues/${leagueId}/seasons/${seasonId}/games`),
-    {
-      team1: team1,
-      team2: team2,
-      date: date,
-      name: gameName,
-    }
-  );
+  const gameRef = await addDoc(collection(db, `leagues/${leagueId}/seasons/${seasonId}/games`), {
+    team1: team1,
+    team2: team2,
+    date: date,
+    name: gameName,
+  });
 }
 
 export async function addScoreToGame(
@@ -99,10 +77,7 @@ export async function addScoreToGame(
   team1score: number,
   team2score: number
 ) {
-  const ref = doc(
-    db,
-    `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`
-  );
+  const ref = doc(db, `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`);
   return await updateDoc(ref, {
     team1score: team1score,
     team2score: team2score,
@@ -113,9 +88,7 @@ export async function addScoreToGame(
 
 //#region Get functions
 export async function getSeasons(leagueId: string) {
-  const seasonsSnapshot = await getDocs(
-    collection(db, "leagues", leagueId, "seasons")
-  );
+  const seasonsSnapshot = await getDocs(collection(db, 'leagues', leagueId, 'seasons'));
 
   const seasons: Season[] = [];
   seasonsSnapshot.forEach((s) => {
@@ -127,13 +100,10 @@ export async function getSeasons(leagueId: string) {
   return seasons;
 }
 
-export async function getTeamsForSeason(
-  leagueId: string,
-  seasonId: string
-): Promise<Team[]> {
+export async function getTeamsForSeason(leagueId: string, seasonId: string): Promise<Team[]> {
   const teams: Team[] = [];
   const teamsSnapshot = await getDocs(
-    collection(db, "leagues", leagueId, "seasons", seasonId, "teams")
+    collection(db, 'leagues', leagueId, 'seasons', seasonId, 'teams')
   );
 
   teamsSnapshot.forEach((doc) => {
@@ -145,13 +115,10 @@ export async function getTeamsForSeason(
   return teams;
 }
 
-export async function getGamesForSeason(
-  leagueId: string,
-  seasonId: string
-): Promise<Game[]> {
+export async function getGamesForSeason(leagueId: string, seasonId: string): Promise<Game[]> {
   const games: Game[] = [];
   const gamesSnapshot = await getDocs(
-    collection(db, "leagues", leagueId, "seasons", seasonId, "games")
+    collection(db, 'leagues', leagueId, 'seasons', seasonId, 'games')
   );
 
   gamesSnapshot.forEach((doc) => {
@@ -170,16 +137,7 @@ export async function getPlayersFromTeam(
 ): Promise<Player[]> {
   const players: Player[] = [];
   const playersSnapshot = await getDocs(
-    collection(
-      db,
-      "leagues",
-      leagueId,
-      "seasons",
-      seasonId,
-      "teams",
-      teamId,
-      "players"
-    )
+    collection(db, 'leagues', leagueId, 'seasons', seasonId, 'teams', teamId, 'players')
   );
 
   playersSnapshot.forEach((p) => {
@@ -192,29 +150,19 @@ export async function getPlayersFromTeam(
   return players;
 }
 
-export async function getTeamsIdsForGame(
-  leagueId: string,
-  seasonId: string,
-  gameId: string
-) {
-  const data = await getDoc(
-    doc(db, `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`)
-  );
+export async function getTeamsIdsForGame(leagueId: string, seasonId: string, gameId: string) {
+  const data = await getDoc(doc(db, `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`));
   return {
-    team1: data.get("team1") as string,
-    team2: data.get("team2") as string,
+    team1: data.get('team1') as string,
+    team2: data.get('team2') as string,
   };
 }
 
-export async function getTeamPlayersFromGame(
-  leagueId: string,
-  seasonId: string,
-  gameId: string
-) {
-  const { team1, team2 } = await getTeamsIdsForGame(leagueId, seasonId, gameId);
+export async function getTeamPlayersFromGame(leagueId: string, seasonId: string, gameId: string) {
+  const {team1, team2} = await getTeamsIdsForGame(leagueId, seasonId, gameId);
   const team1players = await getPlayersFromTeam(leagueId, seasonId, team1);
   const team2players = await getPlayersFromTeam(leagueId, seasonId, team2);
-  return { team1, team2, team1players, team2players };
+  return {team1, team2, team1players, team2players};
 }
 
 export async function getPlayerStatisticsFromGame(
@@ -222,24 +170,22 @@ export async function getPlayerStatisticsFromGame(
   seasonId: string,
   gameId: string
 ) {
-  const { team1, team2, team1players, team2players } =
-    await getTeamPlayersFromGame(leagueId, seasonId, gameId);
+  const {team1, team2, team1players, team2players} = await getTeamPlayersFromGame(
+    leagueId,
+    seasonId,
+    gameId
+  );
 
-  const playerStatistics: PlayerStats[] = team1players
-    .concat(team2players)
-    .map((p) => ({ ...p }));
+  const playerStatistics: PlayerStats[] = team1players.concat(team2players).map((p) => ({...p}));
 
   const snapshot = await getDocs(
-    collection(
-      db,
-      `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/playerStatistics`
-    )
+    collection(db, `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/playerStatistics`)
   );
 
   snapshot.docs.forEach((s) => {
     const data = s.data();
-    const two_point_made = data["two_point_made"] ?? 0;
-    const three_point_made = data["three_point_made"] ?? 0;
+    const two_point_made = data['two_point_made'] ?? 0;
+    const three_point_made = data['three_point_made'] ?? 0;
     const specificPlayerIdx = playerStatistics.findIndex((a) => a.id === s.id);
     if (specificPlayerIdx === -1) return;
     playerStatistics[specificPlayerIdx] = {
@@ -258,8 +204,8 @@ export async function getPlayerStatisticsFromGame(
 
   return {
     playerStatistics: playerStatistics,
-    team1: { id: team1, score: team1Score },
-    team2: { id: team2, score: team2Score },
+    team1: {id: team1, score: team1Score},
+    team2: {id: team2, score: team2Score},
   };
 }
 
@@ -298,21 +244,13 @@ export async function getSeasonStatisticsRegenerate(
       const team2 = stats.team2.id;
 
       if (!records.has(team1)) {
-        records.set(team1, { teamId: team1, wins: 0, losses: 0, ties: 0 });
-        console.log(`Adding ${team1} to map`);
+        records.set(team1, {teamId: team1, wins: 0, losses: 0, ties: 0});
       }
       if (!records.has(team2)) {
-        records.set(team2, { teamId: team2, wins: 0, losses: 0, ties: 0 });
-        console.log(`Adding ${team2} to map`);
+        records.set(team2, {teamId: team2, wins: 0, losses: 0, ties: 0});
       }
 
-      addScoreToGame(
-        leagueId,
-        seasonId,
-        g.id,
-        stats.team1.score,
-        stats.team2.score
-      );
+      addScoreToGame(leagueId, seasonId, g.id, stats.team1.score, stats.team2.score);
 
       // Add the loss and the win
       if (stats.team1.score > stats.team2.score) {
@@ -332,40 +270,26 @@ export async function getSeasonStatisticsRegenerate(
   return records;
 }
 
-export async function isGameOver(
-  leagueId: string,
-  seasonId: string,
-  gameId: string
-) {
+export async function isGameOver(leagueId: string, seasonId: string, gameId: string) {
   const gameSnapshot = await getDoc(
     doc(db, `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`)
   );
-  return gameSnapshot.get("gameover") == 1;
+  return gameSnapshot.get('gameover') == 1;
 }
 
-export async function getTeamNameByTeamId(
-  leagueId: string,
-  seasonId: string,
-  teamId: string
-) {
-  const snapshot = await getDoc(
-    doc(db, `leagues/${leagueId}/seasons/${seasonId}/teams/${teamId}`)
-  );
+export async function getTeamNameByTeamId(leagueId: string, seasonId: string, teamId: string) {
+  const snapshot = await getDoc(doc(db, `leagues/${leagueId}/seasons/${seasonId}/teams/${teamId}`));
 
-  return snapshot.get("name");
+  return snapshot.get('name');
 }
 
 //#endregion
 
 //#region Utility functions
-export async function finalizeGame(
-  leagueId: string,
-  seasonId: string,
-  gameId: string
-) {
+export async function finalizeGame(leagueId: string, seasonId: string, gameId: string) {
   const initialPath = `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`;
 
-  await updateDoc(doc(db, initialPath), { gameover: 1 });
+  await updateDoc(doc(db, initialPath), {gameover: 1});
 }
 export async function incrementStat(
   leagueId: string,
@@ -375,40 +299,40 @@ export async function incrementStat(
   fieldName: string,
   incrementValue: number
 ) {
-  const initialPath = `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/playerStatistics`;
   if (playerId.length !== 20) return;
-  let dataToUpdate = { [fieldName]: increment(incrementValue) };
 
-  try {
-    const snapshot = doc(db, `${initialPath}/${playerId}`);
-    await updateDoc(snapshot, dataToUpdate);
-  } catch (e) {
-    await setDoc(doc(db, initialPath, playerId), dataToUpdate);
-  }
+  const ref = doc(
+    db,
+    `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/playerStatistics/${playerId}`
+  );
+
+  await setDoc(
+    ref,
+    {[fieldName]: increment(incrementValue)},
+    {merge: true} // create if missing, update if exists
+  );
 }
 
 export async function findLeagueAndSeasonByGameId(gameId: string) {
   try {
     // Step 1: Fetch all leagues
-    const leaguesSnapshot = await getDocs(collection(db, "leagues"));
+    const leaguesSnapshot = await getDocs(collection(db, 'leagues'));
     for (const leagueDoc of leaguesSnapshot.docs) {
       const leagueId = leagueDoc.id;
 
       // Step 2: Fetch all seasons for this league
-      const seasonsSnapshot = await getDocs(
-        collection(db, "leagues", leagueId, "seasons")
-      );
+      const seasonsSnapshot = await getDocs(collection(db, 'leagues', leagueId, 'seasons'));
       for (const seasonDoc of seasonsSnapshot.docs) {
         const seasonId = seasonDoc.id;
 
         // Step 3: Fetch all games for this season and check for the gameId
         const gamesSnapshot = await getDocs(
-          collection(db, "leagues", leagueId, "seasons", seasonId, "games")
+          collection(db, 'leagues', leagueId, 'seasons', seasonId, 'games')
         );
         for (const gameDoc of gamesSnapshot.docs) {
           if (gameDoc.id === gameId) {
             // Found the matching gameId
-            return { leagueId, seasonId };
+            return {leagueId, seasonId};
           }
         }
       }
@@ -417,9 +341,60 @@ export async function findLeagueAndSeasonByGameId(gameId: string) {
     // If no matching gameId is found
     return null;
   } catch (error) {
-    console.error("Error finding league and season by gameId: ", error);
-    throw new Error("Unable to find league and season.");
+    console.error('Error finding league and season by gameId: ', error);
+    throw new Error('Unable to find league and season.');
   }
 }
 
 //#endregion
+
+
+export async function getGameCore(
+  leagueId: string,
+  seasonId: string,
+  gameId: string,
+) {
+  const snap = await getDoc(doc(db, `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`));
+
+  if (!snap.exists()) throw new Error(`Game not found [${gameId}]`);
+
+  const data = snap.data();
+
+  const {team1, team2} = data;
+
+  const [team1Name, team2Name] = await Promise.all([getTeamNameByTeamId(leagueId, seasonId, team1), getTeamNameByTeamId(leagueId, seasonId, team2)]);
+
+  return {
+    team1: team1,
+    team2: team2,
+    gameover: data.gameover === 1,
+    // optionally denormalize:
+    team1Name: team1Name,
+    team2Name: team2Name,
+  };
+}
+
+export async function getLiveGameData(
+  leagueId: string,
+  seasonId: string,
+  gameId: string
+) {
+  const {team1, team2, gameover, team1Name, team2Name} =
+    await getGameCore(leagueId, seasonId, gameId);
+
+  const [team1Players, team2Players] = await Promise.all([
+    getPlayersFromTeam(leagueId, seasonId, team1),
+    getPlayersFromTeam(leagueId, seasonId, team2),
+  ]);
+
+  return {
+    team1,
+    team2,
+    team1Name,
+    team2Name,
+    gameover,
+    team1Players,
+    team2Players,
+  };
+}
+

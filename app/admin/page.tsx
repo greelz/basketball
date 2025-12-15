@@ -1,30 +1,32 @@
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../config";
-import { League } from "../types";
+import {collection, getDocs} from "firebase/firestore";
+import {db} from "../config";
+import {League} from "../types";
 import LinkList from "../components/LinkList";
-import { addLeague } from "../database";
-
-interface LeaguesPageProps {
-  leagues: League[];
-}
+import {addLeague} from "../database";
+import Form from "@/app/components/BasketballForm";
 
 export default async function LeaguesPage() {
   const data = await getData();
 
   async function createLeague(formData: FormData) {
     'use server'
-    addLeague("Who Cares", formData.get('seasonName') as string);
+    const name = formData.get('leagueName') as string;
+    addLeague(name, name);
   }
   return (
-    <>
-      <h1>Leagues</h1>
+    <div className="p-2 flex flex-col gap-5">
+      <h1 className="text-center text-3xl">Leagues</h1>
       <LinkList data={data} slug="/admin" />
-      <form action={createLeague}>
-        <input placeholder="enter a season name" type="input" id="seasonName">
-        </input>
-        <button type="submit">Create new season</button>
-      </form>
-    </>
+      <div className="max-w-80">
+        <Form action={createLeague}
+          title="Create a league"
+        >
+          <input className="input-default" placeholder="enter a league name" type="input" name="leagueName" id="leagueName">
+          </input>
+          <button className="btn-blue mt-4" type="submit">Create new league</button>
+        </Form>
+      </div>
+    </div>
   );
 }
 
