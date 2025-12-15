@@ -1,4 +1,4 @@
-import { db } from '@/app/config';
+import {db} from '@/app/config';
 import {
   arrayRemove,
   arrayUnion,
@@ -15,7 +15,7 @@ import {
   writeBatch,
   WriteBatch,
 } from 'firebase/firestore';
-import { IPlayer, IJeopardyBoard } from '@/app/trivia/Interfaces/Jeopardy';
+import {IPlayer, IJeopardyBoard} from '@/app/trivia/Interfaces/Jeopardy';
 
 export function enableBuzzers(gameId: string, batch?: WriteBatch) {
   const b = batch ?? writeBatch(db);
@@ -26,7 +26,7 @@ export function enableBuzzers(gameId: string, batch?: WriteBatch) {
       enableBuzzers: true,
       buzzerStartTime: serverTimestamp(),
     },
-    { merge: true }
+    {merge: true}
   );
 
   return b;
@@ -40,7 +40,7 @@ export function disableBuzzers(gameId: string, batch?: WriteBatch) {
     {
       enableBuzzers: deleteField(),
     },
-    { merge: true }
+    {merge: true}
   );
 
   return b;
@@ -54,7 +54,7 @@ export function setBuzzedThisRound(gameId: string, name: string, batch?: WriteBa
     {
       buzzedThisRound: arrayUnion(name),
     },
-    { merge: true }
+    {merge: true}
   );
 
   return b;
@@ -69,10 +69,18 @@ export function removeBuzzData(gameId: string, batch?: WriteBatch) {
       buzzerStartTime: deleteField(),
       enableBuzzers: deleteField(),
     },
-    { merge: true }
+    {merge: true}
   );
 
   b.delete(doc(db, 'trivia', gameId, 'state', 'buzzers'));
+
+  b.set(
+    doc(db, 'trivia', gameId, 'state', 'currentQuestion'),
+    {
+      buzzedThisRound: deleteField(),
+    },
+    {merge: true}
+  );
 
   return b;
 }
@@ -90,7 +98,7 @@ export async function tryAddPlayer(gameId: string, name: string): Promise<string
 
   const nameRef = doc(db, 'trivia', gameId, 'players', nameForDb);
 
-  await setDoc(nameRef, {}, { merge: true });
+  await setDoc(nameRef, {}, {merge: true});
   return nameForDb;
 }
 
@@ -106,7 +114,7 @@ export function awardPoints(gameId: string, name: string, value: number, batch?:
   const b = batch ?? writeBatch(db);
 
   const playerRef = doc(db, 'trivia', gameId, 'players', name);
-  b.update(playerRef, { score: increment(value) });
+  b.update(playerRef, {score: increment(value)});
 
   return b;
 }
@@ -119,7 +127,7 @@ export function showQuestion(gameId: string, questionId: string, batch?: WriteBa
     {
       id: questionId,
     },
-    { merge: true }
+    {merge: true}
   );
 
   b.set(
@@ -127,7 +135,7 @@ export function showQuestion(gameId: string, questionId: string, batch?: WriteBa
     {
       questions: arrayUnion(questionId),
     },
-    { merge: true }
+    {merge: true}
   );
 
   return b;
@@ -174,7 +182,7 @@ export async function getPlayersList(gameId: string) {
   const players: IPlayer[] = [];
   const colRef = collection(db, 'trivia', gameId, 'players');
   const docs = await getDocs(colRef);
-  docs.forEach((p) => players.push({ name: p.id, score: p.data().score, t: p.data().t }));
+  docs.forEach((p) => players.push({name: p.id, score: p.data().score, t: p.data().t}));
 
   return players;
 }

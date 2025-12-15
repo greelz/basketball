@@ -1,10 +1,10 @@
 'use client';
 
-import { db } from '@/app/config';
-import { usePlayerList, useCurrentQuestionId, useBuzzData } from './hooks';
+import {db} from '@/app/config';
+import {usePlayerList, useCurrentQuestionId, useBuzzData} from './hooks';
 import AdminRow from './AdminRow';
-import { IPlayer, IJeopardyBoard } from '@/app/trivia/Interfaces/Jeopardy';
-import { useRef, useState, useCallback } from 'react';
+import {IPlayer, IJeopardyBoard} from '@/app/trivia/Interfaces/Jeopardy';
+import {useRef, useState, useCallback} from 'react';
 import {
   awardPoints,
   removeBuzzData,
@@ -13,7 +13,7 @@ import {
   setBuzzedThisRound,
   showBoard,
 } from './apis';
-import { writeBatch } from 'firebase/firestore';
+import {writeBatch} from 'firebase/firestore';
 
 interface IAdminComponentProps {
   gameId: string;
@@ -26,7 +26,7 @@ function sortByScoreOrName(a: IPlayer, b: IPlayer) {
   return (b.score ?? 0) - (a.score ?? 0);
 }
 
-export default function AdminComponent({ gameId, board }: IAdminComponentProps) {
+export default function AdminComponent({gameId, board}: IAdminComponentProps) {
   const players = usePlayerList(gameId, db);
   const buzzers = useBuzzData(gameId, db);
   const questionId = useCurrentQuestionId(gameId, db);
@@ -41,11 +41,13 @@ export default function AdminComponent({ gameId, board }: IAdminComponentProps) 
   const answered = useCallback(
     async (correctly: boolean, gameId: string, name: string) => {
       const batch = writeBatch(db);
+      const val = currentQuestion?.value || 0;
       if (correctly) {
-        awardPoints(gameId, name, currentQuestion?.value ?? 0, batch);
+        awardPoints(gameId, name, val, batch);
         removeBuzzData(gameId, batch);
         showBoard(gameId, batch);
       } else {
+        awardPoints(gameId, name, -val, batch);
         removeBuzzData(gameId, batch);
         enableBuzzers(gameId, batch);
         setBuzzedThisRound(gameId, name, batch);
