@@ -1,5 +1,4 @@
-import { PlayerStats } from "@/app/types";
-import React from "react";
+import {PlayerStats} from "@/app/types";
 
 interface Props {
   s: PlayerStats;
@@ -15,7 +14,7 @@ const convertToZeroOrOriginal = (val: any) => {
   }
 };
 
-export default function StatCell({ s, setPlayer, player }: Props) {
+export default function StatCell({s, setPlayer, player}: Props) {
   let totalTwosAttempted =
     convertToZeroOrOriginal(s.two_point_miss) +
     convertToZeroOrOriginal(s.two_point_made);

@@ -5,30 +5,30 @@
   --color-jeopardytext: #ffcc00;
 }
 
-@utility btn-default {
-  @apply rounded-md hover:cursor-pointer px-4 py-2;
-}
-
 .btn-blue {
-  @apply btn-default bg-blue-700 hover:bg-blue-800 active:bg-blue-900;
+  @apply rounded-md hover:cursor-pointer px-4 py-2 bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white;
 }
 
 .btn-yellow {
-  @apply btn-default bg-yellow-700 hover:bg-yellow-800 active:bg-yellow-900;
+  @apply rounded-md hover:cursor-pointer px-4 py-2 bg-yellow-700 hover:bg-yellow-800 active:bg-yellow-900 text-black;
 }
 
 .btn-green {
-  @apply btn-default bg-green-700 hover:bg-green-800 active:bg-green-900;
+  @apply rounded-md hover:cursor-pointer px-4 py-2 bg-green-700 hover:bg-green-800 active:bg-green-900 text-white;
 }
 
 .btn-red {
-  @apply btn-default bg-red-700 hover:bg-red-800 active:bg-red-900;
+  @apply rounded-md hover:cursor-pointer px-4 py-2 bg-red-700 hover:bg-red-800 active:bg-red-900 text-white;
 }
 
 .btn-purple {
-  @apply btn-default bg-purple-700 hover:bg-purple-800 active:bg-purple-900;
+  @apply rounded-md hover:cursor-pointer px-4 py-2 bg-purple-700 hover:bg-purple-800 active:bg-purple-900 text-white;
 }
 
 .btn-gray {
-  @apply btn-default bg-gray-700 hover:bg-gray-800 active:bg-gray-900;
+  @apply rounded-md hover:cursor-pointer px-4 py-2 bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white;
+}
+
+.input-default {
+  @apply rounded-sm px-1 min-w-40 border border-slate-600 focus:outline;
 }

@@ -6,11 +6,11 @@ import {
   PlayerStats,
   PlayerStatsStringForButtons,
 } from "@/app/types";
-import React, { useCallback, useEffect, useState } from "react";
+import {useCallback, useEffect, useState, useMemo} from "react";
 import StatCell from "./StatCell";
 import StatIncrementButton from "./StatIncrementButton";
-import { collection, onSnapshot } from "firebase/firestore";
-import { db } from "@/app/config";
+import {collection, onSnapshot} from "firebase/firestore";
+import {db} from "@/app/config";
 import Clock from "./Clock";
 
 interface Props {
@@ -59,7 +59,7 @@ export default function PlayerIncrementor({
     PlayerStats[] | undefined
   >();
 
-  const allPlayers = team1Players.concat(team2Players); // starting block for who to show on the screen
+  const allPlayers = useMemo(() => team1Players.concat(team2Players), [team1Players, team2Players]); // starting block for who to show on the screen
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -68,7 +68,7 @@ export default function PlayerIncrementor({
         `leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/playerStatistics`
       ),
       (snapshot) => {
-        const tempStats: PlayerStats[] = allPlayers.map((p) => ({ ...p }));
+        const tempStats: PlayerStats[] = allPlayers.map((p) => ({...p}));
         snapshot.docs.forEach((s) => {
           const two_point_made = s.data()["two_point_made"] ?? 0;
           const three_point_made = s.data()["three_point_made"] ?? 0;
@@ -84,7 +84,7 @@ export default function PlayerIncrementor({
       }
     );
     return () => unsubscribe();
-  }, []);
+  }, [allPlayers, leagueId, seasonId, gameId]);
 
   const incrementAndAddToHistory = useCallback(
     (p: string, t: string, v: number) => {
@@ -92,7 +92,7 @@ export default function PlayerIncrementor({
       incrementStat(p, t, v);
       setHistory((curr) => {
         const temp = curr.slice(0, historyIndex ?? 0);
-        temp.push({ player: p, type: t, val: v });
+        temp.push({player: p, type: t, val: v});
         return temp;
       });
       setHistoryIndex(historyIndex === null ? 1 : historyIndex + 1);
@@ -110,7 +110,7 @@ export default function PlayerIncrementor({
   const undoDisabled =
     historyIndex === null || historyIndex === 0 || gameIsOver;
 
-  if (!playerStatistics) return "Couldn't find any stats to show.";
+  if (!playerStatistics) return "Loading live stats...";
   return (
     <div className="flex flex-1 gap-4 flex-col">
       <div className="flex flex-row flex-wrap">
@@ -162,7 +162,7 @@ export default function PlayerIncrementor({
               ))}
           </tbody>
         </table>
-        <div className="text-7xl flex-1 flex flex-wrap justify-around gap-2 items-center text-center">
+        <div className="text-7xl flex-1 flex flex-wrap justify-around gap-2 items-center text-center my-5">
           <div>
             {team1Score} - {team2Score}
           </div>
@@ -224,7 +224,7 @@ export default function PlayerIncrementor({
           className={`${undoDisabled ? "bg-slate-300" : ""} btn btn-blue`}
           onClick={() => {
             if (!historyIndex || historyIndex === 0 || gameIsOver) return;
-            const { player, type, val } = history[historyIndex - 1];
+            const {player, type, val} = history[historyIndex - 1];
 
             // do the opposite thing that just happened
             incrementStat(player, type, -val);
