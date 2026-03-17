@@ -21,10 +21,11 @@ export default function NameChip({
 
   return (
     <>
+      <span className="text-xs text-center">{person_name}</span>
       <FileUpload family_name={family_name} person_name={person_name}>
         {imgUrl && (
           <Image
-            className="rounded-full aspect-square p-2"
+            className="rounded-full object-none p-1"
             fill
             alt={person_name + ' ' + family_name}
             src={imgUrl}
@@ -32,7 +33,7 @@ export default function NameChip({
         )}
         {!imgUrl && (
           <div
-            className={`${color} ${textColor} m-2 rounded-full aspect-square font-bold flex items-center justify-center`}
+            className={`${color} ${textColor} m-1 rounded-full aspect-square font-bold flex items-center justify-center`}
           >
             {personNameInitial}
             {familyNameInitial}

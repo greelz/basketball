@@ -13,7 +13,14 @@ export async function POST(request: Request) {
   const sql = neon(`${process.env.DATABASE_URL}`);
   await sql`
     INSERT INTO family_photos (image_url, person_name, family_name)
-    VALUES (${url}, ${person_name}, ${family_name})`;
+    VALUES (${url}, ${person_name}, ${family_name})
+    ON CONFLICT (person_name, family_name)
+    DO UPDATE SET
+      image_url = CASE
+        WHEN EXCLUDED.image_url IS DISTINCT FROM family_photos.image_url
+        THEN EXCLUDED.image_url
+        ELSE family_photos.image_url
+      END`;
 
   return Response.json({ url });
 }

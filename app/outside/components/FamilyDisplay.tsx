@@ -9,7 +9,8 @@ import { PhotoData, FamilyTable } from '../[family]/page';
 const DATE_PRESETS = {
   today: 'today',
   yesterday: 'yesterday',
-  'one-week-ago': 'one-week-ago',
+  'start-of-week': 'start-of-week',
+  'start-of-month': 'start-of-month',
   'one-month-ago': 'one-month-ago',
   'start-of-year': 'start-of-year',
 } as const;
@@ -25,8 +26,11 @@ function getPresetDate(preset: DatePreset): Date {
     case 'yesterday':
       date.setDate(date.getDate() - 1);
       break;
-    case 'one-week-ago':
-      date.setDate(date.getDate() - 7);
+    case 'start-of-week':
+      date.setDate(date.getDate() - date.getDay());
+      break;
+    case 'start-of-month':
+      date.setDate(1);
       break;
     case 'one-month-ago':
       date.setMonth(date.getMonth() - 1);
@@ -50,7 +54,7 @@ export default function FamilyDisplay({
   family: string;
   photoData: PhotoData[];
 }) {
-  const [preset, setPreset] = useState<DatePreset>('one-week-ago');
+  const [preset, setPreset] = useState<DatePreset>('start-of-week');
   const dateFilter = getPresetDate(preset);
 
   const nameMap = new Map<string, FamilyTable[]>();
@@ -62,15 +66,17 @@ export default function FamilyDisplay({
 
   return (
     <>
-      <div className="text-sm text-center">
-        <span>Showing data for the {family} family for </span>
+      <div>
         <DateFilterSelect
           current={preset}
           DATE_PRESETS={DATE_PRESETS}
           onChange={(val) => setPreset(val)}
         />
+        <h1 className="text-xl text-center m-3">
+          {family}'s outside since <strong>{dateFilter.toLocaleDateString()}</strong>
+        </h1>
       </div>
-      <div className="flex-1 flex flex-col gap-3 p-3">
+      <div className="flex-1 flex flex-col gap-6 p-3">
         <div className="flex gap-3 justify-center">
           {[...nameMap.entries()].map(([person, data]) => {
             const hoursTo1000 = data.reduce((t, r) => t + Number(r.hours_outside), 0);

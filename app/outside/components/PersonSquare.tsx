@@ -19,7 +19,7 @@ export default function PersonSquare({
 
   return (
     <div className="flex flex-col h-40 w-24 shadow-md rounded-sm border border-gray-200">
-      <div className="relative">
+      <div className="flex flex-col">
         <NameChip
           person_name={person_name}
           family_name={family_name}
@@ -28,7 +28,9 @@ export default function PersonSquare({
           imgUrl={imgUrl}
         />
       </div>
-      <div className="text-4xl flex-1 text-center">{hoursToDisplay.toFixed(0)}</div>
+      <div className="text-3xl flex-1 items-center align-center text-center">
+        {hoursToDisplay.toFixed(1)}
+      </div>
       <div className="bg-green-500 h-1" style={{ width: `${roundedPercentTo1000}%` }}></div>
     </div>
   );

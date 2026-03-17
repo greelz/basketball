@@ -20,7 +20,7 @@ export default async function Page(props: PageProps<'/outside/[family]'>) {
   const photoData = await getPhotoData(family);
 
   return (
-    <div className="min-h-dvh flex flex-col">
+    <div className="min-h-dvh flex flex-col max-w-[700px] m-auto">
       <h1 className="text-center text-xl border-b p-2">
         <strong>1000 Hours</strong> <i>Outside</i>
       </h1>

@@ -27,7 +27,7 @@ export default function FileUpload({
     router.refresh();
   }
   return (
-    <label className="cursor-pointer block aspect-square">
+    <label className="cursor-pointer block aspect-square relative">
       <input
         type="file"
         accept="image/*"
