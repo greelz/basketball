@@ -7,7 +7,7 @@ export default function Home() {
     <div className="relative min-h-dvh flex">
       <Image className="z-0 absolute h-full object-cover opacity-50" alt="Champs" src={court} />
       <div className="p-4 flex-1 flex flex-col gap-2">
-        <Link className="btn-blue h-10 w-40 text-white text-center z-1" href="/admin">
+        <Link className="btn-blue h-10 w-40 text-white text-center z-1" href="/admin/PzZH38lp1R6wYs5Luf67">
           Play Ball
         </Link>
         <Link className="btn-purple h-10 w-40 text-white text-center z-1" href="/trivia">
